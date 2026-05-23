@@ -512,9 +512,6 @@ async def get_repo_query_logs(repo_id: str, limit: int = Query(default=50, ge=1,
 async def deep_code_search(repo_id: str, request: QueryRequest):
     ensure_repo_exists(repo_id)
     store = get_storage()
-    # Log the search as a query
-    if hasattr(store, "log_query"):
-        store.log_query(repo_id=repo_id, query=request.query, user_id="default_user")
     
     # Use keyword_search from the store
     if hasattr(store, "keyword_search"):

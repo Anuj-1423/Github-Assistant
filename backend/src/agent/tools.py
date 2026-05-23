@@ -33,12 +33,22 @@ class CodeIntelligenceTools:
         output.append("Outgoing (Callees/Contained):")
         for out in relations['outgoing']:
             output.append(f"- {out['id']} ({out['relation']})")
+        
+        output = [f"Relationships for {symbol_id}:"]
+        output.append("Incoming (Callers/Contains):")
+        for inc in relations['incoming']:
+            output.append(f"- {inc['id']} ({inc['relation']})")
+        
+        output.append("Outgoing (Callees/Contained):")
+        for out in relations['outgoing']:
+            output.append(f"- {out['id']} ({out['relation']})")
             
         return "\n".join(output)
 
     def read_file(self, file_path: str) -> str:
         """Read the full content of a file in the repository. Use this when you need more context around a search result."""
         # Sanitize path to stay within repo
+        file_path = file_path.lstrip("/\\")
         abs_path = os.path.abspath(os.path.join(self.repo_path, file_path))
         if not abs_path.startswith(os.path.abspath(self.repo_path)):
             return "Error: Access denied. Path outside repository."
