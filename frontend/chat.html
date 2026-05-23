@@ -578,5 +578,17 @@
             setTimeout(toggleAnalysis, 500);
         }
     </script>
+    <script>
+        if (window.self !== window.top) {
+            const rail = document.querySelector('.nav-rail');
+            const sidebar = document.querySelector('.sidebar');
+            const appShell = document.querySelector('.app-shell');
+            if (rail) rail.style.display = 'none';
+            if (sidebar) sidebar.style.display = 'none';
+            if (appShell) {
+                appShell.style.gridTemplateColumns = '1fr 340px';
+            }
+        }
+    </script>
 </body>
 </html>

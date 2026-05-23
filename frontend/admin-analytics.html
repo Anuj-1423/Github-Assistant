@@ -36,7 +36,7 @@
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin-dashboard.html'"><i class="fas fa-server"></i> System Overview</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin-users.html'"><i class="fas fa-users-cog"></i> User Management</button>
                 <button class="sidebar-nav-btn active"><i class="fas fa-database"></i> Database Health</button>
-                <button class="sidebar-nav-btn"><i class="fas fa-microchip"></i> Node Clusters</button>
+                <button class="sidebar-nav-btn" onclick="window.location.href='admin-clusters.html'"><i class="fas fa-microchip"></i> Node Clusters</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin-settings.html'"><i class="fas fa-cog"></i> Global Settings</button>
             </nav>
         </aside>
@@ -169,6 +169,16 @@
                 }
             }
         });
+    </script>
+    <script>
+        if (window.self !== window.top) {
+            const rail = document.querySelector('.nav-rail');
+            const sidebar = document.querySelector('.sidebar');
+            const appShell = document.querySelector('.app-shell');
+            if (rail) rail.style.display = 'none';
+            if (sidebar) sidebar.style.display = 'none';
+            if (appShell) appShell.style.gridTemplateColumns = '1fr';
+        }
     </script>
 </body>
 </html>

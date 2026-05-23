@@ -229,11 +229,20 @@
             </div>
             <div class="input-group">
                 <i class="fas fa-envelope input-icon"></i>
-                <input type="email" class="auth-input" placeholder="Neural Identifier (Email)" required>
+                <input type="email" id="emailInput" class="auth-input" placeholder="Neural Identifier (Email)" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-lock input-icon"></i>
                 <input type="password" class="auth-input" placeholder="Neural Access Key" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-user-shield input-icon"></i>
+                <select id="operatorRole" class="auth-input" style="appearance: none; cursor: pointer; color: var(--text-muted);" required onchange="this.style.color='white'">
+                    <option value="" disabled selected>Select Operator Designation</option>
+                    <option value="user" style="color: black;">Standard Operator (User)</option>
+                    <option value="admin" style="color: black;">System Overseer (Admin)</option>
+                </select>
+                <i class="fas fa-chevron-down" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; font-size: 12px;"></i>
             </div>
 
             <div class="policy-box">
@@ -269,9 +278,16 @@
         // Form handling
         document.getElementById('regForm').addEventListener('submit', (e) => {
             e.preventDefault();
+            const role = document.getElementById('operatorRole').value;
+            const email = document.getElementById('emailInput').value.trim().toLowerCase();
+            
+            // Store registration data in localStorage
+            localStorage.setItem('userRole_' + email, role);
+            
             document.getElementById('loader').style.display = 'flex';
+            
             setTimeout(() => {
-                window.location.href = 'user-dashboard.html';
+                window.location.href = 'login.html';
             }, 2000);
         });
     </script>

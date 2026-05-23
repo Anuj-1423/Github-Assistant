@@ -48,18 +48,14 @@
 
                 <div class="ingestion-card">
                     <div class="form-group" style="text-align: left;">
-                        <label class="form-label">Repository Designation</label>
-                        <input type="text" id="repo-name" class="form-input" placeholder="demo_repo" style="margin-top: 8px;">
-                    </div>
-                    <div class="form-group" style="text-align: left; margin-top: 32px;">
-                        <label class="form-label">Absolute Directory Path</label>
-                        <input type="text" id="repo-path" class="form-input" placeholder="C:\Users\Ishaan\Documents\Codebase Knowledge AI\demo_repo" style="margin-top: 8px;">
+                        <label class="form-label">GitHub Repository URL</label>
+                        <input type="text" id="repo-url" class="form-input" placeholder="https://github.com/username/project" style="margin-top: 8px;">
                     </div>
 
                     <div class="drop-zone" id="ingest-trigger">
-                        <i class="fas fa-microchip" style="font-size: 48px; color: var(--primary-brand); margin-bottom: 20px;"></i>
-                        <h4 style="font-size: 18px; margin-bottom: 8px;">Synchronize Local Directory</h4>
-                        <p style="font-size: 13px; color: var(--text-muted);">Click to initiate automated AST decomposition</p>
+                        <i class="fab fa-github" style="font-size: 48px; color: var(--primary-brand); margin-bottom: 20px;"></i>
+                        <h4 style="font-size: 18px; margin-bottom: 8px;">Synchronize Repository</h4>
+                        <p style="font-size: 13px; color: var(--text-muted);">Click to initiate automated clone and indexing process</p>
                     </div>
 
                     <div class="protocol-steps">
@@ -67,14 +63,14 @@
                             <div style="font-size: 16px; color: var(--primary-brand);"><i class="fas fa-search"></i></div>
                             <div>
                                 <div style="font-size: 13px; font-weight: 700;">Scanning Environment</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">Awaiting repository path input</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Awaiting repository URL input</div>
                             </div>
                         </div>
                         <div class="step-pill" id="step-2">
-                            <div style="font-size: 16px; color: #fbbf24; background: transparent;"><i class="fas fa-tree"></i></div>
+                            <div style="font-size: 16px; color: #fbbf24; background: transparent;"><i class="fas fa-download"></i></div>
                             <div>
-                                <div style="font-size: 13px; font-weight: 700;">AST Decomposition</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">Constructing semantic tree primitives</div>
+                                <div style="font-size: 13px; font-weight: 700;">Cloning Repository</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Downloading source code from GitHub</div>
                             </div>
                         </div>
                         <div class="step-pill" id="step-3">
@@ -92,16 +88,13 @@
 
     <script>
         document.getElementById('ingest-trigger').addEventListener('click', async () => {
-            const nameInput = document.getElementById('repo-name');
-            const pathInput = document.getElementById('repo-path');
+            const urlInput = document.getElementById('repo-url');
             
             // Use placeholder as fallback if empty
-            const name = nameInput.value.trim() || nameInput.placeholder.replace('e.g. ', '');
-            let path = pathInput.value.trim() || pathInput.placeholder;
+            let repoUrl = urlInput.value.trim() || urlInput.placeholder;
             
-            // If they are literally empty or we failed to get a good fallback
-            if (!name || !path) {
-                alert("Identity and path parameters are required.");
+            if (!repoUrl) {
+                alert("GitHub URL parameter is required.");
                 return;
             }
 
@@ -112,7 +105,7 @@
                 const response = await fetch('/api/repos', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ repo_url: path })
+                    body: JSON.stringify({ repo_url: repoUrl })
                 });
                 
                 if (response.ok) {
@@ -140,6 +133,16 @@
             } catch (err) {}
         }
         loadProfile();
+    </script>
+    <script>
+        if (window.self !== window.top) {
+            const rail = document.querySelector('.nav-rail');
+            const sidebar = document.querySelector('.sidebar');
+            const appShell = document.querySelector('.app-shell');
+            if (rail) rail.style.display = 'none';
+            if (sidebar) sidebar.style.display = 'none';
+            if (appShell) appShell.style.gridTemplateColumns = '1fr';
+        }
     </script>
 </body>
 </html>

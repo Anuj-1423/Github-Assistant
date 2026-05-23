@@ -263,7 +263,7 @@
         <form id="loginForm">
             <div class="input-group">
                 <i class="fas fa-fingerprint input-icon"></i>
-                <input type="email" class="auth-input" placeholder="Operator Identity (Email)" required>
+                <input type="email" id="emailInput" class="auth-input" placeholder="Operator Identity (Email)" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-key input-icon"></i>
@@ -303,9 +303,17 @@
         // Form handling
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
+            const email = document.getElementById('emailInput').value.trim().toLowerCase();
+            const storedRole = localStorage.getItem('userRole_' + email);
+            
             document.getElementById('loader').style.display = 'flex';
             setTimeout(() => {
-                window.location.href = 'user-dashboard.html';
+                // If they registered as admin or explicitly use an admin email
+                if (storedRole === 'admin' || email.includes('admin')) {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'user-dashboard.html';
+                }
             }, 2000);
         });
     </script>
