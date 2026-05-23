@@ -47,9 +47,9 @@
             </div>
 
             <nav style="display: flex; flex-direction: column; gap: 10px;">
-                <button id="nav-dashboard" class="sidebar-nav-btn active" onclick="switchView('dashboard')"><i class="fas fa-th-large"></i> Dashboard Home</button>
+                <button id="nav-dashboard" class="sidebar-nav-btn active" onclick="window.location.hash='dashboard'"><i class="fas fa-th-large"></i> Dashboard Home</button>
                 <button class="sidebar-nav-btn" onclick="showIndexModal()"><i class="fas fa-plus-circle"></i> Index Repository</button>
-                <button id="nav-analytics" class="sidebar-nav-btn" onclick="switchView('analytics')"><i class="fas fa-chart-line"></i> Global Analytics</button>
+                <button id="nav-analytics" class="sidebar-nav-btn" onclick="window.location.hash='analytics'"><i class="fas fa-chart-line"></i> Global Analytics</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin.html'"><i class="fas fa-user-shield"></i> Operator Access</button>
                 <button class="sidebar-nav-btn" style="margin-top: 32px; color: #ef4444;" onclick="window.location.href='login.html'"><i class="fas fa-sign-out-alt"></i> Logout Session</button>
             </nav>
@@ -186,6 +186,16 @@
                 window.chartsRendered = true;
             }
         }
+        
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.substring(1) || 'dashboard';
+            switchView(hash);
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const hash = window.location.hash.substring(1) || 'dashboard';
+            switchView(hash);
+        });
 
         function renderCharts() {
             const growthCtx = document.getElementById('growthChart').getContext('2d');

@@ -36,8 +36,8 @@
 
             <nav style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="sidebar-nav-btn" onclick="window.location.href='user-dashboard.html'"><i class="fas fa-th-large"></i> Dashboard Home</button>
-                <button class="sidebar-nav-btn active"><i class="fas fa-chart-line"></i> Deep Analytics</button>
-                <button class="sidebar-nav-btn" onclick="viewSystemMap()"><i class="fas fa-project-diagram"></i> System Map</button>
+                <button id="nav-analytics" class="sidebar-nav-btn active" onclick="window.location.hash='analytics'"><i class="fas fa-chart-line"></i> Deep Analytics</button>
+                <button id="nav-system-map" class="sidebar-nav-btn" onclick="window.location.hash='system-map'"><i class="fas fa-project-diagram"></i> System Map</button>
                 <button class="sidebar-nav-btn" onclick="exportReport()"><i class="fas fa-file-invoice"></i> Export Report</button>
             </nav>
         </aside>
@@ -141,6 +141,29 @@
     <script>
         mermaid.initialize({ startOnLoad: false, theme: 'dark' });
 
+        function switchView(viewName) {
+            document.getElementById('view-analytics').style.display = viewName === 'analytics' ? 'block' : 'none';
+            document.getElementById('view-system-map').style.display = viewName === 'system-map' ? 'block' : 'none';
+            
+            document.getElementById('nav-analytics').classList.toggle('active', viewName === 'analytics');
+            document.getElementById('nav-system-map').classList.toggle('active', viewName === 'system-map');
+            
+            if (viewName === 'system-map' && !window.systemMapLoaded) {
+                viewSystemMap();
+                window.systemMapLoaded = true;
+            }
+        }
+        
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.substring(1) || 'analytics';
+            switchView(hash);
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const hash = window.location.hash.substring(1) || 'analytics';
+            switchView(hash);
+        });
+
         async function loadProfile() {
             try {
                 const response = await fetch('/api/user/profile');
@@ -205,8 +228,6 @@
         }
 
         async function viewSystemMap() {
-            document.getElementById('view-analytics').style.display = 'none';
-            document.getElementById('view-system-map').style.display = 'block';
             
             const container = document.getElementById('system-maps-container');
             container.innerHTML = '<div style="color: var(--text-muted); font-size: 14px;"><i class="fas fa-spinner fa-spin"></i> Generating maps...</div>';
@@ -249,6 +270,10 @@
                     mapPart.style.overflow = 'hidden';
                     mapPart.style.cursor = 'pointer';
                     mapPart.style.position = 'relative';
+                    mapPart.style.display = 'flex';
+                    mapPart.style.alignItems = 'center';
+                    mapPart.style.justifyContent = 'center';
+                    mapPart.style.height = '250px';
                     mapPart.title = "Click to expand map";
                     mapPart.innerHTML = `<div style="padding: 40px; text-align: center; color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Analyzing architecture...</div>`;
                     
@@ -257,17 +282,23 @@
                     container.appendChild(repoBox);
                     
                     // Fetch map
-                    fetch(`/api/repos/${repo.id}/architecture-map`)
+                    fetch(`/api/repos/${repo.id}/architecture-mermaid`)
                         .then(res => res.json())
                         .then(async mapData => {
-                            if (mapData && mapData.map_markdown) {
-                                const cleanMarkdown = mapData.map_markdown.replace(/```mermaid/g, '').replace(/```/g, '').trim();
-                                mapPart.innerHTML = `<div class="mermaid" id="mermaid-${repo.id}" style="width: 100%; height: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center;">${cleanMarkdown}</div>`;
+                            if (mapData && mapData.mermaid_code) {
+                                const cleanMarkdown = mapData.mermaid_code.replace(/```mermaid/g, '').replace(/```/g, '').trim();
                                 
                                 // Render it!
                                 try {
                                     const { svg } = await mermaid.render(`svg-${repo.id}`, cleanMarkdown);
                                     mapPart.innerHTML = svg;
+                                    const svgElement = mapPart.querySelector('svg');
+                                    if (svgElement) {
+                                        svgElement.style.maxWidth = '100%';
+                                        svgElement.style.maxHeight = '100%';
+                                        svgElement.style.width = 'auto';
+                                        svgElement.style.height = 'auto';
+                                    }
                                     
                                     // Add click event for expansion
                                     mapPart.onclick = () => openMapModal(repo.name, svg, cleanMarkdown, repo.id);
@@ -288,12 +319,72 @@
             }
         }
         
+        let currentScale = 1;
+        let translateX = 0, translateY = 0;
+        let isDragging = false, startX, startY;
+
+        function updateTransform(el) {
+            el.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+            el.style.transformOrigin = 'center center';
+            el.style.transition = isDragging ? 'none' : 'transform 0.1s ease-out';
+        }
+
         function openMapModal(repoName, svgContent, rawMarkdown, repoId) {
+            const modalContent = document.getElementById('map-modal-content');
             document.getElementById('map-modal').style.display = 'flex';
             document.getElementById('map-modal-title').innerText = repoName + " Architecture";
-            document.getElementById('map-modal-content').innerHTML = svgContent;
-            document.getElementById('map-modal-content').querySelector('svg').style.maxWidth = '100%';
-            document.getElementById('map-modal-content').querySelector('svg').style.height = 'auto';
+            modalContent.innerHTML = svgContent;
+            
+            modalContent.style.overflow = 'hidden';
+            modalContent.style.cursor = 'grab';
+            
+            const svgEl = modalContent.querySelector('svg');
+            if (svgEl) {
+                svgEl.style.maxWidth = 'none';
+                svgEl.style.maxHeight = '80vh';
+                svgEl.style.width = 'auto';
+                svgEl.style.height = 'auto';
+                
+                currentScale = 1;
+                translateX = 0;
+                translateY = 0;
+                updateTransform(svgEl);
+
+                modalContent.onwheel = function(e) {
+                    e.preventDefault();
+                    const scaleFactor = 0.1;
+                    if (e.deltaY < 0) {
+                        currentScale += scaleFactor; // zoom in
+                    } else {
+                        currentScale = Math.max(0.1, currentScale - scaleFactor); // zoom out
+                    }
+                    updateTransform(svgEl);
+                };
+
+                modalContent.onmousedown = function(e) {
+                    isDragging = true;
+                    modalContent.style.cursor = 'grabbing';
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                };
+
+                modalContent.onmousemove = function(e) {
+                    if (!isDragging) return;
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    updateTransform(svgEl);
+                };
+
+                modalContent.onmouseup = function() {
+                    isDragging = false;
+                    modalContent.style.cursor = 'grab';
+                };
+
+                modalContent.onmouseleave = function() {
+                    isDragging = false;
+                    modalContent.style.cursor = 'grab';
+                };
+            }
             
             document.getElementById('map-modal-download').onclick = () => downloadMapSVG(repoId, repoName);
         }
