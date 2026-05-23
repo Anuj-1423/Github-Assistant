@@ -139,12 +139,14 @@
             breaks: true,
             gfm: true,
             renderer: {
-                code({ text, lang }) {
-                    const language = (lang || '').split(/\s/)[0];
+                code(codeStr, lang) {
+                    const text = typeof codeStr === 'object' ? codeStr.text : codeStr;
+                    const language = (typeof codeStr === 'object' ? codeStr.lang : lang) || '';
+                    const cleanLang = language.split(/\s/)[0];
                     try {
-                        if (language && hljs.getLanguage(language)) {
-                            const highlighted = hljs.highlight(text, { language }).value;
-                            return `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
+                        if (cleanLang && hljs.getLanguage(cleanLang)) {
+                            const highlighted = hljs.highlight(text, { language: cleanLang }).value;
+                            return `<pre><code class="hljs language-${cleanLang}">${highlighted}</code></pre>`;
                         }
                         const highlighted = hljs.highlightAuto(text).value;
                         return `<pre><code class="hljs">${highlighted}</code></pre>`;
