@@ -7,7 +7,13 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        .analytics-hero { padding-bottom: 60px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 60px; }
+        .stat-grid-large { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 60px; }
+        .chart-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; margin-bottom: 60px; }
+        .complexity-map { height: 400px; background: rgba(255,255,255,0.02); border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
+        
         .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-bottom: 48px; }
         .repo-list { display: grid; grid-template-columns: 1fr; gap: 20px; }
         .repo-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 24px; display: flex; justify-content: space-between; align-items: center; transition: var(--transition-smooth); }
@@ -41,9 +47,9 @@
             </div>
 
             <nav style="display: flex; flex-direction: column; gap: 10px;">
-                <button class="sidebar-nav-btn active"><i class="fas fa-th-large"></i> Dashboard Home</button>
+                <button id="nav-dashboard" class="sidebar-nav-btn active" onclick="switchView('dashboard')"><i class="fas fa-th-large"></i> Dashboard Home</button>
                 <button class="sidebar-nav-btn" onclick="showIndexModal()"><i class="fas fa-plus-circle"></i> Index Repository</button>
-                <button class="sidebar-nav-btn" onclick="window.location.href='user-analytics.html'"><i class="fas fa-chart-line"></i> Global Analytics</button>
+                <button id="nav-analytics" class="sidebar-nav-btn" onclick="switchView('analytics')"><i class="fas fa-chart-line"></i> Global Analytics</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin.html'"><i class="fas fa-user-shield"></i> Operator Access</button>
                 <button class="sidebar-nav-btn" style="margin-top: 32px; color: #ef4444;" onclick="window.location.href='login.html'"><i class="fas fa-sign-out-alt"></i> Logout Session</button>
             </nav>
@@ -77,6 +83,7 @@
                 </div>
             </div>
 
+            <div id="view-dashboard">
             <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px;">
                 <div>
                     <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;">Welcome Back, Operator</h2>
@@ -103,7 +110,7 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 40px;">
+            <div style="display: grid; grid-template-columns: 1fr; gap: 40px;">
                 <section>
                     <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 24px;">Connected Repositories</h3>
                     <div class="repo-list" id="repo-list-container">
@@ -119,45 +126,89 @@
                         </div>
                     </div>
                 </section>
+            </div>
+            </div> <!-- End view-dashboard -->
 
-                <section>
-                    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 24px;">Neural Activity Log</h3>
-                    <div class="activity-log" id="activity-log">
-                        <div class="activity-item">
-                            <div style="font-size: 16px; color: var(--primary-brand);"><i class="fas fa-sync"></i></div>
-                            <div>
-                                <div style="font-size: 13px; font-weight: 700;">Re-indexed 'v3-core-kernel'</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">10 minutes ago • 142 new chunks</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div style="font-size: 16px; color: #10b981;"><i class="fas fa-check"></i></div>
-                            <div>
-                                <div style="font-size: 13px; font-weight: 700;">Optimization Audit Complete</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">2 hours ago • Repository 'frontend-app'</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div style="font-size: 16px; color: #3b82f6;"><i class="fas fa-search"></i></div>
-                            <div>
-                                <div style="font-size: 13px; font-weight: 700;">New Inquiry: "Auth Flow"</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">5 hours ago • 8 files analyzed</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div style="font-size: 16px; color: #ef4444;"><i class="fas fa-exclamation-triangle"></i></div>
-                            <div>
-                                <div style="font-size: 13px; font-weight: 700;">Sync Interrupted</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">Yesterday • Repository 'legacy-java-lib'</div>
-                            </div>
-                        </div>
+            <div id="view-analytics" style="display: none;">
+                <header class="analytics-hero">
+                    <div class="badge" style="margin-bottom: 12px;">GLOBAL TELEMETRY</div>
+                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">Architectural Insights</h2>
+                    <p style="color: var(--text-secondary); font-size: 16px;">Advanced structural analysis across all indexed repositories.</p>
+                </header>
+
+                <div class="stat-grid-large">
+                    <div class="premium-card">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Cyclomatic Complexity</div>
+                        <div style="font-size: 32px; font-weight: 800;">14.2</div>
+                        <div style="font-size: 12px; color: #fbbf24; margin-top: 8px;">Moderate Overload</div>
                     </div>
-                </section>
+                    <div class="premium-card">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Dependency Depth</div>
+                        <div style="font-size: 32px; font-weight: 800;">8 Levels</div>
+                        <div style="font-size: 12px; color: #22c55e; margin-top: 8px;">Optimal Hierarchy</div>
+                    </div>
+                    <div class="premium-card">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Hotspot Density</div>
+                        <div style="font-size: 32px; font-weight: 800;">4 files</div>
+                        <div style="font-size: 12px; color: #ef4444; margin-top: 8px;">Requires Refactor</div>
+                    </div>
+                    <div class="premium-card">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Semantic Cohesion</div>
+                        <div style="font-size: 32px; font-weight: 800;">88.2%</div>
+                        <div style="font-size: 12px; color: var(--primary-brand); margin-top: 8px;">High Consistency</div>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="complexity-map">
+                        <h3 style="font-size: 18px; margin-bottom: 24px;">Growth of Knowledge Shards</h3>
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                    <div class="complexity-map">
+                        <h3 style="font-size: 18px; margin-bottom: 24px;">Language Distribution</h3>
+                        <canvas id="langChart"></canvas>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
     <script>
+        function switchView(viewName) {
+            document.getElementById('view-dashboard').style.display = viewName === 'dashboard' ? 'block' : 'none';
+            document.getElementById('view-analytics').style.display = viewName === 'analytics' ? 'block' : 'none';
+            
+            document.getElementById('nav-dashboard').classList.toggle('active', viewName === 'dashboard');
+            document.getElementById('nav-analytics').classList.toggle('active', viewName === 'analytics');
+            
+            if (viewName === 'analytics' && !window.chartsRendered) {
+                renderCharts();
+                window.chartsRendered = true;
+            }
+        }
+
+        function renderCharts() {
+            const growthCtx = document.getElementById('growthChart').getContext('2d');
+            new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{ label: 'Knowledge Shards', data: [2000, 4500, 3200, 8000, 12000, 14282], borderColor: '#6366f1', tension: 0.4, fill: false }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
+            });
+
+            const langCtx = document.getElementById('langChart').getContext('2d');
+            new Chart(langCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Python', 'TypeScript', 'Rust', 'Other'],
+                    datasets: [{ data: [45, 30, 15, 10], backgroundColor: ['#6366f1', '#3b82f6', '#8b5cf6', '#475569'], borderWidth: 0, hoverOffset: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, padding: 20 } } } }
+            });
+        }
+
         async function loadProfile() {
             try {
                 const response = await fetch('/api/user/profile');
@@ -196,6 +247,7 @@
                                         <span class="health-indicator" style="background: #22c55e;"></span>ACTIVE
                                     </div>
                                 </div>
+                                <button class="btn" style="padding: 8px 12px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; cursor: pointer;" onclick="downloadRepo('${repo.id}', event)" title="Download Repository Zip"><i class="fas fa-download"></i></button>
                                 <button class="btn-danger" onclick="deleteRepo('${repo.id}', event)" title="Delete Repository and All Data"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </div>
@@ -209,22 +261,14 @@
                     document.getElementById('stat-chunks').innerText = stats.total_chunks || 0;
                     document.getElementById('stat-queries').innerText = stats.total_queries || 0;
                     
-                    const activityLog = document.getElementById('activity-log');
-                    if (stats.recent_queries && stats.recent_queries.length > 0) {
-                        activityLog.innerHTML = stats.recent_queries.map(q => `
-                            <div class="activity-item">
-                                <div style="font-size: 16px; color: #3b82f6;"><i class="fas fa-search"></i></div>
-                                <div>
-                                    <div style="font-size: 13px; font-weight: 700;">New Inquiry: "${q.query}"</div>
-                                    <div style="font-size: 11px; color: var(--text-muted);">${new Date(q.created_at).toLocaleString()} • Repository '${q.repo_id}'</div>
-                                </div>
-                            </div>
-                        `).join('');
-                    } else {
-                        activityLog.innerHTML = '<div style="padding: 20px; color: var(--text-muted);">No recent activity.</div>';
-                    }
+                    // Activity log was removed
                 }
             } catch (err) {}
+        }
+
+        function downloadRepo(repoId, event) {
+            event.stopPropagation();
+            window.location.href = `/api/repos/${repoId}/download`;
         }
 
         function showIndexModal() {

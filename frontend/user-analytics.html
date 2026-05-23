@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
     <style>
         .analytics-hero { padding-bottom: 60px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 60px; }
         .stat-grid-large { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 60px; }
@@ -36,12 +37,13 @@
             <nav style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="sidebar-nav-btn" onclick="window.location.href='user-dashboard.html'"><i class="fas fa-th-large"></i> Dashboard Home</button>
                 <button class="sidebar-nav-btn active"><i class="fas fa-chart-line"></i> Deep Analytics</button>
-                <button class="sidebar-nav-btn" onclick="alert('Feature under development.');"><i class="fas fa-project-diagram"></i> System Map</button>
-                <button class="sidebar-nav-btn" onclick="alert('Feature under development.');"><i class="fas fa-file-invoice"></i> Export Report</button>
+                <button class="sidebar-nav-btn" onclick="viewSystemMap()"><i class="fas fa-project-diagram"></i> System Map</button>
+                <button class="sidebar-nav-btn" onclick="exportReport()"><i class="fas fa-file-invoice"></i> Export Report</button>
             </nav>
         </aside>
 
         <main class="main-content" style="padding: 60px; overflow-y: auto; flex: 1;">
+            <div id="view-analytics">
             <header class="analytics-hero">
                 <div class="badge" style="margin-bottom: 12px;">GLOBAL TELEMETRY</div>
                 <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">Architectural Insights</h2>
@@ -107,10 +109,38 @@
                     </div>
                 </div>
             </section>
+            </div> <!-- End view-analytics -->
+
+            <div id="view-system-map" style="display: none;">
+                <header class="analytics-hero">
+                    <div class="badge" style="margin-bottom: 12px;">ARCHITECTURE VISUALIZATION</div>
+                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">System Maps</h2>
+                    <p style="color: var(--text-secondary); font-size: 16px;">Visual structural breakdown of all connected repositories.</p>
+                </header>
+                <div id="system-maps-container" style="display: flex; flex-direction: column; gap: 40px;">
+                    <div style="color: var(--text-muted); font-size: 14px;">Loading system maps...</div>
+                </div>
+            </div>
         </main>
+
+        <!-- Fullscreen Map Modal -->
+        <div id="map-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; padding: 40px; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 id="map-modal-title" style="font-size: 24px; font-weight: 800;">Repository Map</h2>
+                <div>
+                    <button id="map-modal-download" class="btn btn-primary" style="margin-right: 16px;"><i class="fas fa-download"></i> Download SVG</button>
+                    <button onclick="closeMapModal()" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div id="map-modal-content" style="flex: 1; overflow: auto; background: var(--surface-base); border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 40px;">
+                <!-- Fullscreen mermaid chart here -->
+            </div>
+        </div>
     </div>
 
     <script>
+        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+
         async function loadProfile() {
             try {
                 const response = await fetch('/api/user/profile');
@@ -153,6 +183,156 @@
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, padding: 20 } } } }
         });
+        async function exportReport() {
+            try {
+                const response = await fetch('/api/admin/overview');
+                const stats = await response.json();
+                
+                const csvContent = `Architectural Insights Report,${new Date().toLocaleString()}\n`
+                    + `Total Connected Repositories,${stats.global_docs || 0}\n`
+                    + `Total Knowledge Shards (Chunks),${stats.total_chunks || 0}\n`
+                    + `Total Telemetry Queries,${stats.total_queries || 0}\n`;
+                    
+                const blob = new Blob([csvContent], {type: 'text/csv'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Knowledge_Telemetry_Report.csv';
+                a.click();
+            } catch (err) {
+                alert("Failed to export report.");
+            }
+        }
+
+        async function viewSystemMap() {
+            document.getElementById('view-analytics').style.display = 'none';
+            document.getElementById('view-system-map').style.display = 'block';
+            
+            const container = document.getElementById('system-maps-container');
+            container.innerHTML = '<div style="color: var(--text-muted); font-size: 14px;"><i class="fas fa-spinner fa-spin"></i> Generating maps...</div>';
+            
+            try {
+                const response = await fetch('/api/repos');
+                const repos = await response.json();
+                
+                if (repos.length === 0) {
+                    container.innerHTML = '<div>No repositories connected.</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                for (let repo of repos) {
+                    const repoBox = document.createElement('div');
+                    repoBox.style.display = 'flex';
+                    repoBox.style.gap = '24px';
+                    repoBox.style.alignItems = 'stretch';
+                    repoBox.style.background = 'rgba(255,255,255,0.02)';
+                    repoBox.style.border = '1px solid var(--border-subtle)';
+                    repoBox.style.borderRadius = '24px';
+                    repoBox.style.padding = '24px';
+                    
+                    const headerPart = document.createElement('div');
+                    headerPart.style.width = '250px';
+                    headerPart.style.flexShrink = '0';
+                    headerPart.innerHTML = `
+                        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">${repo.name}</h3>
+                        <p style="font-size: 12px; color: var(--text-muted); word-break: break-all; margin-bottom: 24px;">${repo.url}</p>
+                        <button class="btn btn-secondary" onclick="downloadMapSVG('${repo.id}', '${repo.name}')" style="width: 100%;"><i class="fas fa-download"></i> Download Map</button>
+                    `;
+                    
+                    const mapPart = document.createElement('div');
+                    mapPart.style.flex = '1';
+                    mapPart.style.background = 'var(--surface-base)';
+                    mapPart.style.borderRadius = '16px';
+                    mapPart.style.border = '1px solid var(--border-subtle)';
+                    mapPart.style.overflow = 'hidden';
+                    mapPart.style.cursor = 'pointer';
+                    mapPart.style.position = 'relative';
+                    mapPart.title = "Click to expand map";
+                    mapPart.innerHTML = `<div style="padding: 40px; text-align: center; color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Analyzing architecture...</div>`;
+                    
+                    repoBox.appendChild(headerPart);
+                    repoBox.appendChild(mapPart);
+                    container.appendChild(repoBox);
+                    
+                    // Fetch map
+                    fetch(`/api/repos/${repo.id}/architecture-map`)
+                        .then(res => res.json())
+                        .then(async mapData => {
+                            if (mapData && mapData.map_markdown) {
+                                const cleanMarkdown = mapData.map_markdown.replace(/```mermaid/g, '').replace(/```/g, '').trim();
+                                mapPart.innerHTML = `<div class="mermaid" id="mermaid-${repo.id}" style="width: 100%; height: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center;">${cleanMarkdown}</div>`;
+                                
+                                // Render it!
+                                try {
+                                    const { svg } = await mermaid.render(`svg-${repo.id}`, cleanMarkdown);
+                                    mapPart.innerHTML = svg;
+                                    
+                                    // Add click event for expansion
+                                    mapPart.onclick = () => openMapModal(repo.name, svg, cleanMarkdown, repo.id);
+                                    
+                                    // Store raw markdown for download
+                                    mapPart.dataset.markdown = cleanMarkdown;
+                                } catch (e) {
+                                    mapPart.innerHTML = `<div style="padding: 20px; color: #ef4444;">Failed to render graph.</div>`;
+                                }
+                            } else {
+                                mapPart.innerHTML = `<div style="padding: 20px; color: var(--text-muted);">No architecture map available.</div>`;
+                            }
+                        });
+                }
+                
+            } catch (e) {
+                container.innerHTML = '<div>Failed to load repositories.</div>';
+            }
+        }
+        
+        function openMapModal(repoName, svgContent, rawMarkdown, repoId) {
+            document.getElementById('map-modal').style.display = 'flex';
+            document.getElementById('map-modal-title').innerText = repoName + " Architecture";
+            document.getElementById('map-modal-content').innerHTML = svgContent;
+            document.getElementById('map-modal-content').querySelector('svg').style.maxWidth = '100%';
+            document.getElementById('map-modal-content').querySelector('svg').style.height = 'auto';
+            
+            document.getElementById('map-modal-download').onclick = () => downloadMapSVG(repoId, repoName);
+        }
+        
+        function closeMapModal() {
+            document.getElementById('map-modal').style.display = 'none';
+        }
+        
+        function downloadMapSVG(repoId, repoName) {
+            // Find the rendered SVG
+            let svgElement;
+            if (document.getElementById('map-modal').style.display === 'flex') {
+                svgElement = document.getElementById('map-modal-content').querySelector('svg');
+            } else {
+                // Find it in the grid
+                const container = document.getElementById('system-maps-container');
+                const svgs = container.querySelectorAll('svg');
+                for (let s of svgs) {
+                    if (s.id === `svg-${repoId}`) {
+                        svgElement = s;
+                        break;
+                    }
+                }
+            }
+            
+            if (!svgElement) {
+                alert("Map is not ready yet.");
+                return;
+            }
+            
+            const svgData = new XMLSerializer().serializeToString(svgElement);
+            const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${repoName}_architecture.svg`;
+            a.click();
+        }
     </script>
 </body>
 </html>

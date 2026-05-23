@@ -47,8 +47,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Paths
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-FRONTEND_DIR = os.path.join(ROOT_DIR, "frontend")
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIR = os.path.join(os.path.dirname(ROOT_DIR), "frontend")
 
 app = FastAPI(title="Codebase Knowledge AI API", version="1.0.0")
 print("\n" + "="*50)

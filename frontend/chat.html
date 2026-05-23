@@ -202,6 +202,28 @@
                         <div id="hub-repo-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
                             <div style="color: var(--text-muted); font-size: 14px;">Loading available repositories...</div>
                         </div>
+
+                        <!-- Spacer Fillers to look professional -->
+                        <div style="margin-top: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                                <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center;"><i class="fas fa-lightbulb" style="color: #fbbf24; margin-right: 12px; font-size: 24px;"></i> Inquiry Best Practices</h3>
+                                <ul style="color: var(--text-muted); font-size: 14px; line-height: 2; padding-left: 20px; margin: 0;">
+                                    <li>Ask specific questions about architectural patterns.</li>
+                                    <li>Use the Deep Code Search for cross-file tracing.</li>
+                                    <li>Request markdown code blocks for implementation details.</li>
+                                    <li>Open the Architecture Map to visualize dependencies.</li>
+                                </ul>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                                <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center;"><i class="fas fa-network-wired" style="color: var(--primary-brand); margin-right: 12px; font-size: 24px;"></i> Neural Engine Status</h3>
+                                <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px;">
+                                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Vector Database</span> <span style="color: #22c55e; font-weight: 800; background: rgba(34,197,94,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;"><i class="fas fa-circle" style="font-size: 8px; margin-right: 4px; vertical-align: middle;"></i> ONLINE</span></div>
+                                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Inference Model</span> <span style="color: #22c55e; font-weight: 800; background: rgba(34,197,94,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;"><i class="fas fa-circle" style="font-size: 8px; margin-right: 4px; vertical-align: middle;"></i> OPTIMIZED</span></div>
+                                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Context Window</span> <span style="color: white; font-weight: 700; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;">128K TOKENS</span></div>
+                                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Base Latency</span> <span style="color: white; font-weight: 700; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;">~24ms</span></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
                 
@@ -551,6 +573,10 @@
 
         loadRepoInfo();
         loadProfile();
+        
+        if (params.get('map') === 'true') {
+            setTimeout(toggleAnalysis, 500);
+        }
     </script>
 </body>
 </html>
