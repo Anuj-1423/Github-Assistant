@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingestion Pipeline | Codebase Knowledge AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .ingestion-container { max-width: 800px; margin: 0 auto; }
+        .ingestion-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 32px; padding: 60px; text-align: center; }
+        .drop-zone { border: 2px dashed var(--border-subtle); border-radius: 20px; padding: 60px 40px; margin-top: 40px; transition: var(--transition-smooth); cursor: pointer; }
+        .drop-zone:hover { border-color: var(--primary-brand); background: rgba(99, 102, 241, 0.05); }
+        .protocol-steps { display: flex; flex-direction: column; gap: 24px; margin-top: 48px; text-align: left; }
+        .step-pill { display: flex; align-items: center; gap: 16px; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 14px; opacity: 0.5; transition: var(--transition-smooth); }
+        .step-pill.active { opacity: 1; border-color: var(--primary-brand); background: var(--surface-accent); }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="nav-rail">
+            <div class="rail-item" onclick="window.location.href='user-dashboard.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div id="user-avatar" class="rail-item" style="margin-top: auto; background: var(--surface-elevated); border: 1px solid var(--border-subtle); font-weight: 800;">U</div>
+        </aside>
+
+        <aside class="sidebar">
+            <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
+                <div class="logo-box">CK</div>
+                <div>
+                    <h1 style="font-size: 14px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;">INGESTION</h1>
+                    <span style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">PIPELINE</span>
+                </div>
+            </div>
+            <nav style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="sidebar-nav-btn active"><i class="fas fa-cloud-upload-alt"></i> Upload Repository</button>
+                <button class="sidebar-nav-btn"><i class="fab fa-github"></i> GitHub Connector</button>
+                <button class="sidebar-nav-btn"><i class="fas fa-terminal"></i> CLI Integration</button>
+            </nav>
+        </aside>
+
+        <main class="main-content" style="padding: 60px; overflow-y: auto; flex: 1;">
+            <div class="ingestion-container">
+                <header style="margin-bottom: 64px; text-align: center;">
+                    <div class="badge" style="margin-bottom: 16px;">SOURCE INPUT PROTOCOL</div>
+                    <h2 style="font-size: 40px; font-weight: 800;">Initialize Knowledge Sync</h2>
+                    <p style="color: var(--text-secondary); max-width: 500px; margin: 12px auto 0;">Provide the path to your source repository. Our neural engine will automatically decompose and index its semantic structure.</p>
+                </header>
+
+                <div class="ingestion-card">
+                    <div class="form-group" style="text-align: left;">
+                        <label class="form-label">Repository Designation</label>
+                        <input type="text" id="repo-name" class="form-input" placeholder="demo_repo" style="margin-top: 8px;">
+                    </div>
+                    <div class="form-group" style="text-align: left; margin-top: 32px;">
+                        <label class="form-label">Absolute Directory Path</label>
+                        <input type="text" id="repo-path" class="form-input" placeholder="C:\Users\Ishaan\Documents\Codebase Knowledge AI\demo_repo" style="margin-top: 8px;">
+                    </div>
+
+                    <div class="drop-zone" id="ingest-trigger">
+                        <i class="fas fa-microchip" style="font-size: 48px; color: var(--primary-brand); margin-bottom: 20px;"></i>
+                        <h4 style="font-size: 18px; margin-bottom: 8px;">Synchronize Local Directory</h4>
+                        <p style="font-size: 13px; color: var(--text-muted);">Click to initiate automated AST decomposition</p>
+                    </div>
+
+                    <div class="protocol-steps">
+                        <div class="step-pill active" id="step-1">
+                            <div style="font-size: 16px; color: var(--primary-brand);"><i class="fas fa-search"></i></div>
+                            <div>
+                                <div style="font-size: 13px; font-weight: 700;">Scanning Environment</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Awaiting repository path input</div>
+                            </div>
+                        </div>
+                        <div class="step-pill" id="step-2">
+                            <div style="font-size: 16px; color: #fbbf24; background: transparent;"><i class="fas fa-tree"></i></div>
+                            <div>
+                                <div style="font-size: 13px; font-weight: 700;">AST Decomposition</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Constructing semantic tree primitives</div>
+                            </div>
+                        </div>
+                        <div class="step-pill" id="step-3">
+                            <div style="font-size: 16px; color: #10b981;"><i class="fas fa-vector-square"></i></div>
+                            <div>
+                                <div style="font-size: 13px; font-weight: 700;">Vector Synthesis</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Generating neural embedding shards</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('ingest-trigger').addEventListener('click', async () => {
+            const nameInput = document.getElementById('repo-name');
+            const pathInput = document.getElementById('repo-path');
+            
+            // Use placeholder as fallback if empty
+            const name = nameInput.value.trim() || nameInput.placeholder.replace('e.g. ', '');
+            let path = pathInput.value.trim() || pathInput.placeholder;
+            
+            // If they are literally empty or we failed to get a good fallback
+            if (!name || !path) {
+                alert("Identity and path parameters are required.");
+                return;
+            }
+
+            // UI feedback
+            document.getElementById('step-2').classList.add('active');
+            
+            try {
+                const response = await fetch('/api/repos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ repo_url: path })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('step-3').classList.add('active');
+                    setTimeout(() => {
+                        window.location.href = 'user-dashboard.html';
+                    }, 1000);
+                } else {
+                    alert("Protocol Error: Ingestion failed.");
+                }
+            } catch (err) {
+                alert("Neural link failure. Check backend status.");
+            }
+        });
+
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/user/profile');
+                if (response.ok) {
+                    const profile = await response.json();
+                    if (profile && profile.full_name) {
+                        document.getElementById('user-avatar').innerText = profile.full_name.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (err) {}
+        }
+        loadProfile();
+    </script>
+</body>
+</html>

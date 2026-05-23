@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architectural Insights | Codebase Knowledge AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .analytics-hero { padding-bottom: 60px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 60px; }
+        .stat-grid-large { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 60px; }
+        .chart-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; margin-bottom: 60px; }
+        .complexity-map { height: 400px; background: rgba(255,255,255,0.02); border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="nav-rail">
+            <div class="rail-item" onclick="window.location.href='user-dashboard.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div class="rail-item" onclick="window.location.href='chat.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <div class="rail-item active"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+            <div id="user-avatar" class="rail-item" style="margin-top: auto; background: var(--surface-elevated); border: 1px solid var(--border-subtle); font-weight: 800;">U</div>
+        </aside>
+
+        <aside class="sidebar">
+            <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
+                <div class="logo-box">CK</div>
+                <div>
+                    <h1 style="font-size: 14px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;">INSIGHTS</h1>
+                    <span style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">USER INTERFACE</span>
+                </div>
+            </div>
+
+            <nav style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="sidebar-nav-btn" onclick="window.location.href='user-dashboard.html'"><i class="fas fa-th-large"></i> Dashboard Home</button>
+                <button class="sidebar-nav-btn active"><i class="fas fa-chart-line"></i> Deep Analytics</button>
+                <button class="sidebar-nav-btn" onclick="alert('Feature under development.');"><i class="fas fa-project-diagram"></i> System Map</button>
+                <button class="sidebar-nav-btn" onclick="alert('Feature under development.');"><i class="fas fa-file-invoice"></i> Export Report</button>
+            </nav>
+        </aside>
+
+        <main class="main-content" style="padding: 60px; overflow-y: auto; flex: 1;">
+            <header class="analytics-hero">
+                <div class="badge" style="margin-bottom: 12px;">GLOBAL TELEMETRY</div>
+                <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">Architectural Insights</h2>
+                <p style="color: var(--text-secondary); font-size: 16px;">Advanced structural analysis across all indexed repositories.</p>
+            </header>
+
+            <div class="stat-grid-large">
+                <div class="premium-card">
+                    <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Cyclomatic Complexity</div>
+                    <div style="font-size: 32px; font-weight: 800;">14.2</div>
+                    <div style="font-size: 12px; color: #fbbf24; margin-top: 8px;">Moderate Overload</div>
+                </div>
+                <div class="premium-card">
+                    <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Dependency Depth</div>
+                    <div style="font-size: 32px; font-weight: 800;">8 Levels</div>
+                    <div style="font-size: 12px; color: #22c55e; margin-top: 8px;">Optimal Hierarchy</div>
+                </div>
+                <div class="premium-card">
+                    <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Hotspot Density</div>
+                    <div style="font-size: 32px; font-weight: 800;">4 files</div>
+                    <div style="font-size: 12px; color: #ef4444; margin-top: 8px;">Requires Refactor</div>
+                </div>
+                <div class="premium-card">
+                    <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Semantic Cohesion</div>
+                    <div style="font-size: 32px; font-weight: 800;">88.2%</div>
+                    <div style="font-size: 12px; color: var(--primary-brand); margin-top: 8px;">High Consistency</div>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="complexity-map">
+                    <h3 style="font-size: 18px; margin-bottom: 24px;">Growth of Knowledge Shards</h3>
+                    <canvas id="growthChart"></canvas>
+                </div>
+                <div class="complexity-map">
+                    <h3 style="font-size: 18px; margin-bottom: 24px;">Language Distribution</h3>
+                    <canvas id="langChart"></canvas>
+                </div>
+            </div>
+
+            <section class="glass-panel" style="margin-bottom: 60px;">
+                <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 32px;">Top Complexity Hotspots</h3>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border-subtle);">
+                        <div style="display: flex; gap: 20px; align-items: center;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></div>
+                            <div>
+                                <div style="font-size: 15px; font-weight: 700;">backend/src/main.py</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">High fan-in (82) • High complexity (48)</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 12px;" onclick="alert('Feature under development.');">View in Chat</button>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border-subtle);">
+                        <div style="display: flex; gap: 20px; align-items: center;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #fbbf24;"></div>
+                            <div>
+                                <div style="font-size: 15px; font-weight: 700;">frontend/src/store/index.ts</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Circular dependency detected with 'auth_service.ts'</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 12px;" onclick="alert('Feature under development.');">Analyze Conflict</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/user/profile');
+                if (response.ok) {
+                    const profile = await response.json();
+                    if (profile && profile.full_name) {
+                        document.getElementById('user-avatar').innerText = profile.full_name.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (err) {}
+        }
+        loadProfile();
+
+        const growthCtx = document.getElementById('growthChart').getContext('2d');
+        new Chart(growthCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Knowledge Shards',
+                    data: [2000, 4500, 3200, 8000, 12000, 14282],
+                    borderColor: '#6366f1',
+                    tension: 0.4,
+                    fill: false
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
+        });
+
+        const langCtx = document.getElementById('langChart').getContext('2d');
+        new Chart(langCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Python', 'TypeScript', 'Rust', 'Other'],
+                datasets: [{
+                    data: [45, 30, 15, 10],
+                    backgroundColor: ['#6366f1', '#3b82f6', '#8b5cf6', '#475569'],
+                    borderWidth: 0
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, padding: 20 } } } }
+        });
+    </script>
+</body>
+</html>

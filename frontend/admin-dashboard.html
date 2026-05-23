@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Core Control | Codebase Knowledge AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px; }
+        .admin-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 32px; transition: var(--transition-smooth); }
+        .admin-card:hover { border-color: var(--primary-brand); transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+        .log-terminal { background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #a5f3fc; line-height: 1.6; height: 350px; overflow-y: auto; }
+        .log-entry { margin-bottom: 8px; border-left: 2px solid transparent; padding-left: 12px; }
+        .log-entry.info { border-color: var(--primary-brand); }
+        .log-entry.warn { border-color: #fbbf24; color: #fbbf24; }
+        .log-entry.error { border-color: #ef4444; color: #ef4444; }
+        .badge-admin { background: #ef4444; color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; }
+        .cluster-node { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-subtle); }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="nav-rail">
+            <div class="rail-item active" style="margin-bottom: 24px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+            <div class="rail-item" onclick="window.location.href='user-dashboard.html'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div id="user-avatar" class="rail-item" style="margin-top: auto; background: var(--surface-card); border: 1px solid var(--border-subtle); font-weight: 800;">A</div>
+        </aside>
+
+        <aside class="sidebar">
+            <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
+                <div class="logo-box" style="width: 36px; height: 36px; background: #ef4444;">
+                    <i class="fas fa-shield-alt" style="font-size: 16px; color: white;"></i>
+                </div>
+                <div>
+                    <h1 style="font-size: 15px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;">CORE CONTROL</h1>
+                    <span style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">ADMINISTRATIVE INTERFACE</span>
+                </div>
+            </div>
+
+            <nav style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="sidebar-nav-btn active"><i class="fas fa-server"></i> System Overview</button>
+                <button class="sidebar-nav-btn" onclick="window.location.href='admin-users.html'"><i class="fas fa-users-cog"></i> User Management</button>
+                <button class="sidebar-nav-btn" onclick="window.location.href='admin-analytics.html'"><i class="fas fa-database"></i> Database Health</button>
+                <button class="sidebar-nav-btn" onclick="alert('Feature under development.');"><i class="fas fa-microchip"></i> Node Clusters</button>
+                <button class="sidebar-nav-btn" onclick="window.location.href='admin-settings.html'"><i class="fas fa-cog"></i> Global Settings</button>
+                <button class="sidebar-nav-btn" style="margin-top: 32px; color: #ef4444;" onclick="window.location.href='login.html'"><i class="fas fa-power-off"></i> Terminate Admin Session</button>
+            </nav>
+        </aside>
+
+        <main class="main-content" style="padding: 60px; overflow-y: auto; flex: 1;">
+            <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px;">
+                <div>
+                    <span class="badge-admin" style="margin-bottom: 12px; display: inline-block;">SYSTEM OVERSEER</span>
+                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;">Global System Nexus</h2>
+                    <p style="color: var(--text-secondary); font-size: 16px;">Comprehensive real-time monitoring of Codebase Knowledge AI neural network.</p>
+                </div>
+                <div style="display: flex; gap: 16px;">
+                    <div style="text-align: right; margin-right: 16px;">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Server Uptime</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #22c55e;">14d 22h 04m</div>
+                    </div>
+                    <button class="btn btn-secondary" style="border-color: #ef4444; color: #ef4444; background: rgba(239, 68, 68, 0.05);" onclick="alert('Action requires elevated privileges.');">EMERGENCY SHUTDOWN</button>
+                </div>
+            </header>
+
+            <div class="admin-stat-grid">
+                <div class="admin-card">
+                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Total Entities</div>
+                    <div style="font-size: 36px; font-weight: 800;">14,282</div>
+                    <div style="color: #22c55e; font-size: 12px; font-weight: 600; margin-top: 12px;"><i class="fas fa-caret-up"></i> 14.2% Growth</div>
+                </div>
+                <div class="admin-card">
+                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Neural Links</div>
+                    <div style="font-size: 36px; font-weight: 800;">854k</div>
+                    <div style="color: var(--primary-brand); font-size: 12px; font-weight: 600; margin-top: 12px;">Active Syncing...</div>
+                </div>
+                <div class="admin-card">
+                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Processor Load</div>
+                    <div style="font-size: 36px; font-weight: 800;">24.8%</div>
+                    <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 16px;">
+                        <div style="width: 24.8%; height: 100%; background: var(--primary-brand); border-radius: 2px;"></div>
+                    </div>
+                </div>
+                <div class="admin-card">
+                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Global Latency</div>
+                    <div style="font-size: 36px; font-weight: 800;">12ms</div>
+                    <div style="color: #22c55e; font-size: 12px; font-weight: 600; margin-top: 12px;">Optimal Performance</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px;">
+                <section>
+                    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-terminal" style="color: var(--primary-brand);"></i> System Core Logs
+                    </h3>
+                    <div class="log-terminal">
+                        <div class="log-entry info">[10:42:01] Neural indexer completed for repository 'v3-core-kernel'</div>
+                        <div class="log-entry info">[10:40:15] Global backup protocol initiated on Node-07</div>
+                        <div class="log-entry warn">[10:38:42] Elevated memory allocation detected on Worker-04 - Stabilizing...</div>
+                        <div class="log-entry info">[10:35:12] New operator 'ishaan_dev' authenticated via Secure Link</div>
+                        <div class="log-entry info">[10:32:05] Database 'ck_primary' optimization sequence completed</div>
+                        <div class="log-entry error">[10:28:14] Failed request on /api/v1/auth - 403 Forbidden - Source IP Flagged</div>
+                        <div class="log-entry info">[10:25:00] System heartbeat check: ALL NODES OPERATIONAL</div>
+                        <div class="log-entry info">[10:22:45] Clearing transient cache for user session 'sess_8123'</div>
+                        <div class="log-entry warn">[10:18:30] Latency spike (45ms) detected in Node-12 cluster</div>
+                        <div class="log-entry info">[10:15:00] Neural weights synchronized across 4 regions</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 24px;">Active Node Clusters</h3>
+                    <div class="cluster-node">
+                        <div>
+                            <div style="font-size: 13px; font-weight: 700;">Node-01 (Primary)</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">US-East-1 • 8 cores</div>
+                        </div>
+                        <div class="badge-blue">ACTIVE</div>
+                    </div>
+                    <div class="cluster-node">
+                        <div>
+                            <div style="font-size: 13px; font-weight: 700;">Node-02</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">EU-West-2 • 16 cores</div>
+                        </div>
+                        <div class="badge-blue">ACTIVE</div>
+                    </div>
+                    <div class="cluster-node">
+                        <div>
+                            <div style="font-size: 13px; font-weight: 700;">Node-03</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">AP-South-1 • 4 cores</div>
+                        </div>
+                        <div class="badge-green">IDLE</div>
+                    </div>
+                    <div class="cluster-node" style="opacity: 0.5;">
+                        <div>
+                            <div style="font-size: 13px; font-weight: 700;">Node-04</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">US-West-2 • 8 cores</div>
+                        </div>
+                        <div style="font-size: 10px; font-weight: 800; color: #ef4444;">OFFLINE</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/user/profile');
+                if (response.ok) {
+                    const profile = await response.json();
+                    if (profile && profile.full_name) {
+                        document.getElementById('user-avatar').innerText = profile.full_name.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (err) {}
+        }
+        loadProfile();
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Protocol | Codebase Knowledge AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .settings-container { max-width: 900px; margin: 0 auto; }
+        .profile-section { display: flex; align-items: center; gap: 40px; margin-bottom: 60px; padding: 40px; background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 32px; }
+        .avatar-large { width: 100px; height: 100px; border-radius: 50%; background: var(--primary-brand); display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 800; border: 4px solid var(--surface-elevated); box-shadow: var(--shadow-glow); }
+        .settings-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; margin-bottom: 32px; }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="nav-rail">
+            <div class="rail-item" onclick="window.location.href='user-dashboard.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div id="user-avatar-rail" class="rail-item active" style="margin-top: auto; background: var(--surface-elevated); border: 1px solid var(--border-subtle); font-weight: 800;">U</div>
+        </aside>
+
+        <aside class="sidebar">
+            <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
+                <div class="logo-box">CK</div>
+                <div>
+                    <h1 style="font-size: 14px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;">PERSONAL PROTOCOL</h1>
+                    <span style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">USER SETTINGS</span>
+                </div>
+            </div>
+
+            <nav style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="sidebar-nav-btn active"><i class="fas fa-user-circle"></i> Profile Identity</button>
+                <button class="sidebar-nav-btn" onclick="alert('Feature under development.');"><i class="fas fa-key"></i> Security Keys</button>
+                <button class="sidebar-nav-btn" onclick="alert('Feature under development.');"><i class="fas fa-bell"></i> Sync Notifications</button>
+                <button class="sidebar-nav-btn" style="margin-top: 32px; color: #ef4444;" onclick="window.location.href='login.html'"><i class="fas fa-power-off"></i> Terminate Session</button>
+            </nav>
+        </aside>
+
+        <main class="main-content" style="padding: 60px; overflow-y: auto; flex: 1;">
+            <div class="settings-container">
+                <header style="margin-bottom: 64px;">
+                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">Personal Protocol</h2>
+                    <p style="color: var(--text-secondary);">Manage your operator credentials and system preferences.</p>
+                </header>
+
+                <section class="profile-section">
+                    <div class="avatar-large" id="avatar-large">U</div>
+                    <div style="flex: 1;">
+                        <h3 style="font-size: 24px; margin-bottom: 8px;" id="display-name">Loading...</h3>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">System Operator since May 2026</p>
+                        <button class="btn btn-secondary" style="font-size: 13px;" onclick="alert('Feature under development.');">Change Neural Identity</button>
+                    </div>
+                </section>
+
+                <div class="settings-card">
+                    <h4 class="panel-section-title">Identity Parameters</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                        <div class="form-group">
+                            <label class="form-label">Full Designation</label>
+                            <input type="text" class="form-input" id="input-name" placeholder="Operator Name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contextual Email</label>
+                            <input type="email" class="form-input" id="input-email" placeholder="Email Address">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 24px; width: 100%;" onclick="alert('Identity Protocol successfully updated.');">Update Identity Protocol</button>
+                </div>
+
+                <div class="settings-card">
+                    <h4 class="panel-section-title">Interface Preferences</h4>
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 15px; font-weight: 700;">Haptic Feedback</div>
+                                <p style="font-size: 12px; color: var(--text-muted);">Enable subtle micro-interactions across the neural interface.</p>
+                            </div>
+                            <input type="checkbox" checked>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 15px; font-weight: 700;">Advanced Visualization Scaling</div>
+                                <p style="font-size: 12px; color: var(--text-muted);">Automatically adjust graph density based on codebase scale.</p>
+                            </div>
+                            <input type="checkbox" checked>
+                        </div>
+                    </div>
+                </div>
+
+                <section style="margin-top: 60px; padding: 40px; border: 1px solid #ef4444; border-radius: 24px; background: rgba(239, 68, 68, 0.02);">
+                    <h4 style="color: #ef4444; margin-bottom: 12px; font-size: 16px; font-weight: 800;">DANGER ZONE</h4>
+                    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Terminating your account will permanently delete all indexed repositories and neural weights.</p>
+                    <button class="btn btn-secondary" style="border-color: #ef4444; color: #ef4444;" onclick="alert('Action requires elevated privileges.');">Initiate Account Purge</button>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/user/profile');
+                if (response.ok) {
+                    const profile = await response.json();
+                    if (profile) {
+                        document.getElementById('user-avatar-rail').innerText = profile.full_name.charAt(0).toUpperCase();
+                        document.getElementById('avatar-large').innerText = profile.full_name.charAt(0).toUpperCase();
+                        document.getElementById('display-name').innerText = profile.full_name;
+                        document.getElementById('input-name').value = profile.full_name;
+                        document.getElementById('input-email').value = profile.email || '';
+                    }
+                }
+            } catch (err) {}
+        }
+        loadProfile();
+    </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provision Identity | Codebase Knowledge AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #050508;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .auth-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 80%);
+        }
+
+        .auth-particle {
+            position: absolute;
+            background: var(--primary-brand);
+            border-radius: 50%;
+            opacity: 0.1;
+            filter: blur(2px);
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            from { transform: translateY(100vh) translateX(0); }
+            to { transform: translateY(-10vh) translateX(20px); }
+        }
+
+        /* Premium Auth Card */
+        .auth-card {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 40px;
+            padding: 50px 60px;
+            backdrop-filter: blur(40px);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 40px;
+            padding: 1px;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0.1), transparent, rgba(99,102,241,0.2));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-box {
+            width: 56px;
+            height: 56px;
+            background: var(--primary-brand);
+            border-radius: 16px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .auth-header h2 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .auth-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 14px 20px 14px 52px;
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--primary-brand);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Buttons */
+        .btn-auth {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            margin-top: 20px;
+        }
+
+        .btn-register {
+            background: var(--primary-brand);
+            color: white;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.3);
+        }
+
+        .policy-box {
+            background: rgba(99, 102, 241, 0.03);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        .policy-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* Loading Effect */
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(5, 5, 8, 0.9);
+            border-radius: 40px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .neural-pulse {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--primary-brand);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-bg" id="bg"></div>
+
+    <div class="auth-card">
+        <div class="loading-overlay" id="loader">
+            <div class="neural-pulse"></div>
+            <p style="margin-top: 24px; font-weight: 800; letter-spacing: 0.1em; font-size: 12px; color: var(--primary-brand);">PROVISIONING PROTOCOLS...</p>
+        </div>
+
+        <div class="auth-header">
+            <div class="logo-box">CK</div>
+            <h2>Provision New Operator</h2>
+            <p>Establish your unique identity in the ecosystem.</p>
+        </div>
+
+        <form id="regForm">
+            <div class="input-group">
+                <i class="fas fa-id-badge input-icon"></i>
+                <input type="text" class="auth-input" placeholder="Full Designation (Name)" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" class="auth-input" placeholder="Neural Identifier (Email)" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" class="auth-input" placeholder="Neural Access Key" required>
+            </div>
+
+            <div class="policy-box">
+                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                    <input type="checkbox" style="margin-top: 4px; accent-color: var(--primary-brand);" required>
+                    <p class="policy-text">I acknowledge the Neural Ingestion Policy and consent to the semantic mapping of my technical repositories for autonomous retrieval and reasoning.</p>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-auth btn-register">Initialize Registration</button>
+        </form>
+
+        <p style="text-align: center; margin-top: 40px; font-size: 14px; color: var(--text-muted);">
+            Existing operator? <a href="login.html" style="color: var(--primary-brand); text-decoration: none; font-weight: 700;">Establish Connection</a>
+        </p>
+    </div>
+
+    <script>
+        // Background particles
+        const bg = document.getElementById('bg');
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'auth-particle';
+            const size = Math.random() * 4 + 2 + 'px';
+            p.style.width = size;
+            p.style.height = size;
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            p.style.animationDelay = Math.random() * 5 + 's';
+            bg.appendChild(p);
+        }
+
+        // Form handling
+        document.getElementById('regForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('loader').style.display = 'flex';
+            setTimeout(() => {
+                window.location.href = 'user-dashboard.html';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

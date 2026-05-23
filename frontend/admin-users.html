@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operator Directory | Codebase Knowledge AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .user-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+        .user-table th { text-align: left; padding: 0 24px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+        .user-row { background: var(--surface-card); border-radius: 16px; transition: var(--transition-smooth); }
+        .user-row:hover { background: rgba(255,255,255,0.05); transform: scale(1.005); }
+        .user-row td { padding: 24px; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+        .user-row td:first-child { border-left: 1px solid var(--border-subtle); border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
+        .user-row td:last-child { border-right: 1px solid var(--border-subtle); border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
+        .avatar-circle { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-elevated); display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid var(--border-subtle); }
+        .search-bar-admin { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px 20px; width: 300px; color: white; outline: none; }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="nav-rail">
+            <div class="rail-item" onclick="window.location.href='admin-dashboard.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+            <div class="rail-item" onclick="window.location.href='user-dashboard.html'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div id="user-avatar" class="rail-item" style="margin-top: auto; background: var(--surface-card); border: 1px solid var(--border-subtle); font-weight: 800;">A</div>
+        </aside>
+
+        <aside class="sidebar">
+            <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
+                <div class="logo-box" style="width: 36px; height: 36px; background: #ef4444;">
+                    <i class="fas fa-shield-alt" style="font-size: 16px; color: white;"></i>
+                </div>
+                <div>
+                    <h1 style="font-size: 15px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;">CORE CONTROL</h1>
+                    <span style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">ADMINISTRATIVE INTERFACE</span>
+                </div>
+            </div>
+
+            <nav style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="sidebar-nav-btn" onclick="window.location.href='admin-dashboard.html'"><i class="fas fa-server"></i> System Overview</button>
+                <button class="sidebar-nav-btn active"><i class="fas fa-users-cog"></i> User Management</button>
+                <button class="sidebar-nav-btn" onclick="window.location.href='admin-analytics.html'"><i class="fas fa-database"></i> Database Health</button>
+                <button class="sidebar-nav-btn"><i class="fas fa-microchip"></i> Node Clusters</button>
+                <button class="sidebar-nav-btn" onclick="window.location.href='admin-settings.html'"><i class="fas fa-cog"></i> Global Settings</button>
+            </nav>
+        </aside>
+
+        <main class="main-content" style="padding: 60px; overflow-y: auto; flex: 1;">
+            <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px;">
+                <div>
+                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;">Operator Directory</h2>
+                    <p style="color: var(--text-secondary); font-size: 16px;">Management of all active entities within the Codebase Knowledge AI ecosystem.</p>
+                </div>
+                <div style="display: flex; gap: 16px;">
+                    <input type="text" class="search-bar-admin" placeholder="Search operators...">
+                    <button class="btn btn-primary"><i class="fas fa-user-plus" style="margin-right: 8px;"></i> Provision New Operator</button>
+                </div>
+            </header>
+
+            <div class="admin-stat-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 64px;">
+                <div class="admin-card">
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Active Operators</div>
+                    <div style="font-size: 28px; font-weight: 800;">142</div>
+                </div>
+                <div class="admin-card">
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Admin Level</div>
+                    <div style="font-size: 28px; font-weight: 800;">12</div>
+                </div>
+                <div class="admin-card">
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Pending Auth</div>
+                    <div style="font-size: 28px; font-weight: 800;">4</div>
+                </div>
+            </div>
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Operator</th>
+                        <th>Status</th>
+                        <th>Access Level</th>
+                        <th>Last Sync</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="user-row">
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div class="avatar-circle" style="color: var(--primary-brand);">I</div>
+                                <div>
+                                    <div style="font-size: 14px; font-weight: 700;">Ishaan Dev</div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">ishaan@codebase-knowledge.ai</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><div class="badge-blue">ACTIVE</div></td>
+                        <td><span style="font-size: 13px; font-weight: 600;">System Admin</span></td>
+                        <td><span style="font-size: 13px; color: var(--text-secondary);">2 mins ago</span></td>
+                        <td>
+                            <div style="display: flex; gap: 12px;">
+                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">Modify</button>
+                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; color: #ef4444;">Revoke</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="user-row">
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div class="avatar-circle">A</div>
+                                <div>
+                                    <div style="font-size: 14px; font-weight: 700;">Alice Architect</div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">alice@techflow.io</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><div class="badge-blue">ACTIVE</div></td>
+                        <td><span style="font-size: 13px; font-weight: 600;">Collaborator</span></td>
+                        <td><span style="font-size: 13px; color: var(--text-secondary);">4h ago</span></td>
+                        <td>
+                            <div style="display: flex; gap: 12px;">
+                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">Modify</button>
+                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; color: #ef4444;">Revoke</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="user-row">
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div class="avatar-circle">B</div>
+                                <div>
+                                    <div style="font-size: 14px; font-weight: 700;">Bob Builder</div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">bob@pynural.com</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><div class="badge" style="background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2);">SUSPENDED</div></td>
+                        <td><span style="font-size: 13px; font-weight: 600;">Restricted</span></td>
+                        <td><span style="font-size: 13px; color: var(--text-secondary);">Yesterday</span></td>
+                        <td>
+                            <div style="display: flex; gap: 12px;">
+                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">Restore</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/user/profile');
+                if (response.ok) {
+                    const profile = await response.json();
+                    if (profile && profile.full_name) {
+                        document.getElementById('user-avatar').innerText = profile.full_name.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (err) {}
+        }
+        loadProfile();
+    </script>
+</body>
+</html>

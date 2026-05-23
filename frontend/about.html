@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture & Mission | Codebase Knowledge AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .about-hero { padding: 160px 40px 80px; max-width: 1200px; margin: 0 auto; }
+        .vision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 120px; padding: 120px 40px; max-width: 1400px; margin: 0 auto; align-items: center; }
+        .tech-stack-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; padding: 80px 40px; max-width: 1400px; margin: 0 auto; }
+        .stack-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; text-align: center; }
+        .timeline { position: relative; max-width: 1000px; margin: 120px auto; padding: 0 40px; }
+        .timeline::before { content: ''; position: absolute; left: 50%; width: 1px; height: 100%; background: var(--border-subtle); top: 0; }
+        .timeline-item { width: 50%; padding: 40px; position: relative; }
+        .timeline-item.left { text-align: right; left: 0; }
+        .timeline-item.right { text-align: left; left: 50%; }
+        .timeline-dot { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; border-radius: 50%; background: var(--primary-brand); box-shadow: 0 0 15px var(--primary-glow); }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <div class="logo-box">CK</div>
+                <span>CODEBASE KNOWLEDGE AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="features.html" class="nav-link">Features</a>
+                <a href="about.html" class="nav-link active">Architecture</a>
+                <a href="contact.html" class="nav-link">Enterprise</a>
+            </div>
+            <div style="display: flex; gap: 16px;">
+                <a href="login.html" class="btn btn-primary">Initialize Link</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="about-hero">
+        <div class="badge" style="margin-bottom: 24px;">THE CORE ARCHITECTURE</div>
+        <h1 style="font-size: 72px; letter-spacing: -0.04em; margin-bottom: 32px; line-height: 1;">Built for High-Scale <span class="text-gradient">Neural Retrieval</span></h1>
+        <p style="color: var(--text-secondary); font-size: 20px; max-width: 800px; line-height: 1.8;">Our mission is to eliminate the 'Knowledge Gap' in large-scale software engineering. Codebase Knowledge AI isn't just a tool—it's an intelligent companion that knows your codebase better than anyone.</p>
+    </header>
+
+    <section class="vision-grid">
+        <div style="background: var(--surface-card); border-radius: 32px; padding: 12px; border: 1px solid var(--border-subtle); position: relative;">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1000" alt="Chip Architecture" style="width: 100%; border-radius: 24px; opacity: 0.7;">
+            <div style="position: absolute; bottom: 40px; right: 40px; background: rgba(0,0,0,0.8); border: 1px solid var(--border-subtle); padding: 24px; border-radius: 16px; backdrop-filter: blur(10px);">
+                <div style="font-size: 10px; font-weight: 800; color: var(--primary-brand); margin-bottom: 8px;">LATENCY PROTOCOL</div>
+                <div style="font-size: 20px; font-weight: 800;">12ms Response Time</div>
+            </div>
+        </div>
+        <div>
+            <h2 style="font-size: 40px; margin-bottom: 24px;">Solving the Distributed Knowledge Problem</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 17px;">In modern engineering, the hardest part isn't writing code—it's understanding what has already been written. We've built an autonomous pipeline that continuousy indexes your entire environment, ensuring your team has instant access to truth.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                <div class="premium-card">
+                    <h4 style="margin-bottom: 12px; font-size: 18px;">Scalability First</h4>
+                    <p style="font-size: 13px; color: var(--text-muted);">Engineered to handle monolithic repositories with 10M+ lines of code without performance degradation.</p>
+                </div>
+                <div class="premium-card">
+                    <h4 style="margin-bottom: 12px; font-size: 18px;">Privacy Centric</h4>
+                    <p style="font-size: 13px; color: var(--text-muted);">Your source code never leaves your secure environment. Neural weights stay strictly under your control.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div style="text-align: center; margin-top: 120px;">
+        <div class="badge">SYSTEM STACK</div>
+        <h2 style="font-size: 40px; margin-top: 24px;">The Technical Foundation</h2>
+    </div>
+
+    <section class="tech-stack-grid">
+        <div class="stack-card">
+            <div style="font-size: 32px; color: var(--primary-brand); margin-bottom: 20px;"><i class="fas fa-microchip"></i></div>
+            <h4 style="margin-bottom: 8px;">FastAPI Backend</h4>
+            <p style="font-size: 12px; color: var(--text-muted);">Ultra-low latency asynchronous API layer for real-time interaction.</p>
+        </div>
+        <div class="stack-card">
+            <div style="font-size: 32px; color: #3b82f6; margin-bottom: 20px;"><i class="fas fa-layer-group"></i></div>
+            <h4 style="margin-bottom: 8px;">FAISS Vector Store</h4>
+            <p style="font-size: 12px; color: var(--text-muted);">Dense vector indexing for efficient semantic similarity searching.</p>
+        </div>
+        <div class="stack-card">
+            <div style="font-size: 32px; color: #10b981; margin-bottom: 20px;"><i class="fas fa-brain"></i></div>
+            <h4 style="margin-bottom: 8px;">Gemini Intelligence</h4>
+            <p style="font-size: 12px; color: var(--text-muted);">Advanced reasoning engine powered by Google's latest multimodal models.</p>
+        </div>
+        <div class="stack-card">
+            <div style="font-size: 32px; color: #fbbf24; margin-bottom: 20px;"><i class="fas fa-project-diagram"></i></div>
+            <h4 style="margin-bottom: 8px;">NetworkX Graphs</h4>
+            <p style="font-size: 12px; color: var(--text-muted);">Mathematical modeling of codebase relationships and dependencies.</p>
+        </div>
+    </section>
+
+    <div style="text-align: center; margin-top: 120px;">
+        <div class="badge">ROADMAP</div>
+        <h2 style="font-size: 40px; margin-top: 24px;">The Evolution of Intelligence</h2>
+    </div>
+
+    <section class="timeline">
+        <div class="timeline-item left">
+            <div class="timeline-dot"></div>
+            <h4 style="color: var(--primary-brand); font-size: 12px; font-weight: 800;">Q1 2026</h4>
+            <h3 style="margin: 8px 0;">Foundation Launch</h3>
+            <p style="font-size: 14px; color: var(--text-secondary);">Core indexing engine with support for 15+ languages and basic semantic search capabilities.</p>
+        </div>
+        <div class="timeline-item right">
+            <div class="timeline-dot"></div>
+            <h4 style="color: var(--primary-brand); font-size: 12px; font-weight: 800;">Q2 2026</h4>
+            <h3 style="margin: 8px 0;">Visual Synthesis</h3>
+            <p style="font-size: 14px; color: var(--text-secondary);">Introduction of the Neural Visualizer with real-time architectural map generation and exports.</p>
+        </div>
+        <div class="timeline-item left">
+            <div class="timeline-dot"></div>
+            <h4 style="color: var(--primary-brand); font-size: 12px; font-weight: 800;">Q3 2026</h4>
+            <h3 style="margin: 8px 0;">Agentic Security</h3>
+            <p style="font-size: 14px; color: var(--text-secondary);">Deep logical vulnerability scanning and automated remediation suggestions via the reasoning engine.</p>
+        </div>
+        <div class="timeline-item right">
+            <div class="timeline-dot" style="background: var(--text-muted); box-shadow: none;"></div>
+            <h4 style="color: var(--text-muted); font-size: 12px; font-weight: 800;">Q4 2026</h4>
+            <h3 style="margin: 8px 0; color: var(--text-muted);">Autonomous Refactoring</h3>
+            <p style="font-size: 14px; color: var(--text-muted);">AI-driven large-scale refactors with guaranteed logical consistency across distributed microservices.</p>
+        </div>
+    </section>
+
+    <footer class="footer-premium">
+        <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px;">
+            <div>
+                <a href="index.html" class="nav-logo" style="margin-bottom: 32px;">
+                    <div class="logo-box">CK</div>
+                    <span>CODEBASE KNOWLEDGE AI</span>
+                </a>
+                <p style="color: var(--text-muted); max-width: 300px; font-size: 14px;">The world's first agentic intelligence layer for codebase exploration, visualization, and security auditing.</p>
+            </div>
+            <div>
+                <h4 style="margin-bottom: 24px; font-size: 12px; font-weight: 800; color: white; letter-spacing: 0.1em; text-transform: uppercase;">Product</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-secondary);">
+                    <li><a href="features.html" style="text-decoration: none; color: inherit;">Features</a></li>
+                    <li><a href="#" style="text-decoration: none; color: inherit;">Architecture</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="margin-bottom: 24px; font-size: 12px; font-weight: 800; color: white; letter-spacing: 0.1em; text-transform: uppercase;">Contact</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-secondary);">
+                    <li><a href="contact.html" style="text-decoration: none; color: inherit;">Enterprise Inquiry</a></li>
+                    <li><a href="#" style="text-decoration: none; color: inherit;">Support Portal</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="margin-bottom: 24px; font-size: 12px; font-weight: 800; color: white; letter-spacing: 0.1em; text-transform: uppercase;">Legal</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-secondary);">
+                    <li><a href="#" style="text-decoration: none; color: inherit;">Privacy Policy</a></li>
+                    <li><a href="#" style="text-decoration: none; color: inherit;">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="max-width: 1400px; margin: 60px auto 0; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; font-size: 12px; color: var(--text-muted);">
+            © 2026 Codebase Knowledge AI. All neural links reserved.
+        </div>
+    </footer>
+</body>
+</html>
