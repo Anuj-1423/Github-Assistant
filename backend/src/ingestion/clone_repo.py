@@ -89,5 +89,14 @@ class RepoIngestor:
                     yield os.path.join(root, file)
 
     def _is_supported_file(self, filename: str) -> bool:
-        supported_extensions = {'.py', '.ts', '.js', '.tsx', '.jsx', '.go', '.java'}
-        return any(filename.endswith(ext) for ext in supported_extensions)
+        supported_extensions = {
+            '.py', '.ts', '.js', '.tsx', '.jsx', '.go', '.java',
+            '.md', '.txt', '.csv', '.json', '.yml', '.yaml', '.toml',
+            '.ini', '.sh', '.bat', '.ps1', '.ipynb', '.xml', '.env',
+            '.sql', '.html', '.css', '.scss'
+        }
+        if any(filename.endswith(ext) for ext in supported_extensions):
+            return True
+        if filename.lower() in {'dockerfile', 'makefile', 'readme'}:
+            return True
+        return False

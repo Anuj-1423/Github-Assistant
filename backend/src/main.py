@@ -271,6 +271,18 @@ async def get_repo_status(repo_id: str):
         "error": status_data.get("error"),
     }
 
+@app.get("/api/repos/{repo_id}/files")
+async def get_repo_files(repo_id: str):
+    store = get_storage()
+    if hasattr(store, "db_path"):
+        import sqlite3
+        with sqlite3.connect(store.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT DISTINCT file_path FROM chunks WHERE repo_id = ? LIMIT 10', (repo_id,))
+            files = [row[0] for row in cursor.fetchall()]
+            return {"files": files}
+    return {"files": []}
+
 @app.get("/api/repos/{repo_id}/graph")
 async def get_repo_graph(repo_id: str):
     graph = CodeGraph(repo_id)
@@ -446,9 +458,7 @@ async def query_repo(repo_id: str, request: QueryRequest):
     memory = feature_service.get_memory_snapshot()
     memory_context = feature_service.build_memory_context(memory.get("glossary", []), memory.get("notes", []))
 
-    if hasattr(store, "log_query"):
-        store.log_query(repo_id=repo_id, query=request.query, user_id="default_user")
-    
+
     agent = CodeAgent(
         repo_id,
         retriever,
@@ -479,8 +489,12 @@ async def query_repo(repo_id: str, request: QueryRequest):
                     "line_start": 0,
                     "line_end": 0
                 })
+    answer_text = result.get("answer", "No answer generated.")
+    if hasattr(store, "log_query"):
+        store.log_query(repo_id=repo_id, query=request.query, user_id="default_user", answer=answer_text)
+
     return {
-        "answer": result.get("answer", "No answer generated."),
+        "answer": answer_text,
         "flow": result.get("flow", []),
         "citations": result.get("citations", []),
         "confidence": result.get("confidence", "medium")
@@ -522,9 +536,7 @@ async def query_repo_stream(repo_id: str, request: QueryRequest):
     memory = feature_service.get_memory_snapshot()
     memory_context = feature_service.build_memory_context(memory.get("glossary", []), memory.get("notes", []))
 
-    if hasattr(store, "log_query"):
-        store.log_query(repo_id=repo_id, query=request.query, user_id="default_user")
-    
+
     agent = CodeAgent(
         repo_id,
         retriever,
@@ -535,8 +547,14 @@ async def query_repo_stream(repo_id: str, request: QueryRequest):
     )
 
     async def event_generator():
+        full_answer = ""
         async for chunk in agent.answer_stream(request.query):
+            if "content" in chunk:
+                full_answer += chunk["content"]
             yield json.dumps(chunk) + "\n"
+            
+        if hasattr(store, "log_query"):
+            store.log_query(repo_id=repo_id, query=request.query, user_id="default_user", answer=full_answer)
 
     return StreamingResponse(event_generator(), media_type="application/x-ndjson")
 

@@ -22,9 +22,9 @@
         .orb-container { position: absolute; top: 40px; right: 40px; }
         .orb { width: 48px; height: 48px; border-radius: 50%; background: var(--primary-brand); filter: blur(15px); opacity: 0.3; animation: pulse 4s infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.5); opacity: 0.4; } }
-        .pinned-section { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
-        .pinned-item { background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px; font-size: 12px; cursor: pointer; }
-        .pinned-item:hover { background: rgba(255,255,255,0.05); border-color: var(--primary-brand); }
+        .pinned-section { display: flex; flex-direction: column; margin-top: 32px; }
+        .pinned-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; display: flex; align-items: center; }
+        .pinned-item:hover { background: rgba(255,255,255,0.08); border-color: var(--primary-brand); transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         /* Markdown prose styles inside AI bubbles */
         .ai-prose { line-height: 1.7; font-size: 14px; color: var(--text-secondary); }
         .ai-prose p { margin: 0 0 10px; }
@@ -50,13 +50,16 @@
         </aside>
 
         <aside class="sidebar">
-            <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
-                <div class="logo-box">CK</div>
+            <div style="margin-bottom: 32px; display: flex; align-items: center; gap: 16px;">
                 <div>
                     <h1 style="font-size: 14px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;" id="repo-name-display">REPOSITORY</h1>
                     <span style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">NEURAL CONTEXT</span>
                 </div>
             </div>
+
+            <button onclick="startNewChat()" style="background: var(--primary-brand); color: black; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 24px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(99,102,241,0.2);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(99,102,241,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.2)';">
+                <i class="fas fa-plus"></i> New Chat
+            </button>
 
             <nav style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="sidebar-nav-btn active" onclick="window.location.reload()"><i class="fas fa-comment-alt"></i> Intelligence Chat</button>
@@ -65,18 +68,10 @@
                 <button class="sidebar-nav-btn" onclick="toggleInquiryHistory()"><i class="fas fa-history"></i> Inquiry History</button>
             </nav>
 
-            <div class="pinned-section">
+            <div class="pinned-section" style="margin-top: auto;" id="critical-components-section">
                 <div class="panel-section-title">Critical Components</div>
-                <div class="pinned-item"><i class="fas fa-file-code" style="margin-right: 8px; color: var(--primary-brand);"></i> main.py</div>
-                <div class="pinned-item"><i class="fas fa-file-code" style="margin-right: 8px; color: var(--accent-blue);"></i> auth_service.ts</div>
-                <div class="pinned-item"><i class="fas fa-file-code" style="margin-right: 8px; color: var(--accent-purple);"></i> database_schema.sql</div>
-            </div>
-
-            <div class="premium-card" style="margin-top: auto; padding: 20px;">
-                <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Agent Status</div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span>
-                    <span style="font-size: 13px; font-weight: 600;">Neural Link Stable</span>
+                <div id="dynamic-critical-components">
+                    <!-- Files will be injected here dynamically -->
                 </div>
             </div>
         </aside>
@@ -119,6 +114,22 @@
 
             <button class="btn btn-secondary" style="width: 100%; margin-top: 32px;" onclick="window.location.href='user-analytics.html'"><i class="fas fa-external-link-alt" style="margin-right: 8px;"></i> Open Full Analytics</button>
         </aside>
+
+        <!-- History Modal Overlay -->
+        <div id="history-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: var(--surface-base); border: 1px solid var(--border-subtle); border-radius: 24px; width: 90%; max-width: 800px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                <div style="padding: 24px 32px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h2 style="font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 12px;"><i class="fas fa-history" style="color: var(--primary-brand);"></i> Inquiry History</h2>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Review past intelligence sessions and redirect them to the active chat.</p>
+                    </div>
+                    <button onclick="closeHistoryModal()" style="background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s;"><i class="fas fa-times"></i></button>
+                </div>
+                <div id="history-list" style="padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                    <!-- History items injected here -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -159,6 +170,19 @@
         const params = new URLSearchParams(window.location.search);
         const repoId = params.get('repo');
         
+        function startNewChat() {
+            if (!repoId) return;
+            sessionStorage.removeItem(`chat_history_${repoId}`);
+            window.location.reload();
+        }
+
+        function askAboutComponent(filename) {
+            const inputField = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-btn');
+            inputField.value = `Explain the architecture and purpose of ${filename}`;
+            sendButton.click();
+        }
+
         async function loadRepoInfo() {
             if (!repoId) {
                 // Dynamically build a "Chat Hub" interface
@@ -222,6 +246,26 @@
                         document.getElementById('repo-name-display').innerText = repo.name.toUpperCase();
                     }
                 }
+                
+                // Fetch dynamic critical components (real files)
+                const filesRes = await fetch(`/api/repos/${repoId}/files`);
+                if (filesRes.ok) {
+                    const data = await filesRes.json();
+                    if (data.files && data.files.length > 0) {
+                        const container = document.getElementById('dynamic-critical-components');
+                        const topFiles = data.files.slice(0, 3);
+                        const colors = ['var(--primary-brand)', 'var(--accent-blue)', 'var(--accent-purple)'];
+                        container.innerHTML = topFiles.map((f, i) => `
+                            <div class="pinned-item" onclick="askAboutComponent('${f}')">
+                                <i class="fas fa-file-code" style="margin-right: 12px; color: ${colors[i%3]}; font-size: 16px;"></i> 
+                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${f}">${f}</span>
+                            </div>
+                        `).join('');
+                    } else {
+                        document.getElementById('critical-components-section').style.display = 'none';
+                    }
+                }
+                
                 const statsRes = await fetch(`/api/repos/${repoId}/status`);
                 if (statsRes.ok) {
                     const stats = await statsRes.json();
@@ -431,34 +475,77 @@
             }
         }
 
+        function closeHistoryModal() {
+            document.getElementById('history-modal').style.display = 'none';
+        }
+
+        function loadChatFromHistory(query, answer) {
+            closeHistoryModal();
+            const chatContainer = document.getElementById('chat-messages');
+            
+            // Reconstruct Operator Query
+            chatContainer.insertAdjacentHTML('beforeend', `
+                <div class="message operator">
+                    <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;">Operator</div>
+                    ${renderMarkdown(query)}
+                </div>
+            `);
+
+            // Reconstruct Neural Engine Answer
+            const safeAnswer = answer || "No response recorded.";
+            chatContainer.insertAdjacentHTML('beforeend', `
+                <div class="message ai">
+                    <div style="font-size: 12px; font-weight: 800; color: var(--primary-brand); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;">Neural Engine</div>
+                    <div class="ai-prose">${renderMarkdown(safeAnswer)}</div>
+                </div>
+            `);
+            
+            sessionStorage.setItem(`chat_history_${repoId}`, chatContainer.innerHTML);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
         async function toggleInquiryHistory() {
             if (!repoId) return;
-            const visualizer = document.getElementById('visualizer-preview');
-            visualizer.innerHTML = '<p style="color: var(--text-muted);">Loading history...</p>';
+            const modal = document.getElementById('history-modal');
+            const list = document.getElementById('history-list');
+            
+            modal.style.display = 'flex';
+            list.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">Loading history...</p>';
+            
             try {
                 const response = await fetch(`/api/repos/${repoId}/query-logs`);
                 if (response.ok) {
                     const data = await response.json();
                     if (!data.logs || data.logs.length === 0) {
-                        visualizer.innerHTML = '<div style="width: 100%; text-align: left; display: flex; flex-direction: column; height: 100%;"><h3 style="margin-bottom: 12px;">Inquiry History</h3><p style="color: var(--text-muted);">No history found.</p></div>';
+                        list.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">No inquiry history found for this repository.</p>';
                         return;
                     }
-                    let html = `<div style="width: 100%; text-align: left; display: flex; flex-direction: column; height: 100%;">
-                        <h3 style="margin-bottom: 12px;">Inquiry History</h3>
-                        <div style="flex: 1; overflow-y: auto; font-size: 11px;">`;
+                    
+                    let html = '';
                     data.logs.forEach(log => {
-                        html += `<div style="background: rgba(255,255,255,0.05); padding: 8px; margin-bottom: 8px; border-radius: 6px; border-left: 2px solid var(--accent-purple);">
-                            <div style="color: var(--text-muted); margin-bottom: 4px;">${new Date(log.created_at).toLocaleString()}</div>
-                            <div style="color: white; font-weight: bold;">"${log.query}"</div>
+                        const answerHtml = log.answer ? renderMarkdown(log.answer) : '<span style="color: var(--text-muted); font-style: italic;">No response recorded.</span>';
+                        
+                        html += `
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
+                                <div style="font-weight: 800; font-size: 16px; color: white;">
+                                    <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 4px;">Operator</span>
+                                    ${log.query}
+                                </div>
+                                <div style="font-size: 11px; color: var(--text-muted); white-space: nowrap; margin-left: 16px;">${new Date(log.created_at).toLocaleString()}</div>
+                            </div>
+                            <div class="ai-prose" style="font-size: 14px; color: var(--text-secondary); line-height: 1.7;">
+                                <span style="color: var(--primary-brand); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 800; display: block; margin-bottom: 8px;">Neural Engine</span>
+                                ${answerHtml}
+                            </div>
                         </div>`;
                     });
-                    html += `</div></div>`;
-                    visualizer.innerHTML = html;
+                    list.innerHTML = html;
                 } else {
-                    visualizer.innerHTML = '<p style="color: #ef4444;">Failed to load history.</p>';
+                    list.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 40px;">Failed to load history.</p>';
                 }
             } catch (err) {
-                visualizer.innerHTML = '<p style="color: #ef4444;">Error fetching history.</p>';
+                list.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 40px;">Error fetching history.</p>';
             }
         }
 

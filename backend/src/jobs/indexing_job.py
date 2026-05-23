@@ -17,10 +17,10 @@ class IndexingJob:
     Orchestrates the entire indexing process.
     Milestones 1-5.
     """
-    def __init__(self, repo_url: str, branch: str = "main"):
+    def __init__(self, repo_url: str, branch: str = "main", repo_id: str = None):
         self.repo_url = repo_url
         self.branch = branch
-        self.repo_id = str(uuid.uuid4())[:8]
+        self.repo_id = repo_id or str(uuid.uuid4())[:8]
         
         # Always use absolute paths from root for storage
         root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -62,21 +62,41 @@ class IndexingJob:
             # Normalize path for all OS
             rel_path = rel_path.replace("\\", "/")
             
-            parser = get_parser(f".{rel_path.split('.')[-1]}")
+            file_extension = f".{rel_path.split('.')[-1]}" if '.' in rel_path else ""
+            parser = get_parser(file_extension)
             
-            if parser:
-                try:
-                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                        content = f.read()
-                    
+            try:
+                # Attempt to read as text; will raise error for binaries
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                if parser:
                     parse_result = parser.parse_file(content)
                     parse_result['file_path'] = rel_path
                     all_parse_results.append(parse_result)
                     
                     chunks = self.chunker.chunk_file(rel_path, parse_result, content)
                     all_chunks.extend(chunks)
-                except Exception as e:
-                    logger.error(f"Error parsing {file_path}: {e}")
+                else:
+                    # Fallback text indexing for .md, .csv, Dockerfile, .txt, etc.
+                    # Exclude huge files if necessary, but we'll chunk it as a whole file for now.
+                    chunk_id = str(uuid.uuid4())[:8]
+                    import hashlib
+                    all_chunks.append({
+                        "chunk_id": chunk_id,
+                        "file_path": rel_path,
+                        "chunk_type": "file",
+                        "symbol_name": rel_path.split("/")[-1],
+                        "start_line": 1,
+                        "end_line": len(content.splitlines()),
+                        "content": content,
+                        "content_hash": hashlib.md5(content.encode('utf-8')).hexdigest()
+                    })
+            except UnicodeDecodeError:
+                # Safely ignore binary files like .pkl, .png
+                continue
+            except Exception as e:
+                logger.error(f"Error processing {file_path}: {e}")
 
         # 3. Store Metadata & Keyword Index
         self.store.add_chunks(self.repo_id, all_chunks)
