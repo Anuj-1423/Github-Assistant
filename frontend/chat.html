@@ -110,21 +110,9 @@
             </div>
         </main>
 
-        <aside class="right-panel">
-            <div class="panel-section-title">Contextual Metadata</div>
-            <div id="repo-stats" style="margin-bottom: 40px;">
-                <div class="premium-card" style="margin-bottom: 16px;">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Semantic Chunks</div>
-                    <div id="stat-chunks" style="font-size: 24px; font-weight: 800;">Loading...</div>
-                </div>
-                <div class="premium-card">
-                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Cross-File Links</div>
-                    <div id="stat-links" style="font-size: 24px; font-weight: 800;">Loading...</div>
-                </div>
-            </div>
-
-            <div class="panel-section-title">Active Visualizer</div>
-            <div id="visualizer-preview" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px;">
+        <aside class="right-panel" style="display: flex; flex-direction: column; height: 100vh; padding-bottom: 40px; box-sizing: border-box;">
+            <div class="panel-section-title" style="margin-bottom: 16px;">Active Visualizer</div>
+            <div id="visualizer-preview" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; min-height: 400px; overflow: hidden;">
                 <i class="fas fa-project-diagram" style="font-size: 48px; color: var(--text-muted); margin-bottom: 16px;"></i>
                 <p style="font-size: 13px; color: var(--text-muted);">Architecture maps will be generated here during deep analysis.</p>
             </div>
