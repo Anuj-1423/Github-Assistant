@@ -132,9 +132,11 @@ class RepoFeatureService:
         try:
             files = self._collect_repo_files()
             if not files:
+                # Add debug info to see what path it is checking
+                safe_path = str(self.repo_path).replace("\\", "/").replace('"', '')
                 return {
                     "repo_id": self.repo_id,
-                    "mermaid_code": "flowchart LR\n  Empty(\"No files found\")"
+                    "mermaid_code": f"flowchart LR\n  Empty(\"No files found in {safe_path}\")"
                 }
 
             # Build a tree structure from paths
@@ -501,20 +503,29 @@ class RepoFeatureService:
         return "\n".join(lines).strip()
 
     def _collect_repo_files(self) -> List[str]:
-        if not os.path.exists(self.repo_path):
-            return []
-
-        collected: List[str] = []
-        for root, dirs, files in os.walk(self.repo_path):
-            dirs[:] = [d for d in dirs if d not in self.IGNORE_DIRS]
-            for filename in files:
-                _, ext = os.path.splitext(filename)
-                if ext not in self.SUPPORTED_EXTENSIONS:
-                    continue
-                full_path = os.path.join(root, filename)
-                relative = os.path.relpath(full_path, self.repo_path).replace("\\", "/")
-                collected.append(relative)
-        return sorted(collected)
+        collected = set()
+        
+        # Method 1: Walk physical files if they exist
+        if os.path.exists(self.repo_path):
+            for root, dirs, files in os.walk(self.repo_path):
+                dirs[:] = [d for d in dirs if d not in self.IGNORE_DIRS]
+                for filename in files:
+                    _, ext = os.path.splitext(filename)
+                    if ext not in self.SUPPORTED_EXTENSIONS:
+                        continue
+                    full_path = os.path.join(root, filename)
+                    relative = os.path.relpath(full_path, self.repo_path).replace("\\", "/")
+                    collected.add(relative)
+        
+        # Method 2: Fallback to database chunks if physical files are missing or incomplete
+        if not collected:
+            chunks = self._list_repo_chunks(limit=50000)
+            for chunk in chunks:
+                path = chunk.get("file_path")
+                if path:
+                    collected.add(path.replace("\\", "/"))
+                    
+        return sorted(list(collected))
 
     def _build_module_dependencies(self) -> List[Dict[str, Any]]:
         bucket: Dict[str, Dict[str, Any]] = {}

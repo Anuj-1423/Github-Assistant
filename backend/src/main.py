@@ -107,6 +107,27 @@ if os.path.exists(FRONTEND_DIR):
 def resolve_repo_path(repo_id: str) -> str:
     if repo_id in jobs and jobs[repo_id].get("repo_path"):
         return jobs[repo_id]["repo_path"]
+    
+    # Fallback to check if it's a local repository
+    store = get_storage()
+    if hasattr(store, "get_repo"):
+        repo = store.get_repo(repo_id)
+        if repo and repo.get("url"):
+            url = repo.get("url")
+            if os.path.isdir(url):
+                return os.path.abspath(url)
+                
+            # Additional fallback: if the specific repo_id folder is missing but it's a cloned URL, 
+            # check if there's another clone of the same URL that does exist
+            primary_path = os.path.abspath(os.path.join(ROOT_DIR, "storage", "repos", repo_id))
+            if not os.path.exists(primary_path) and hasattr(store, "list_repos"):
+                all_repos = store.list_repos()
+                for r in all_repos:
+                    if r.get("url") == url and r.get("id") != repo_id:
+                        alt_path = os.path.abspath(os.path.join(ROOT_DIR, "storage", "repos", r.get("id", "")))
+                        if os.path.exists(alt_path):
+                            return alt_path
+
     return os.path.abspath(os.path.join(ROOT_DIR, "storage", "repos", repo_id))
 
 def ensure_repo_exists(repo_id: str):
