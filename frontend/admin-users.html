@@ -61,15 +61,15 @@
             <div class="admin-stat-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 64px;">
                 <div class="admin-card">
                     <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Active Operators</div>
-                    <div style="font-size: 28px; font-weight: 800;">142</div>
+                    <div style="font-size: 28px; font-weight: 800;" id="stat-active">0</div>
                 </div>
                 <div class="admin-card">
-                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Admin Level</div>
-                    <div style="font-size: 28px; font-weight: 800;">12</div>
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Total Users</div>
+                    <div style="font-size: 28px; font-weight: 800;" id="stat-total">0</div>
                 </div>
                 <div class="admin-card">
-                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Pending Auth</div>
-                    <div style="font-size: 28px; font-weight: 800;">4</div>
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Suspended / Held</div>
+                    <div style="font-size: 28px; font-weight: 800;" id="stat-pending">0</div>
                 </div>
             </div>
 
@@ -83,69 +83,50 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="user-row">
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <div class="avatar-circle" style="color: var(--primary-brand);">I</div>
-                                <div>
-                                    <div style="font-size: 14px; font-weight: 700;">Ishaan Dev</div>
-                                    <div style="font-size: 12px; color: var(--text-muted);">ishaan@codebase-knowledge.ai</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><div class="badge-blue">ACTIVE</div></td>
-                        <td><span style="font-size: 13px; font-weight: 600;">System Admin</span></td>
-                        <td><span style="font-size: 13px; color: var(--text-secondary);">2 mins ago</span></td>
-                        <td>
-                            <div style="display: flex; gap: 12px;">
-                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">Modify</button>
-                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; color: #ef4444;">Revoke</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="user-row">
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <div class="avatar-circle">A</div>
-                                <div>
-                                    <div style="font-size: 14px; font-weight: 700;">Alice Architect</div>
-                                    <div style="font-size: 12px; color: var(--text-muted);">alice@techflow.io</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><div class="badge-blue">ACTIVE</div></td>
-                        <td><span style="font-size: 13px; font-weight: 600;">Collaborator</span></td>
-                        <td><span style="font-size: 13px; color: var(--text-secondary);">4h ago</span></td>
-                        <td>
-                            <div style="display: flex; gap: 12px;">
-                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">Modify</button>
-                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; color: #ef4444;">Revoke</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="user-row">
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <div class="avatar-circle">B</div>
-                                <div>
-                                    <div style="font-size: 14px; font-weight: 700;">Bob Builder</div>
-                                    <div style="font-size: 12px; color: var(--text-muted);">bob@pynural.com</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><div class="badge" style="background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2);">SUSPENDED</div></td>
-                        <td><span style="font-size: 13px; font-weight: 600;">Restricted</span></td>
-                        <td><span style="font-size: 13px; color: var(--text-secondary);">Yesterday</span></td>
-                        <td>
-                            <div style="display: flex; gap: 12px;">
-                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">Restore</button>
-                            </div>
-                        </td>
-                    </tr>
+                <tbody id="users-table-body">
+                    <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading operators...</td></tr>
                 </tbody>
             </table>
         </main>
+
+        <!-- User Details Modal -->
+        <div id="user-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+            <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 20px; width: 800px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                <div style="padding: 32px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2);">
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                        <div class="avatar-circle" id="modal-avatar" style="width: 64px; height: 64px; font-size: 24px; color: var(--primary-brand); border-color: var(--primary-brand);">U</div>
+                        <div>
+                            <h2 style="font-size: 24px; font-weight: 800;" id="modal-name">User Name</h2>
+                            <p style="color: var(--text-muted); font-size: 14px;" id="modal-email">email@example.com</p>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('user-modal').style.display='none'" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <div style="padding: 32px; overflow-y: auto; flex: 1;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px;">
+                        <div class="admin-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px;">
+                            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Total Uploaded Repos</div>
+                            <div style="font-size: 32px; font-weight: 800;" id="modal-repos-count">0</div>
+                        </div>
+                        <div class="admin-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px;">
+                            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Total Inquiries</div>
+                            <div style="font-size: 32px; font-weight: 800;" id="modal-queries-count">0</div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px;"><i class="fas fa-folder-open" style="color: var(--primary-brand);"></i> Uploaded Repositories</h3>
+                    <div id="modal-repos-list" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px;">
+                        <!-- Repos -->
+                    </div>
+                    
+                    <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px;"><i class="fas fa-comments" style="color: var(--accent-blue);"></i> Correspondence Chats</h3>
+                    <div id="modal-chats-list" style="display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Chats -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -160,7 +141,131 @@
                 }
             } catch (err) {}
         }
+        
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admin/users');
+                if (!res.ok) return;
+                const data = await res.json();
+                const tbody = document.getElementById('users-table-body');
+                
+                let active = 0, suspended = 0, total = data.users.length;
+                
+                tbody.innerHTML = data.users.map(u => {
+                    const status = u.status || 'ACTIVE';
+                    if (status === 'ACTIVE') active++;
+                    else suspended++;
+                    
+                    const badgeClass = status === 'ACTIVE' ? 'badge-blue' : 'badge';
+                    let badgeStyle = status === 'ACTIVE' ? '' : 'background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2);';
+                    if (status === 'BLOCKED') badgeStyle = 'background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);';
+                    
+                    let actions = '';
+                    if (status === 'ACTIVE') {
+                        actions = `
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; color: #fbbf24; border-color: rgba(251, 191, 36, 0.2);" onclick="event.stopPropagation(); updateUserStatus('${u.id}', 'HOLD')">Hold</button>
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; color: #ef4444; border-color: rgba(239, 68, 68, 0.2);" onclick="event.stopPropagation(); updateUserStatus('${u.id}', 'BLOCKED')">Block</button>
+                        `;
+                    } else if (status === 'HOLD') {
+                        actions = `
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; color: #10b981; border-color: rgba(16, 185, 129, 0.2);" onclick="event.stopPropagation(); updateUserStatus('${u.id}', 'ACTIVE')">Un-Hold</button>
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; color: #ef4444; border-color: rgba(239, 68, 68, 0.2);" onclick="event.stopPropagation(); updateUserStatus('${u.id}', 'BLOCKED')">Block</button>
+                        `;
+                    } else {
+                        actions = `
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px; color: #10b981; border-color: rgba(16, 185, 129, 0.2);" onclick="event.stopPropagation(); updateUserStatus('${u.id}', 'ACTIVE')">Unblock</button>
+                        `;
+                    }
+                    
+                    return \`
+                    <tr class="user-row" onclick="viewUserDetails('\${u.id}')" style="cursor: pointer;">
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div class="avatar-circle" style="color: var(--primary-brand);">\${(u.full_name || u.username || 'U').charAt(0).toUpperCase()}</div>
+                                <div>
+                                    <div style="font-size: 14px; font-weight: 700;">\${u.full_name || u.username}</div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">\${u.email || ''}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><div class="\${badgeClass}" style="\${badgeStyle}">\${status}</div></td>
+                        <td><span style="font-size: 13px; font-weight: 600;">\${u.role || 'User'}</span></td>
+                        <td><span style="font-size: 13px; color: var(--text-secondary);">\${u.updated_at ? new Date(u.updated_at).toLocaleString() : 'Never'}</span></td>
+                        <td>
+                            <div style="display: flex; gap: 12px;">
+                                \${actions}
+                            </div>
+                        </td>
+                    </tr>\`;
+                }).join('');
+                
+                document.getElementById('stat-active').innerText = active;
+                document.getElementById('stat-pending').innerText = suspended;
+                document.getElementById('stat-total').innerText = total;
+                
+            } catch (e) {
+                console.error("Failed to load users", e);
+            }
+        }
+
+        async function updateUserStatus(userId, status) {
+            try {
+                await fetch(\`/api/admin/users/\${userId}/status\`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                loadUsers();
+            } catch (e) {
+                alert('Failed to update status');
+            }
+        }
+
+        async function viewUserDetails(userId) {
+            document.getElementById('user-modal').style.display = 'flex';
+            document.getElementById('modal-repos-list').innerHTML = '<p style="color: var(--text-muted);">Loading...</p>';
+            document.getElementById('modal-chats-list').innerHTML = '<p style="color: var(--text-muted);">Loading...</p>';
+            
+            try {
+                const res = await fetch(\`/api/admin/users/\${userId}\`);
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                document.getElementById('modal-name').innerText = data.user.full_name || data.user.username;
+                document.getElementById('modal-email').innerText = data.user.email || 'No email';
+                document.getElementById('modal-avatar').innerText = (data.user.full_name || data.user.username || 'U').charAt(0).toUpperCase();
+                
+                document.getElementById('modal-repos-count').innerText = data.repos.length;
+                document.getElementById('modal-queries-count').innerText = data.queries.length;
+                
+                document.getElementById('modal-repos-list').innerHTML = data.repos.length ? data.repos.map(r => \`
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">\${r.name}</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">\${r.url}</div>
+                        </div>
+                        <div class="badge-blue" style="background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.2);">\${r.status}</div>
+                    </div>
+                \`).join('') : '<p style="color: var(--text-muted); font-style: italic;">No repos uploaded.</p>';
+                
+                document.getElementById('modal-chats-list').innerHTML = data.queries.length ? data.queries.map(q => \`
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+                            <span style="font-weight: 800; font-size: 14px; color: var(--primary-brand);">\${q.repo_name || 'Unknown Repo'}</span>
+                            <span style="font-size: 12px; color: var(--text-muted);">\${new Date(q.created_at).toLocaleString()}</span>
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-main); margin-bottom: 12px; line-height: 1.5;"><b>Q:</b> \${q.query}</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; max-height: 80px; overflow: auto; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;"><b>A:</b> \${q.answer ? q.answer.replace(/</g, '&lt;').replace(/>/g, '&gt;') : '<i>No answer</i>'}</div>
+                    </div>
+                \`).join('') : '<p style="color: var(--text-muted); font-style: italic;">No chat history.</p>';
+                
+            } catch (e) {
+                console.error("Failed to load user details", e);
+            }
+        }
+
         loadProfile();
+        loadUsers();
     </script>
     <script>
         if (window.self !== window.top) {

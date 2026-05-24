@@ -81,7 +81,7 @@
                 <div class="orb-container"><div class="orb"></div></div>
                 
                 <header style="margin-bottom: 80px; text-align: center;">
-                    <div class="badge" style="margin-bottom: 16px;">NEURAL INTERFACE V1.0</div>
+                    <span class="badge" style="margin-bottom: 16px; display: inline-block;">NEURAL INTERFACE V1.0</span>
                     <h2 style="font-size: 32px; font-weight: 800;">Direct Repository Inquiry</h2>
                     <p style="color: var(--text-secondary); max-width: 500px; margin: 12px auto 0;">Your codebase is fully indexed and ready for deep reasoning. Ask about architectural patterns, data flows, or logical implementations.</p>
                 </header>
@@ -195,7 +195,7 @@
                 chatContainer.innerHTML = `
                     <div style="max-width: 1200px; margin: 0 auto; width: 100%;">
                         <header style="margin-bottom: 60px; text-align: left;">
-                            <div class="badge badge-blue" style="margin-bottom: 16px; border: 1px solid rgba(99,102,241,0.3); background: rgba(99,102,241,0.1); color: var(--primary-brand);">NEURAL HUB</div>
+                            <span class="badge badge-blue" style="margin-bottom: 16px; border: 1px solid rgba(99,102,241,0.3); background: rgba(99,102,241,0.1); color: var(--primary-brand); display: inline-block;">NEURAL HUB</span>
                             <h2 style="font-size: 48px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.02em;">Select Repository</h2>
                             <p style="color: var(--text-secondary); font-size: 18px;">Choose an indexed codebase to initiate a neural chat session.</p>
                         </header>
@@ -586,7 +586,12 @@
             if (rail) rail.style.display = 'none';
             if (sidebar) sidebar.style.display = 'none';
             if (appShell) {
-                appShell.style.gridTemplateColumns = '1fr 340px';
+                const urlParams = new URLSearchParams(window.location.search);
+                if (!urlParams.get('repo')) {
+                    appShell.style.gridTemplateColumns = '1fr';
+                } else {
+                    appShell.style.gridTemplateColumns = '1fr 340px';
+                }
             }
         }
     </script>

@@ -589,6 +589,27 @@ async def get_admin_users(limit: int = Query(default=200, ge=1, le=1000)):
 
     return {"users": users}
 
+class UserStatusUpdate(BaseModel):
+    status: str
+
+@app.put("/api/admin/users/{user_id}/status")
+async def update_user_status(user_id: str, request: UserStatusUpdate):
+    store = get_storage()
+    if hasattr(store, "update_user_status"):
+        store.update_user_status(user_id, request.status)
+        return {"status": "success", "user_id": user_id, "new_status": request.status}
+    raise HTTPException(status_code=501, detail="User status update not supported")
+
+@app.get("/api/admin/users/{user_id}")
+async def get_user_details(user_id: str):
+    store = get_storage()
+    if hasattr(store, "get_user_details"):
+        details = store.get_user_details(user_id)
+        if not details or not details.get("user"):
+            raise HTTPException(status_code=404, detail="User not found")
+        return details
+    raise HTTPException(status_code=501, detail="User details not supported")
+
 @app.get("/api/admin/query-logs")
 async def get_admin_query_logs(limit: int = Query(default=50, ge=1, le=500)):
     store = get_storage()

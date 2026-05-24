@@ -228,8 +228,8 @@
         }
 
         thead th {
-            background: #f8f9fc;
-            color: #475467;
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--muted);
             text-transform: uppercase;
             letter-spacing: 0.07em;
             font-size: 12px;
@@ -240,9 +240,9 @@
 
         tbody td {
             padding: 14px 16px;
-            border-bottom: 1px solid #eef1f5;
+            border-bottom: 1px solid var(--border);
             font-size: 14px;
-            color: #344054;
+            color: var(--ink);
             vertical-align: top;
         }
 
@@ -273,7 +273,7 @@
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: 14px 14px;
-            background: #fcfdff;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .metric h4 {
@@ -330,14 +330,14 @@
             </div>
 
             <nav class="nav-group">
-                <a class="nav-link active" href="#" onclick="loadPage('dashboard', this)"><i class="fa-solid fa-chart-column"></i><span>Dashboard</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('admin-dashboard.html', this)"><i class="fa-solid fa-server"></i><span>System Overview</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('index-repo.html', this)"><i class="fa-solid fa-book-open"></i><span>Global Library</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('chat.html', this)"><i class="fa-regular fa-comments"></i><span>Enterprise Chat</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('admin-users.html', this)"><i class="fa-solid fa-users"></i><span>User Management</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('admin-analytics.html', this)"><i class="fa-solid fa-database"></i><span>Database Health</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('admin-clusters.html', this)"><i class="fa-solid fa-microchip"></i><span>Node Clusters</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('admin-settings.html', this)"><i class="fa-solid fa-cog"></i><span>Global Settings</span></a>
+                <a class="nav-link active" href="#" onclick="loadPage('dashboard', this); return false;"><i class="fa-solid fa-chart-column"></i><span>Dashboard</span></a>
+                <a class="nav-link" href="#" onclick="loadPage('admin-dashboard.html', this); return false;"><i class="fa-solid fa-server"></i><span>System Overview</span></a>
+                <a class="nav-link" href="#" onclick="loadPage('index-repo.html', this); return false;"><i class="fa-solid fa-book-open"></i><span>Global Library</span></a>
+                <a class="nav-link" href="#" onclick="loadPage('chat.html', this); return false;"><i class="fa-regular fa-comments"></i><span>Enterprise Chat</span></a>
+                <a class="nav-link" href="#" onclick="loadPage('admin-users.html', this); return false;"><i class="fa-solid fa-users"></i><span>User Management</span></a>
+                <a class="nav-link" href="#" onclick="loadPage('admin-analytics.html', this); return false;"><i class="fa-solid fa-database"></i><span>Database Health</span></a>
+                <a class="nav-link" href="#" onclick="loadPage('admin-clusters.html', this); return false;"><i class="fa-solid fa-microchip"></i><span>Node Clusters</span></a>
+                <a class="nav-link" href="#" onclick="loadPage('admin-settings.html', this); return false;"><i class="fa-solid fa-cog"></i><span>Global Settings</span></a>
             </nav>
 
             <div class="sidebar-foot">Admin session active</div>
@@ -429,11 +429,25 @@
                 document.getElementById('default-view').style.display = 'flex';
                 document.getElementById('content-frame').style.display = 'none';
                 document.getElementById('content-frame').src = '';
+                history.replaceState(null, null, ' ');
             } else {
                 document.getElementById('default-view').style.display = 'none';
                 document.getElementById('content-frame').style.display = 'block';
-                document.getElementById('content-frame').src = url;
+                document.getElementById('content-frame').src = url + "?v=" + new Date().getTime();
+                window.location.hash = url;
             }
+        }
+
+        function restoreFromHash() {
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                const link = Array.from(document.querySelectorAll('.nav-link')).find(a => a.getAttribute('onclick') && a.getAttribute('onclick').includes(hash));
+                if (link) {
+                    loadPage(hash, link);
+                    return true;
+                }
+            }
+            return false;
         }
 
         function setText(id, value) {
@@ -547,6 +561,9 @@
         }
 
         refreshAdmin();
+        if (!restoreFromHash()) {
+            // Only set default if there is no hash
+        }
         setInterval(refreshAdmin, 20000);
     </script>
 </body>
