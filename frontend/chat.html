@@ -133,6 +133,13 @@
     </div>
 
     <script>
+        // === AUTH GUARD ===
+        (function() {
+            const userId = localStorage.getItem('auth_user_id');
+            if (!userId) {
+                window.location.href = 'login.html';
+            }
+        })();
         // Configure marked.js (v9+ API — highlight option was removed, use marked.use() renderer)
         marked.use({
             breaks: true,
@@ -228,7 +235,10 @@
                 `;
                 
                 try {
-                    const response = await fetch('/api/repos');
+                    const userId = localStorage.getItem('auth_user_id');
+                    const response = await fetch('/api/repos', {
+                        headers: userId ? { 'X-User-Id': userId } : {}
+                    });
                     if (response.ok) {
                         const repos = await response.json();
                         const container = document.getElementById('hub-repo-list');
@@ -260,7 +270,10 @@
             }
 
             try {
-                const response = await fetch('/api/repos');
+                const userId = localStorage.getItem('auth_user_id');
+                const response = await fetch('/api/repos', {
+                    headers: userId ? { 'X-User-Id': userId } : {}
+                });
                 if (response.ok) {
                     const repos = await response.json();
                     const repo = repos.find(r => r.id === repoId);
@@ -299,7 +312,10 @@
 
         async function loadProfile() {
             try {
-                const response = await fetch('/api/user/profile');
+                const userId = localStorage.getItem('auth_user_id');
+                const response = await fetch('/api/user/profile', {
+                    headers: userId ? { 'X-User-Id': userId } : {}
+                });
                 if (response.ok) {
                     const profile = await response.json();
                     if (profile && profile.full_name) {
@@ -332,9 +348,13 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
+                const userId = localStorage.getItem('auth_user_id');
                 const response = await fetch(`/api/repos/${repoId}/query`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(userId ? { 'X-User-Id': userId } : {})
+                    },
                     body: JSON.stringify({ query: message })
                 });
                 

@@ -15,7 +15,7 @@
         .log-entry.info { border-color: var(--primary-brand); }
         .log-entry.warn { border-color: #fbbf24; color: #fbbf24; }
         .log-entry.error { border-color: #ef4444; color: #ef4444; }
-        .badge-admin { background: #ef4444; color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; }
+        .badge-admin { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; }
         .cluster-node { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-subtle); }
     </style>
 </head>
@@ -60,51 +60,47 @@
                         <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Server Uptime</div>
                         <div style="font-size: 18px; font-weight: 700; color: #22c55e;">14d 22h 04m</div>
                     </div>
-                    <button class="btn btn-secondary" style="border-color: #ef4444; color: #ef4444; background: rgba(239, 68, 68, 0.05);" onclick="alert('Action requires elevated privileges.');">EMERGENCY SHUTDOWN</button>
+                    <button class="btn btn-secondary" id="btn-shutdown" style="border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; background: transparent; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; padding: 8px 16px; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'" onmouseout="this.style.background='transparent'" onclick="executeShutdown()">EMERGENCY SHUTDOWN</button>
                 </div>
             </header>
 
             <div class="admin-stat-grid">
                 <div class="admin-card">
-                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Total Entities</div>
-                    <div style="font-size: 36px; font-weight: 800;">14,282</div>
-                    <div style="color: #22c55e; font-size: 12px; font-weight: 600; margin-top: 12px;"><i class="fas fa-caret-up"></i> 14.2% Growth</div>
+                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Total Users</div>
+                    <div id="stat-users" style="font-size: 36px; font-weight: 800;">-</div>
+                    <div style="color: var(--text-muted); font-size: 12px; font-weight: 600; margin-top: 12px;">Registered Accounts</div>
                 </div>
                 <div class="admin-card">
-                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Neural Links</div>
-                    <div style="font-size: 36px; font-weight: 800;">854k</div>
-                    <div style="color: var(--primary-brand); font-size: 12px; font-weight: 600; margin-top: 12px;">Active Syncing...</div>
+                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Global Repos</div>
+                    <div id="stat-repos" style="font-size: 36px; font-weight: 800;">-</div>
+                    <div style="color: #22c55e; font-size: 12px; font-weight: 600; margin-top: 12px;"><i class="fas fa-check-circle"></i> Indexed & Analyzed</div>
                 </div>
                 <div class="admin-card">
-                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Processor Load</div>
-                    <div style="font-size: 36px; font-weight: 800;">24.8%</div>
-                    <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 16px;">
-                        <div style="width: 24.8%; height: 100%; background: var(--primary-brand); border-radius: 2px;"></div>
-                    </div>
+                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Total Queries</div>
+                    <div id="stat-queries" style="font-size: 36px; font-weight: 800;">-</div>
+                    <div style="color: var(--primary-brand); font-size: 12px; font-weight: 600; margin-top: 12px;">Across All Users</div>
                 </div>
                 <div class="admin-card">
-                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Global Latency</div>
-                    <div style="font-size: 36px; font-weight: 800;">12ms</div>
-                    <div style="color: #22c55e; font-size: 12px; font-weight: 600; margin-top: 12px;">Optimal Performance</div>
+                    <div style="color: var(--text-secondary); font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Ready Instances</div>
+                    <div id="stat-ready" style="font-size: 36px; font-weight: 800;">-</div>
+                    <div style="color: #22c55e; font-size: 12px; font-weight: 600; margin-top: 12px;">System Healthy</div>
                 </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px;">
-                <section>
-                    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-                        <i class="fas fa-terminal" style="color: var(--primary-brand);"></i> System Core Logs
-                    </h3>
-                    <div class="log-terminal">
-                        <div class="log-entry info">[10:42:01] Neural indexer completed for repository 'v3-core-kernel'</div>
-                        <div class="log-entry info">[10:40:15] Global backup protocol initiated on Node-07</div>
-                        <div class="log-entry warn">[10:38:42] Elevated memory allocation detected on Worker-04 - Stabilizing...</div>
-                        <div class="log-entry info">[10:35:12] New operator 'ishaan_dev' authenticated via Secure Link</div>
-                        <div class="log-entry info">[10:32:05] Database 'ck_primary' optimization sequence completed</div>
-                        <div class="log-entry error">[10:28:14] Failed request on /api/v1/auth - 403 Forbidden - Source IP Flagged</div>
-                        <div class="log-entry info">[10:25:00] System heartbeat check: ALL NODES OPERATIONAL</div>
-                        <div class="log-entry info">[10:22:45] Clearing transient cache for user session 'sess_8123'</div>
-                        <div class="log-entry warn">[10:18:30] Latency spike (45ms) detected in Node-12 cluster</div>
-                        <div class="log-entry info">[10:15:00] Neural weights synchronized across 4 regions</div>
+
+                <section style="display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h3 style="font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px;">
+                            <i class="fas fa-book-open" style="color: var(--primary-brand);"></i> Global Library
+                        </h3>
+                        <div style="position: relative; width: 200px;">
+                            <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px;"></i>
+                            <input type="text" id="repo-search" placeholder="Filter by user..." onkeyup="filterRepos(this.value)" style="width: 100%; padding: 8px 12px 8px 32px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 12px;">
+                        </div>
+                    </div>
+                    <div id="admin-repo-list" style="display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 8px;">
+                        <div style="color: var(--text-muted); font-size: 13px; font-style: italic;">Loading synchronized repositories...</div>
                     </div>
                 </section>
 
@@ -115,21 +111,21 @@
                             <div style="font-size: 13px; font-weight: 700;">Node-01 (Primary)</div>
                             <div style="font-size: 11px; color: var(--text-muted);">US-East-1 • 8 cores</div>
                         </div>
-                        <div class="badge-blue">ACTIVE</div>
+                        <div class="badge-blue" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);">ACTIVE</div>
                     </div>
                     <div class="cluster-node">
                         <div>
                             <div style="font-size: 13px; font-weight: 700;">Node-02</div>
                             <div style="font-size: 11px; color: var(--text-muted);">EU-West-2 • 16 cores</div>
                         </div>
-                        <div class="badge-blue">ACTIVE</div>
+                        <div class="badge-blue" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);">ACTIVE</div>
                     </div>
                     <div class="cluster-node">
                         <div>
                             <div style="font-size: 13px; font-weight: 700;">Node-03</div>
                             <div style="font-size: 11px; color: var(--text-muted);">AP-South-1 • 4 cores</div>
                         </div>
-                        <div class="badge-green">IDLE</div>
+                        <div class="badge-green" style="background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2);">IDLE</div>
                     </div>
                     <div class="cluster-node" style="opacity: 0.5;">
                         <div>
@@ -155,7 +151,131 @@
                 }
             } catch (err) {}
         }
+        
+        let allGlobalRepos = [];
+
+        async function loadGlobalRepos() {
+            try {
+                const response = await fetch('/api/repos');
+                if (!response.ok) return;
+                const data = await response.json();
+                
+                // Parse GitHub owners as fallback for system uploads
+                allGlobalRepos = data.map(r => {
+                    if ((!r.uploader_name || r.uploader_name === 'System Operator') && r.url && r.url.includes('github.com/')) {
+                        const parts = r.url.split('github.com/');
+                        if (parts.length > 1) {
+                            const pathParts = parts[1].split('/');
+                            if (pathParts.length > 0 && pathParts[0]) {
+                                r.uploader_name = pathParts[0]; // Set GitHub Owner as uploader
+                            }
+                        }
+                    }
+                    return r;
+                });
+                
+                renderGlobalRepos(allGlobalRepos);
+            } catch (err) {
+                document.getElementById('admin-repo-list').innerHTML = '<div style="color: #ef4444; font-size: 13px;">Failed to load global repository library.</div>';
+            }
+        }
+        
+        function filterRepos(term) {
+            term = term.toLowerCase().trim();
+            if (!term) {
+                renderGlobalRepos(allGlobalRepos);
+                return;
+            }
+            const filtered = allGlobalRepos.filter(r => 
+                (r.uploader_name && r.uploader_name.toLowerCase().includes(term)) ||
+                (r.name && r.name.toLowerCase().includes(term)) ||
+                (r.url && r.url.toLowerCase().includes(term))
+            );
+            renderGlobalRepos(filtered);
+        }
+
+        function renderGlobalRepos(repos) {
+            const container = document.getElementById('admin-repo-list');
+            if (repos.length === 0) {
+                container.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; font-style: italic;">No repositories found.</div>';
+                return;
+            }
+            
+            container.innerHTML = repos.map(r => `
+                <div style="background: linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-code-branch" style="color: var(--text-secondary);"></i> ${r.name || r.id}
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                            <span><i class="fas fa-user-astronaut" style="color: var(--primary-brand); margin-right: 4px;"></i> ${r.uploader_name || 'System Operator'}</span>
+                            <span style="opacity: 0.5;">|</span>
+                            <span><i class="fab fa-github" style="margin-right: 4px;"></i> ${r.url || 'Local Environment'}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);"><div style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div> ${(r.status || 'READY').toUpperCase()}</span>
+                        <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'" onclick="window.location.href='/api/repos/${r.id}/download'" title="Download Archive"><i class="fas fa-cloud-download-alt"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/overview');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('stat-users').innerText = data.total_users || 0;
+                    document.getElementById('stat-repos').innerText = data.global_docs || 0;
+                    document.getElementById('stat-queries').innerText = data.total_queries || 0;
+                    document.getElementById('stat-ready').innerText = data.repo_status ? (data.repo_status.ready || 0) : 0;
+                }
+            } catch(e) {}
+        }
+        
+        async function executeShutdown() {
+            if (!confirm("CRITICAL WARNING: Are you sure you want to completely shut down the Core Control neural engine? The backend server will terminate instantly, and all active user sessions will disconnect. The server will require manual restart.")) return;
+            
+            const btn = document.getElementById('btn-shutdown');
+            btn.innerText = "TERMINATING...";
+            btn.style.background = "#ef4444";
+            btn.style.color = "white";
+            btn.disabled = true;
+            
+            try {
+                await fetch('/api/admin/shutdown', { method: 'POST' });
+            } catch(e) {
+                // Fetch will fail when server dies, which is expected
+            }
+            
+            setTimeout(() => {
+                document.body.innerHTML = `
+                    <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #050508; color: #ef4444; font-family: 'JetBrains Mono', monospace;">
+                        <i class="fas fa-power-off" style="font-size: 64px; margin-bottom: 24px;"></i>
+                        <h1 style="font-weight: 800; letter-spacing: 0.1em;">SYSTEM OFFLINE</h1>
+                        <p style="color: var(--text-muted); margin-top: 12px; font-size: 14px;">The neural engine is currently locked in Emergency Maintenance Mode.</p>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 32px;">All user queries and endpoints are actively blocked with a 503 error.</p>
+                        <button onclick="restoreSystem()" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 12px 24px; border-radius: 8px; font-weight: 800; letter-spacing: 0.1em; cursor: pointer; transition: all 0.2s;">
+                            <i class="fas fa-bolt" style="margin-right: 8px;"></i> RESTORE SYSTEM POWER
+                        </button>
+                    </div>
+                `;
+            }, 500);
+        }
+
+        async function restoreSystem() {
+            try {
+                await fetch('/api/admin/resume', { method: 'POST' });
+                window.location.reload();
+            } catch(e) {
+                alert("Failed to contact the backend to restore power.");
+            }
+        }
+        
         loadProfile();
+        loadStats();
+        loadGlobalRepos();
     </script>
     <script>
         if (window.self !== window.top) {

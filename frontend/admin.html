@@ -11,7 +11,7 @@
             --panel: #0a0a0a;
             --ink: #ffffff;
             --muted: #94a3b8;
-            --brand: #ef4444;
+            --brand: #6366f1; /* Changed from red to professional indigo */
             --border: rgba(255, 255, 255, 0.08);
             --ok: #10b981;
             --warn: #fbbf24;
@@ -145,13 +145,15 @@
         }
 
         .health.ok {
-            background: #eafbf3;
-            color: #087443;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .health.warn {
-            background: #fff8eb;
-            color: #8f5a00;
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.2);
         }
 
         .content {
@@ -168,19 +170,26 @@
         }
 
         .stat-card {
-            background: var(--panel);
-            border: 1px solid var(--border);
+            background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 16px;
-            padding: 18px 18px 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
         }
 
         .stat-label {
-            color: var(--brand);
+            color: var(--muted);
             font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin-bottom: 10px;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
         }
 
         .stat-value {
@@ -197,18 +206,19 @@
         }
 
         .panel {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 16px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
             overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
         .panel-head {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 22px;
-            border-bottom: 1px solid var(--border);
+            padding: 24px 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .panel-title {
@@ -228,19 +238,19 @@
         }
 
         thead th {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(0, 0, 0, 0.2);
             color: var(--muted);
             text-transform: uppercase;
             letter-spacing: 0.07em;
             font-size: 12px;
             text-align: left;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
+            padding: 14px 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         tbody td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
+            padding: 16px 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
             font-size: 14px;
             color: var(--ink);
             vertical-align: top;
@@ -252,15 +262,17 @@
 
         .activity-tag {
             display: inline-block;
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 999px;
-            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border-radius: 6px;
+            padding: 6px 12px;
         }
 
-        .activity-high { background: #fff1f1; color: #b42318; }
-        .activity-medium { background: #fff8eb; color: #8f5a00; }
-        .activity-low { background: #eff8ff; color: #175cd3; }
+        .activity-high { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .activity-medium { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); }
+        .activity-low { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
 
         .side-panel {
             padding: 20px 22px;
@@ -270,18 +282,21 @@
         }
 
         .metric {
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 14px 14px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 16px;
             background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .metric h4 {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--muted);
-            margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
+            font-weight: 700;
         }
 
         .metric .v {
@@ -330,93 +345,20 @@
             </div>
 
             <nav class="nav-group">
-                <a class="nav-link active" href="#" onclick="loadPage('dashboard', this); return false;"><i class="fa-solid fa-chart-column"></i><span>Dashboard</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('admin-dashboard.html', this); return false;"><i class="fa-solid fa-server"></i><span>System Overview</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('index-repo.html', this); return false;"><i class="fa-solid fa-book-open"></i><span>Global Library</span></a>
-                <a class="nav-link" href="#" onclick="loadPage('chat.html', this); return false;"><i class="fa-regular fa-comments"></i><span>Enterprise Chat</span></a>
+                <a class="nav-link active" href="#" id="nav-dashboard" onclick="loadPage('admin-dashboard.html', this); return false;"><i class="fa-solid fa-chart-column"></i><span>Dashboard</span></a>
                 <a class="nav-link" href="#" onclick="loadPage('admin-users.html', this); return false;"><i class="fa-solid fa-users"></i><span>User Management</span></a>
                 <a class="nav-link" href="#" onclick="loadPage('admin-analytics.html', this); return false;"><i class="fa-solid fa-database"></i><span>Database Health</span></a>
                 <a class="nav-link" href="#" onclick="loadPage('admin-clusters.html', this); return false;"><i class="fa-solid fa-microchip"></i><span>Node Clusters</span></a>
                 <a class="nav-link" href="#" onclick="loadPage('admin-settings.html', this); return false;"><i class="fa-solid fa-cog"></i><span>Global Settings</span></a>
+                
+                <a class="nav-link" href="index.html" style="margin-top: 32px; color: #ef4444; background: rgba(239, 68, 68, 0.05); border-radius: 8px;"><i class="fa-solid fa-power-off"></i><span>Terminate Session</span></a>
             </nav>
 
             <div class="sidebar-foot">Admin session active</div>
         </aside>
 
         <main class="main" style="display: flex; flex-direction: column;">
-            <div id="default-view" style="flex: 1; display: flex; flex-direction: column;">
-                <header class="topbar">
-                    <h2>Platform Statistics</h2>
-                    <div id="healthBadge" class="health warn"><i class="fa-solid fa-circle"></i><span>Checking system</span></div>
-                </header>
-
-                <div class="content">
-                    <section class="stats-grid">
-                        <article class="stat-card">
-                            <div class="stat-label">Total Users</div>
-                        <div class="stat-value" id="totalUsers">0</div>
-                    </article>
-                    <article class="stat-card">
-                        <div class="stat-label">Global Docs</div>
-                        <div class="stat-value" id="globalDocs">0</div>
-                    </article>
-                    <article class="stat-card">
-                        <div class="stat-label">Personal Docs</div>
-                        <div class="stat-value" id="personalDocs">0</div>
-                    </article>
-                    <article class="stat-card">
-                        <div class="stat-label">Total Queries</div>
-                        <div class="stat-value" id="totalQueries">0</div>
-                    </article>
-                </section>
-
-                <section class="panels">
-                    <article class="panel">
-                        <div class="panel-head">
-                            <h3 class="panel-title">User Activity Report</h3>
-                            <p class="subtle">Total Interactions: <span id="interactionsCount">0</span></p>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User Identity</th>
-                                    <th>Activity Level</th>
-                                    <th>Total Queries</th>
-                                </tr>
-                            </thead>
-                            <tbody id="activityTableBody">
-                                <tr>
-                                    <td colspan="3" class="muted-row">Loading user activity...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </article>
-
-                    <aside class="panel side-panel">
-                        <h3 class="panel-title">Inference Analytics</h3>
-                        <p class="subtle" id="analyticsSummary">Loading usage patterns and repository health.</p>
-
-                        <div class="metric">
-                            <h4>Ready Repositories</h4>
-                            <div class="v" id="readyRepos">0</div>
-                        </div>
-
-                        <div class="metric">
-                            <h4>Pending Repositories</h4>
-                            <div class="v" id="pendingRepos">0</div>
-                        </div>
-
-                        <div class="metric">
-                            <h4>Failed Repositories</h4>
-                            <div class="v" id="failedRepos">0</div>
-                        </div>
-
-                        <a class="download" href="/api/admin/users/export.csv">Download CSV Report</a>
-                    </aside>
-                </section>
-            </div>
-            </div> <!-- End of default-view -->
-            <iframe id="content-frame" style="display: none; width: 100%; height: 100%; border: none; flex: 1;"></iframe>
+            <iframe id="content-frame" style="display: block; width: 100%; height: 100%; border: none; flex: 1;"></iframe>
         </main>
     </div>
 
@@ -425,17 +367,10 @@
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             if(element) element.classList.add('active');
             
-            if(url === 'dashboard') {
-                document.getElementById('default-view').style.display = 'flex';
-                document.getElementById('content-frame').style.display = 'none';
-                document.getElementById('content-frame').src = '';
-                history.replaceState(null, null, ' ');
-            } else {
-                document.getElementById('default-view').style.display = 'none';
-                document.getElementById('content-frame').style.display = 'block';
-                document.getElementById('content-frame').src = url + "?v=" + new Date().getTime();
-                window.location.hash = url;
-            }
+            if(url === 'dashboard') url = 'admin-dashboard.html';
+            
+            document.getElementById('content-frame').src = url + "?v=" + new Date().getTime();
+            window.location.hash = url;
         }
 
         function restoreFromHash() {
@@ -450,121 +385,13 @@
             return false;
         }
 
-        function setText(id, value) {
-            const element = document.getElementById(id);
-            if (element) element.textContent = String(value);
-        }
-
-        function escapeHtml(text) {
-            return String(text || "")
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll("\"", "&quot;")
-                .replaceAll("'", "&#39;");
-        }
-
-        function activityMeta(totalQueries) {
-            if (totalQueries >= 10) return { label: "High", className: "activity-high" };
-            if (totalQueries >= 3) return { label: "Medium", className: "activity-medium" };
-            return { label: "Low", className: "activity-low" };
-        }
-
-        function applyHealth(repoStatus) {
-            const failed = Number(repoStatus.failed || 0);
-            const pending = Number(repoStatus.pending || 0);
-            const badge = document.getElementById("healthBadge");
-            if (!badge) return;
-
-            if (failed > 0) {
-                badge.className = "health warn";
-                badge.innerHTML = "<i class='fa-solid fa-circle'></i><span>System degraded</span>";
-                return;
+        window.addEventListener('DOMContentLoaded', () => {
+            const restored = restoreFromHash();
+            if(!restored) {
+                // By default, load the admin-dashboard.html
+                loadPage('admin-dashboard.html', document.getElementById('nav-dashboard'));
             }
-
-            if (pending > 0) {
-                badge.className = "health warn";
-                badge.innerHTML = "<i class='fa-solid fa-circle'></i><span>System syncing</span>";
-                return;
-            }
-
-            badge.className = "health ok";
-            badge.innerHTML = "<i class='fa-solid fa-circle'></i><span>System healthy</span>";
-        }
-
-        async function loadOverview() {
-            const response = await fetch("/api/admin/overview", { cache: "no-store" });
-            if (!response.ok) {
-                throw new Error("Overview fetch failed");
-            }
-
-            const data = await response.json();
-            setText("totalUsers", data.total_users || 0);
-            setText("globalDocs", data.global_docs || 0);
-            setText("personalDocs", data.personal_docs || 0);
-            setText("totalQueries", data.total_queries || 0);
-            setText("interactionsCount", data.total_queries || 0);
-            setText("readyRepos", data.repo_status ? (data.repo_status.ready || 0) : 0);
-            setText("pendingRepos", data.repo_status ? (data.repo_status.pending || 0) : 0);
-            setText("failedRepos", data.repo_status ? (data.repo_status.failed || 0) : 0);
-
-            applyHealth(data.repo_status || {});
-
-            const summary = "Tracked " + (data.total_chunks || 0) + " indexed code chunks across " + (data.global_docs || 0) + " repositories.";
-            setText("analyticsSummary", summary);
-        }
-
-        async function loadUsers() {
-            const response = await fetch("/api/admin/users", { cache: "no-store" });
-            if (!response.ok) {
-                throw new Error("Users fetch failed");
-            }
-
-            const data = await response.json();
-            const users = Array.isArray(data.users) ? data.users : [];
-            const tbody = document.getElementById("activityTableBody");
-            if (!tbody) return;
-
-            if (!users.length) {
-                tbody.innerHTML = "<tr><td colspan='3' class='muted-row'>No users found.</td></tr>";
-                return;
-            }
-
-            tbody.innerHTML = users.map((user) => {
-                const totalQueries = Number(user.total_queries || 0);
-                const activity = activityMeta(totalQueries);
-                const name = user.full_name || user.username || user.id || "Unknown User";
-                const email = user.email ? ("<div class='subtle'>" + escapeHtml(user.email) + "</div>") : "";
-
-                return "<tr>" +
-                    "<td><strong>" + escapeHtml(name) + "</strong>" + email + "</td>" +
-                    "<td><span class='activity-tag " + activity.className + "'>" + activity.label + "</span></td>" +
-                    "<td>" + totalQueries + "</td>" +
-                "</tr>";
-            }).join("");
-        }
-
-        async function refreshAdmin() {
-            try {
-                await Promise.all([loadOverview(), loadUsers()]);
-            } catch (error) {
-                const tbody = document.getElementById("activityTableBody");
-                if (tbody) {
-                    tbody.innerHTML = "<tr><td colspan='3' class='muted-row'>Could not load admin data. Check backend server.</td></tr>";
-                }
-                const badge = document.getElementById("healthBadge");
-                if (badge) {
-                    badge.className = "health warn";
-                    badge.innerHTML = "<i class='fa-solid fa-circle'></i><span>Backend unavailable</span>";
-                }
-            }
-        }
-
-        refreshAdmin();
-        if (!restoreFromHash()) {
-            // Only set default if there is no hash
-        }
-        setInterval(refreshAdmin, 20000);
+        });
     </script>
 </body>
 </html>

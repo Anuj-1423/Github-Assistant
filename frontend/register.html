@@ -225,7 +225,7 @@
         <form id="regForm">
             <div class="input-group">
                 <i class="fas fa-id-badge input-icon"></i>
-                <input type="text" class="auth-input" placeholder="Full Designation (Name)" required>
+                <input type="text" id="nameInput" class="auth-input" placeholder="Full Designation (Name)" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-envelope input-icon"></i>
@@ -233,7 +233,7 @@
             </div>
             <div class="input-group">
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" class="auth-input" placeholder="Neural Access Key" required>
+                <input type="password" id="passwordInput" class="auth-input" placeholder="Neural Access Key" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-user-shield input-icon"></i>
@@ -253,6 +253,8 @@
             </div>
 
             <button type="submit" class="btn-auth btn-register">Initialize Registration</button>
+            <div id="reg-error" style="display:none; margin-top: 16px; padding: 12px 16px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; color: #ef4444; font-size: 13px; font-weight: 600; text-align: center;"></div>
+            <div id="reg-success" style="display:none; margin-top: 16px; padding: 12px 16px; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 10px; color: #22c55e; font-size: 13px; font-weight: 600; text-align: center;"></div>
         </form>
 
         <p style="text-align: center; margin-top: 40px; font-size: 14px; color: var(--text-muted);">
@@ -276,19 +278,49 @@
         }
 
         // Form handling
-        document.getElementById('regForm').addEventListener('submit', (e) => {
+        document.getElementById('regForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const role = document.getElementById('operatorRole').value;
             const email = document.getElementById('emailInput').value.trim().toLowerCase();
-            
-            // Store registration data in localStorage
-            localStorage.setItem('userRole_' + email, role);
+            const name = document.getElementById('nameInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+
+            const errDiv = document.getElementById('reg-error');
+            const okDiv = document.getElementById('reg-success');
+            errDiv.style.display = 'none';
+            okDiv.style.display = 'none';
+
+            if (!name || !email || !password || !role) {
+                errDiv.innerText = 'All fields are required.';
+                errDiv.style.display = 'block';
+                return;
+            }
             
             document.getElementById('loader').style.display = 'flex';
             
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 2000);
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ full_name: name, email: email, password: password, role: role })
+                });
+                
+                const data = await response.json();
+                document.getElementById('loader').style.display = 'none';
+
+                if (response.ok) {
+                    okDiv.innerText = `Registration successful! Redirecting to login...`;
+                    okDiv.style.display = 'block';
+                    setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                } else {
+                    errDiv.innerText = data.detail || 'Registration failed.';
+                    errDiv.style.display = 'block';
+                }
+            } catch (err) {
+                document.getElementById('loader').style.display = 'none';
+                errDiv.innerText = 'Network error. Cannot reach backend.';
+                errDiv.style.display = 'block';
+            }
         });
     </script>
 </body>

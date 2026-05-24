@@ -301,20 +301,44 @@
         }
 
         // Form handling
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('emailInput').value.trim().toLowerCase();
-            const storedRole = localStorage.getItem('userRole_' + email);
+            const password = document.querySelector('input[placeholder="Neural Key"]').value;
             
             document.getElementById('loader').style.display = 'flex';
-            setTimeout(() => {
-                // If they registered as admin or explicitly use an admin email
-                if (storedRole === 'admin' || email.includes('admin')) {
-                    window.location.href = 'admin.html';
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: password })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const user = data.user;
+                    
+                    // Store real authentication tokens
+                    localStorage.setItem('auth_user_id', user.id);
+                    localStorage.setItem('auth_user_role', user.role);
+                    
+                    setTimeout(() => {
+                        if (user.role === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'user-dashboard.html';
+                        }
+                    }, 1000);
                 } else {
-                    window.location.href = 'user-dashboard.html';
+                    const error = await response.json();
+                    alert("Authentication Failed: " + error.detail);
+                    document.getElementById('loader').style.display = 'none';
                 }
-            }, 2000);
+            } catch (err) {
+                alert("Network error. Cannot reach backend.");
+                document.getElementById('loader').style.display = 'none';
+            }
         });
     </script>
 </body>

@@ -50,9 +50,19 @@
                 <button id="nav-dashboard" class="sidebar-nav-btn active" onclick="window.location.hash='dashboard'"><i class="fas fa-th-large"></i> Dashboard Home</button>
                 <button class="sidebar-nav-btn" onclick="showIndexModal()"><i class="fas fa-plus-circle"></i> Index Repository</button>
                 <button id="nav-analytics" class="sidebar-nav-btn" onclick="window.location.hash='analytics'"><i class="fas fa-chart-line"></i> Global Analytics</button>
+                <button id="nav-profile" class="sidebar-nav-btn" onclick="window.location.hash='profile'"><i class="fas fa-user-circle"></i> Operator Profile</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin.html'"><i class="fas fa-user-shield"></i> Operator Access</button>
-                <button class="sidebar-nav-btn" style="margin-top: 32px; color: #ef4444;" onclick="window.location.href='login.html'"><i class="fas fa-sign-out-alt"></i> Logout Session</button>
+                <button class="sidebar-nav-btn" style="margin-top: 32px; color: #ef4444;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout Session</button>
             </nav>
+
+            <script>
+                function logout() {
+                    localStorage.removeItem('auth_user_id');
+                    localStorage.removeItem('auth_user_role');
+                    sessionStorage.clear();
+                    window.location.href = 'index.html';
+                }
+            </script>
 
             <div class="premium-card" style="margin-top: auto; padding: 20px;">
                 <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Storage Quota</div>
@@ -129,6 +139,44 @@
             </div>
             </div> <!-- End view-dashboard -->
 
+            <div id="view-profile" style="display: none;">
+                <header style="margin-bottom: 64px;">
+                    <span class="badge" style="margin-bottom: 16px; display: inline-block;">OPERATOR CLEARANCE</span>
+                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;">Identity Matrix</h2>
+                    <p style="color: var(--text-secondary); font-size: 16px;">View and manage your core system parameters.</p>
+                </header>
+
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; max-width: 800px; box-shadow: 0 4px 30px rgba(0,0,0,0.2);">
+                    <div style="display: flex; gap: 32px; align-items: flex-start;">
+                        <div style="width: 100px; height: 100px; background: var(--primary-brand); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: white; box-shadow: 0 10px 25px rgba(99,102,241,0.3);" id="profile-avatar-large">U</div>
+                        <div style="flex: 1;">
+                            <div style="margin-bottom: 24px;">
+                                <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Full Designation</div>
+                                <div id="profile-name" style="font-size: 24px; font-weight: 800;">Loading...</div>
+                            </div>
+                            <div style="margin-bottom: 24px;">
+                                <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Neural Identifier (Email)</div>
+                                <div id="profile-email" style="font-size: 16px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">Loading...</div>
+                            </div>
+                            <div style="display: flex; gap: 40px; margin-bottom: 24px;">
+                                <div>
+                                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Clearance Level</div>
+                                    <div id="profile-role" style="font-size: 14px; font-weight: 700; color: #10b981; background: rgba(16,185,129,0.1); padding: 4px 12px; border-radius: 6px; display: inline-block;">Loading...</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">System ID</div>
+                                    <div id="profile-id" style="font-size: 14px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Loading...</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-subtle);">
+                                <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;"><i class="fas fa-shield-alt" style="color: var(--text-muted); margin-right: 8px;"></i> Security Constraints</h4>
+                                <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">Your data is completely isolated. Only you can view, query, and modify repositories uploaded under this clearance matrix. Your neural keys are heavily encrypted within the core vault.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="view-analytics" style="display: none;">
                 <header class="analytics-hero">
                     <div class="badge" style="margin-bottom: 12px;">GLOBAL TELEMETRY</div>
@@ -174,12 +222,22 @@
     </div>
 
     <script>
+        // === AUTH GUARD ===
+        (function() {
+            const userId = localStorage.getItem('auth_user_id');
+            if (!userId) {
+                window.location.href = 'login.html';
+            }
+        })();
+
         function switchView(viewName) {
             document.getElementById('view-dashboard').style.display = viewName === 'dashboard' ? 'block' : 'none';
             document.getElementById('view-analytics').style.display = viewName === 'analytics' ? 'block' : 'none';
+            document.getElementById('view-profile').style.display = viewName === 'profile' ? 'block' : 'none';
             
             document.getElementById('nav-dashboard').classList.toggle('active', viewName === 'dashboard');
             document.getElementById('nav-analytics').classList.toggle('active', viewName === 'analytics');
+            document.getElementById('nav-profile').classList.toggle('active', viewName === 'profile');
             
             if (viewName === 'analytics' && !window.chartsRendered) {
                 renderCharts();
@@ -221,57 +279,89 @@
 
         async function loadProfile() {
             try {
-                const response = await fetch('/api/user/profile');
+                const userId = localStorage.getItem('auth_user_id');
+                const response = await fetch('/api/user/profile', {
+                    headers: userId ? { 'X-User-Id': userId } : {}
+                });
                 if (response.ok) {
                     const profile = await response.json();
                     if (profile && profile.full_name) {
-                        document.getElementById('user-avatar').innerText = profile.full_name.charAt(0).toUpperCase();
+                        const initial = profile.full_name.charAt(0).toUpperCase();
+                        document.getElementById('user-avatar').innerText = initial;
+                        
+                        // Populate new Profile tab
+                        const avatarLarge = document.getElementById('profile-avatar-large');
+                        if (avatarLarge) avatarLarge.innerText = initial;
+                        
+                        const nameEl = document.getElementById('profile-name');
+                        if (nameEl) nameEl.innerText = profile.full_name;
+                        
+                        const emailEl = document.getElementById('profile-email');
+                        if (emailEl) emailEl.innerText = profile.email || 'N/A';
+                        
+                        const roleEl = document.getElementById('profile-role');
+                        if (roleEl) roleEl.innerText = profile.role === 'admin' ? 'SYSTEM ADMIN' : 'STANDARD OPERATOR';
+                        
+                        const idEl = document.getElementById('profile-id');
+                        if (idEl) idEl.innerText = profile.id;
                     }
                 }
             } catch (err) {}
         }
 
         async function loadRepos() {
+            const userId = localStorage.getItem('auth_user_id');
+            const headers = userId ? { 'X-User-Id': userId } : {};
+
+            // Always default the stats to 0 immediately (never "Loading...")
+            document.getElementById('stat-repos').innerText = '0';
+            document.getElementById('stat-chunks').innerText = '0';
+            document.getElementById('stat-queries').innerText = '0';
+
             try {
-                const response = await fetch('/api/repos');
+                const response = await fetch('/api/repos', { headers });
                 if (response.ok) {
                     const repos = await response.json();
                     const container = document.getElementById('repo-list-container');
+
+                    // Always update repo count stat
+                    document.getElementById('stat-repos').innerText = repos.length;
+
                     if (repos.length === 0) {
                         container.innerHTML = '<div class="repo-card" style="justify-content: center; opacity: 0.5;">No repositories indexed yet.</div>';
-                        return;
-                    }
-                    container.innerHTML = repos.map(repo => `
-                        <div class="repo-card" style="position: relative;">
-                            <div style="display: flex; align-items: center; gap: 20px; cursor: pointer; flex: 1;" onclick="window.location.href='chat.html?repo=${repo.id}'">
-                                <div class="logo-box" style="background: rgba(99, 102, 241, 0.1); color: var(--primary-brand);"><i class="fas fa-folder"></i></div>
-                                <div>
-                                    <h4 style="font-size: 16px; margin-bottom: 4px;">${repo.name}</h4>
-                                    <p style="font-size: 12px; color: var(--text-muted);">${repo.url}</p>
-                                </div>
-                            </div>
-                            <div style="text-align: right; display: flex; align-items: center; gap: 20px;">
-                                <div>
-                                    <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Status</div>
-                                    <div style="font-size: 13px; font-weight: 700; color: #22c55e;">
-                                        <span class="health-indicator" style="background: #22c55e;"></span>ACTIVE
+                    } else {
+                        container.innerHTML = repos.map(repo => `
+                            <div class="repo-card" style="position: relative;">
+                                <div style="display: flex; align-items: center; gap: 20px; cursor: pointer; flex: 1;" onclick="window.location.href='chat.html?repo=${repo.id}'">
+                                    <div class="logo-box" style="background: rgba(99, 102, 241, 0.1); color: var(--primary-brand);"><i class="fas fa-folder"></i></div>
+                                    <div>
+                                        <h4 style="font-size: 16px; margin-bottom: 4px;">${repo.name}</h4>
+                                        <p style="font-size: 12px; color: var(--text-muted);">${repo.url}</p>
                                     </div>
                                 </div>
-                                <button class="btn" style="padding: 8px 12px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; cursor: pointer;" onclick="downloadRepo('${repo.id}', event)" title="Download Repository Zip"><i class="fas fa-download"></i></button>
-                                <button class="btn-danger" onclick="deleteRepo('${repo.id}', event)" title="Delete Repository and All Data"><i class="fas fa-trash-alt"></i></button>
+                                <div style="text-align: right; display: flex; align-items: center; gap: 20px;">
+                                    <div>
+                                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Status</div>
+                                        <div style="font-size: 13px; font-weight: 700; color: #22c55e;">
+                                            <span class="health-indicator" style="background: #22c55e;"></span>ACTIVE
+                                        </div>
+                                    </div>
+                                    <button class="btn" style="padding: 8px 12px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 6px; cursor: pointer;" onclick="downloadRepo('${repo.id}', event)" title="Download Repository Zip"><i class="fas fa-download"></i></button>
+                                    <button class="btn-danger" onclick="deleteRepo('${repo.id}', event)" title="Delete Repository and All Data"><i class="fas fa-trash-alt"></i></button>
+                                </div>
                             </div>
-                        </div>
-                    `).join('');
+                        `).join('');
+                    }
                 }
-                
-                const statsRes = await fetch('/api/admin/overview');
+            } catch (err) {}
+
+            // Fetch user-specific stats (queries & chunks)
+            try {
+                const statsRes = await fetch('/api/user/stats', { headers });
                 if (statsRes.ok) {
                     const stats = await statsRes.json();
-                    document.getElementById('stat-repos').innerText = stats.global_docs || 0;
-                    document.getElementById('stat-chunks').innerText = stats.total_chunks || 0;
-                    document.getElementById('stat-queries').innerText = stats.total_queries || 0;
-                    
-                    // Activity log was removed
+                    document.getElementById('stat-chunks').innerText = stats.total_chunks ?? 0;
+                    document.getElementById('stat-queries').innerText = stats.total_queries ?? 0;
                 }
             } catch (err) {}
         }
@@ -301,9 +391,13 @@
             btn.disabled = true;
             
             try {
+                const userId = localStorage.getItem('auth_user_id');
                 const response = await fetch('/api/repos', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(userId ? { 'X-User-Id': userId } : {})
+                    },
                     body: JSON.stringify({ repo_url: url })
                 });
                 
@@ -330,8 +424,10 @@
             if (!confirm("Are you sure you want to completely purge this repository and all its vectors? This action cannot be undone.")) return;
             
             try {
+                const userId = localStorage.getItem('auth_user_id');
                 const response = await fetch(`/api/repos/${repoId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: userId ? { 'X-User-Id': userId } : {}
                 });
                 
                 if (response.ok) {

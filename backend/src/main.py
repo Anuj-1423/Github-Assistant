@@ -67,6 +67,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+SYSTEM_OFFLINE = False
+
+@app.middleware("http")
+async def emergency_lockdown_middleware(request: Request, call_next):
+    global SYSTEM_OFFLINE
+    if SYSTEM_OFFLINE:
+        path = request.url.path
+        # Block user APIs but allow frontend and admin operations
+        if path.startswith("/api/") and not path.startswith("/api/admin/"):
+            return JSONResponse(status_code=503, content={"detail": "System Offline: Emergency Maintenance Mode Active"})
+            
+    response = await call_next(request)
+    return response
+
 # Global store for active jobs
 jobs = {}
 
@@ -98,6 +112,60 @@ class GlossaryUpsertRequest(BaseModel):
 class NoteCreateRequest(BaseModel):
     note: str
     source_query: Optional[str] = None
+
+class AuthLogin(BaseModel):
+    email: str
+    password: str
+
+class AuthRegister(BaseModel):
+    full_name: str
+    email: str
+    password: str
+    role: str = "user"
+
+@app.post("/api/auth/register")
+async def register_user(req: AuthRegister):
+    store = get_storage()
+    if hasattr(store, "create_user"):
+        user = store.create_user(req.email, req.password, req.full_name, req.role)
+        if user:
+            return {"status": "success", "user": user}
+        raise HTTPException(status_code=400, detail="User already exists")
+    raise HTTPException(status_code=501, detail="Auth not implemented")
+
+@app.post("/api/auth/login")
+async def login_user(req: AuthLogin):
+    store = get_storage()
+    if hasattr(store, "authenticate_user"):
+        user = store.authenticate_user(req.email, req.password)
+        if user:
+            return {"status": "success", "user": user}
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    raise HTTPException(status_code=501, detail="Auth not implemented")
+
+@app.get("/api/user/profile")
+async def get_user_profile(request: Request):
+    user_id = request.headers.get("X-User-Id")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    store = get_storage()
+    if hasattr(store, "get_user_profile"):
+        profile = store.get_user_profile(user_id)
+        if profile:
+            # Remove password_hash from response for security
+            profile.pop("password_hash", None)
+            return profile
+    raise HTTPException(status_code=404, detail="User not found")
+
+@app.get("/api/user/stats")
+async def get_user_stats(request: Request):
+    user_id = request.headers.get("X-User-Id")
+    if not user_id:
+        return {"total_queries": 0, "total_chunks": 0}
+    store = get_storage()
+    if hasattr(store, "get_user_stats"):
+        return store.get_user_stats(user_id)
+    return {"total_queries": 0, "total_chunks": 0}
 
 # Serve Static Files
 # Note: Ensure the 'frontend' folder exists at the root of the workspace
@@ -171,7 +239,10 @@ async def serve_css():
     return FileResponse(os.path.join(FRONTEND_DIR, "style.css"), media_type="text/css")
 
 @app.post("/api/repos")
-async def create_repo(repo: RepoCreate, background_tasks: BackgroundTasks):
+async def create_repo(repo: RepoCreate, background_tasks: BackgroundTasks, request: Request):
+    user_id = request.headers.get("X-User-Id")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Unauthorized: X-User-Id missing")
     store = get_storage()
     repo_name = repo.repo_url.split('/')[-1] if '/' in repo.repo_url else repo.repo_url
     
@@ -184,7 +255,7 @@ async def create_repo(repo: RepoCreate, background_tasks: BackgroundTasks):
     
     # Initialize in DB as PENDING so it shows up in dashboard immediately
     if hasattr(store, "upsert_repo"):
-        store.upsert_repo(job.repo_id, repo_name, repo.repo_url, repo.branch, status="PENDING")
+        store.upsert_repo(job.repo_id, repo_name, repo.repo_url, repo.branch, status="PENDING", user_id=user_id)
 
     async def run_job():
         # Re-fetch store in the thread to be safe
@@ -194,7 +265,7 @@ async def create_repo(repo: RepoCreate, background_tasks: BackgroundTasks):
             jobs[job.repo_id].update(result)
             # Persist the READY status to DB
             if hasattr(thread_store, "upsert_repo"):
-                thread_store.upsert_repo(job.repo_id, repo_name, repo.repo_url, repo.branch, status="READY")
+                thread_store.upsert_repo(job.repo_id, repo_name, repo.repo_url, repo.branch, status="READY", user_id=user_id)
         except Exception as e:
             jobs[job.repo_id].update({
                 "status": "FAILED",
@@ -202,16 +273,20 @@ async def create_repo(repo: RepoCreate, background_tasks: BackgroundTasks):
             })
             # Persist the FAILED status to DB
             if hasattr(thread_store, "upsert_repo"):
-                thread_store.upsert_repo(job.repo_id, repo_name, repo.repo_url, repo.branch, status="FAILED")
+                thread_store.upsert_repo(job.repo_id, repo_name, repo.repo_url, repo.branch, status="FAILED", user_id=user_id)
         
     background_tasks.add_task(run_job)
     return {"repo_id": job.repo_id, "status": "PENDING"}
 
 @app.get("/api/repos")
-async def list_repositories():
+async def list_repositories(request: Request):
+    user_id = request.headers.get("X-User-Id")
+    if not user_id:
+        return []
     store = get_storage()
     if hasattr(store, "list_repos"):
-        return store.list_repos()
+        # If user is admin, we might want to return all. But for isolation, return only user's repos
+        return store.list_repos(user_id=user_id)
     return []
 
 @app.delete("/api/repos/{repo_id}")
@@ -443,7 +518,10 @@ async def add_repo_note(repo_id: str, request: NoteCreateRequest):
     return {"status": "ok"}
 
 @app.post("/api/repos/{repo_id}/query", response_model=QueryResponse)
-async def query_repo(repo_id: str, request: QueryRequest):
+async def query_repo(repo_id: str, request_body: QueryRequest, request: Request):
+    user_id = request.headers.get("X-User-Id")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Unauthorized: X-User-Id missing")
     ensure_repo_exists(repo_id)
 
     retriever = HybridRetriever(repo_id)
@@ -464,14 +542,14 @@ async def query_repo(repo_id: str, request: QueryRequest):
         retriever,
         graph,
         repo_path,
-        audience_mode=request.audience_mode or "pro",
+        audience_mode=request_body.audience_mode or "pro",
         memory_context=memory_context,
     )
-    result = await agent.answer(request.query)
+    result = await agent.answer(request_body.query)
     
     # Handle flow visualization if result is empty
-    if not result.get("flow") and request.mode == "flow":
-        relevant_chunks = retriever.retrieve(request.query, limit=1)
+    if not result.get("flow") and request_body.mode == "flow":
+        relevant_chunks = retriever.retrieve(request_body.query, limit=1)
         if relevant_chunks:
             chunk = relevant_chunks[0]
             symbol_id = f"{chunk['file_path']}::{chunk['symbol_name']}"
@@ -491,7 +569,7 @@ async def query_repo(repo_id: str, request: QueryRequest):
                 })
     answer_text = result.get("answer", "No answer generated.")
     if hasattr(store, "log_query"):
-        store.log_query(repo_id=repo_id, query=request.query, user_id="default_user", answer=answer_text)
+        store.log_query(repo_id=repo_id, query=request_body.query, user_id=user_id, answer=answer_text)
 
     return {
         "answer": answer_text,
@@ -501,11 +579,15 @@ async def query_repo(repo_id: str, request: QueryRequest):
     }
 
 @app.get("/api/repos/{repo_id}/query-logs")
-async def get_repo_query_logs(repo_id: str, limit: int = Query(default=50, ge=1, le=500)):
+async def get_repo_query_logs(repo_id: str, request: Request, limit: int = Query(default=50, ge=1, le=500)):
+    user_id = request.headers.get("X-User-Id")
+    if not user_id:
+        return {"logs": []}
     ensure_repo_exists(repo_id)
     store = get_storage()
     if hasattr(store, "list_query_logs_for_repo"):
-        return {"logs": store.list_query_logs_for_repo(repo_id, limit=limit)}
+        logs = store.list_query_logs_for_repo(repo_id, limit=limit)
+        return {"logs": [l for l in logs if l.get('user_id') == user_id]}
     return {"logs": []}
 
 @app.post("/api/repos/{repo_id}/search")
@@ -520,7 +602,8 @@ async def deep_code_search(repo_id: str, request: QueryRequest):
     return {"results": []}
 
 @app.post("/api/repos/{repo_id}/query/stream")
-async def query_repo_stream(repo_id: str, request: QueryRequest):
+async def query_repo_stream(repo_id: str, request_body: QueryRequest, request: Request):
+    user_id = request.headers.get("X-User-Id", "system")
     ensure_repo_exists(repo_id)
     
     retriever = HybridRetriever(repo_id)
@@ -545,13 +628,13 @@ async def query_repo_stream(repo_id: str, request: QueryRequest):
 
     async def event_generator():
         full_answer = ""
-        async for chunk in agent.answer_stream(request.query):
+        async for chunk in agent.answer_stream(request_body.query):
             if "content" in chunk:
                 full_answer += chunk["content"]
             yield json.dumps(chunk) + "\n"
             
         if hasattr(store, "log_query"):
-            store.log_query(repo_id=repo_id, query=request.query, user_id="default_user", answer=full_answer)
+            store.log_query(repo_id=repo_id, query=request_body.query, user_id=user_id, answer=full_answer)
 
     return StreamingResponse(event_generator(), media_type="application/x-ndjson")
 
@@ -599,6 +682,18 @@ async def update_user_status(user_id: str, request: UserStatusUpdate):
         store.update_user_status(user_id, request.status)
         return {"status": "success", "user_id": user_id, "new_status": request.status}
     raise HTTPException(status_code=501, detail="User status update not supported")
+
+@app.post("/api/admin/shutdown")
+async def emergency_shutdown():
+    global SYSTEM_OFFLINE
+    SYSTEM_OFFLINE = True
+    return {"status": "maintenance_mode_enabled", "message": "System is now in Emergency Maintenance Mode. User APIs are blocked."}
+
+@app.post("/api/admin/resume")
+async def resume_system():
+    global SYSTEM_OFFLINE
+    SYSTEM_OFFLINE = False
+    return {"status": "system_resumed", "message": "System has been restored to normal operations."}
 
 @app.get("/api/admin/users/{user_id}")
 async def get_user_details(user_id: str):
