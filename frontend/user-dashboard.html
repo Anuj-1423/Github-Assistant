@@ -32,9 +32,9 @@
         <aside class="nav-rail">
             <div class="rail-item active"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
             <div class="rail-item" onclick="window.location.href='chat.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-            <div class="rail-item" onclick="window.location.href='user-analytics.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
-            <div class="rail-item" onclick="window.location.href='user-settings.html'" style="margin-top: auto;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
-            <div id="user-avatar" class="rail-item" style="background: var(--surface-elevated); border: 1px solid var(--border-subtle); font-weight: 800; font-size: 12px;">U</div>
+            <div class="rail-item" onclick="window.location.hash='analytics'" title="Global Analytics" style="cursor: pointer;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+
+            <div id="user-avatar" class="rail-item" onclick="window.location.hash='profile'" style="background: var(--surface-elevated); border: 1px solid var(--border-subtle); font-weight: 800; font-size: 12px; cursor: pointer;" title="Operator Profile">U</div>
         </aside>
 
         <aside class="sidebar">
@@ -51,7 +51,6 @@
                 <button class="sidebar-nav-btn" onclick="showIndexModal()"><i class="fas fa-plus-circle"></i> Index Repository</button>
                 <button id="nav-analytics" class="sidebar-nav-btn" onclick="window.location.hash='analytics'"><i class="fas fa-chart-line"></i> Global Analytics</button>
                 <button id="nav-profile" class="sidebar-nav-btn" onclick="window.location.hash='profile'"><i class="fas fa-user-circle"></i> Operator Profile</button>
-                <button class="sidebar-nav-btn" onclick="window.location.href='admin.html'"><i class="fas fa-user-shield"></i> Operator Access</button>
                 <button class="sidebar-nav-btn" style="margin-top: 32px; color: #ef4444;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout Session</button>
             </nav>
 
@@ -186,24 +185,24 @@
 
                 <div class="stat-grid-large">
                     <div class="premium-card">
-                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Cyclomatic Complexity</div>
-                        <div style="font-size: 32px; font-weight: 800;">14.2</div>
-                        <div style="font-size: 12px; color: #fbbf24; margin-top: 8px;">Moderate Overload</div>
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Total Source Files</div>
+                        <div id="ana-total-files" style="font-size: 32px; font-weight: 800;">—</div>
+                        <div id="ana-total-files-sub" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Across your repos</div>
                     </div>
                     <div class="premium-card">
-                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Dependency Depth</div>
-                        <div style="font-size: 32px; font-weight: 800;">8 Levels</div>
-                        <div style="font-size: 12px; color: #22c55e; margin-top: 8px;">Optimal Hierarchy</div>
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Knowledge Units</div>
+                        <div id="ana-total-chunks" style="font-size: 32px; font-weight: 800;">—</div>
+                        <div style="font-size: 12px; color: #22c55e; margin-top: 8px;">Indexed Blocks</div>
                     </div>
                     <div class="premium-card">
-                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Hotspot Density</div>
-                        <div style="font-size: 32px; font-weight: 800;">4 files</div>
-                        <div style="font-size: 12px; color: #ef4444; margin-top: 8px;">Requires Refactor</div>
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Repositories</div>
+                        <div id="ana-total-repos" style="font-size: 32px; font-weight: 800;">—</div>
+                        <div id="ana-total-repos-sub" style="font-size: 12px; color: #22c55e; margin-top: 8px;">Your workspaces</div>
                     </div>
                     <div class="premium-card">
-                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Semantic Cohesion</div>
-                        <div style="font-size: 32px; font-weight: 800;">88.2%</div>
-                        <div style="font-size: 12px; color: var(--primary-brand); margin-top: 8px;">High Consistency</div>
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Total Queries</div>
+                        <div id="ana-total-queries" style="font-size: 32px; font-weight: 800;">—</div>
+                        <div style="font-size: 12px; color: var(--primary-brand); margin-top: 8px;">Inquiry Logs</div>
                     </div>
                 </div>
 
@@ -255,25 +254,116 @@
             switchView(hash);
         });
 
-        function renderCharts() {
+        // switchView triggers renderAnalytics only once
+        async function renderCharts() {
+            const userId = localStorage.getItem('auth_user_id');
+            const headers = userId ? { 'X-User-Id': userId } : {};
+
+            // --- 1. Fetch user's repos ---
+            let repos = [];
+            try {
+                const r = await fetch('/api/repos', { headers });
+                if (r.ok) repos = await r.json();
+            } catch(e) {}
+
+            document.getElementById('ana-total-repos').innerText = repos.length;
+            document.getElementById('ana-total-repos-sub').innerText =
+                repos.length === 1 ? '1 workspace' : `${repos.length} workspaces`;
+
+            // --- 2. Fetch user stats (chunks + queries) ---
+            try {
+                const sr = await fetch('/api/user/stats', { headers });
+                if (sr.ok) {
+                    const stats = await sr.json();
+                    document.getElementById('ana-total-chunks').innerText = (stats.total_chunks ?? 0).toLocaleString();
+                    document.getElementById('ana-total-queries').innerText = (stats.total_queries ?? 0).toLocaleString();
+                }
+            } catch(e) {}
+
+            // --- 3. Gather per-repo file counts and language distribution ---
+            const langCount = {};
+            let totalFiles = 0;
+            const extMap = { '.py': 'Python', '.ts': 'TypeScript', '.tsx': 'TypeScript',
+                             '.js': 'JavaScript', '.jsx': 'JavaScript', '.go': 'Go',
+                             '.java': 'Java', '.rs': 'Rust', '.cs': 'C#', '.cpp': 'C++' };
+
+            for (const repo of repos) {
+                try {
+                    const fr = await fetch(`/api/repos/${repo.id}/files`);
+                    if (fr.ok) {
+                        const fd = await fr.json();
+                        const files = fd.files || [];
+                        totalFiles += files.length;
+                        files.forEach(f => {
+                            const ext = '.' + f.split('.').pop().toLowerCase();
+                            const lang = extMap[ext] || 'Other';
+                            langCount[lang] = (langCount[lang] || 0) + 1;
+                        });
+                    }
+                } catch(e) {}
+            }
+
+            document.getElementById('ana-total-files').innerText = totalFiles.toLocaleString();
+            document.getElementById('ana-total-files-sub').innerText =
+                repos.length > 0 ? `Across ${repos.length} repo${repos.length > 1 ? 's' : ''}` : 'No repos yet';
+
+            // --- 4. Module complexity chart (per-repo analytics aggregated) ---
+            const moduleLabels = [];
+            const moduleValues = [];
+            for (const repo of repos.slice(0, 3)) { // limit API calls
+                try {
+                    const ar = await fetch(`/api/repos/${repo.id}/analytics`);
+                    if (ar.ok) {
+                        const ad = await ar.json();
+                        const labels = ad.complexity_over_time?.labels || [];
+                        const values = ad.complexity_over_time?.values || [];
+                        labels.forEach((lbl, i) => {
+                            moduleLabels.push(lbl);
+                            moduleValues.push(values[i] || 0);
+                        });
+                    }
+                } catch(e) {}
+            }
+
+            // Growth chart — show real module complexity data or flat placeholder
             const growthCtx = document.getElementById('growthChart').getContext('2d');
+            const growthLabels = moduleLabels.length > 0 ? moduleLabels.slice(0, 10) : (repos.map(r => r.name) || ['No Data']);
+            const growthValues = moduleValues.length > 0 ? moduleValues.slice(0, 10) : repos.map(() => 0);
             new Chart(growthCtx, {
-                type: 'line',
+                type: 'bar',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{ label: 'Knowledge Shards', data: [2000, 4500, 3200, 8000, 12000, 14282], borderColor: '#6366f1', tension: 0.4, fill: false }]
+                    labels: growthLabels,
+                    datasets: [{ label: 'Symbol Complexity', data: growthValues,
+                        backgroundColor: 'rgba(99,102,241,0.5)', borderColor: '#6366f1',
+                        borderWidth: 1, borderRadius: 6 }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', maxRotation: 35, font: { size: 10 } } }
+                    }
+                }
             });
 
+            // Language distribution chart — real data
             const langCtx = document.getElementById('langChart').getContext('2d');
+            const langColors = ['#6366f1','#3b82f6','#8b5cf6','#22c55e','#f59e0b','#ef4444','#06b6d4','#475569'];
+            const langLabels = Object.keys(langCount).length > 0 ? Object.keys(langCount) : ['No files yet'];
+            const langValues = Object.keys(langCount).length > 0 ? Object.values(langCount) : [1];
             new Chart(langCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Python', 'TypeScript', 'Rust', 'Other'],
-                    datasets: [{ data: [45, 30, 15, 10], backgroundColor: ['#6366f1', '#3b82f6', '#8b5cf6', '#475569'], borderWidth: 0, hoverOffset: 4 }]
+                    labels: langLabels,
+                    datasets: [{ data: langValues,
+                        backgroundColor: langColors.slice(0, langLabels.length),
+                        borderWidth: 0, hoverOffset: 4 }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, padding: 20 } } } }
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, padding: 20 } } }
+                }
             });
         }
 
@@ -402,11 +492,18 @@
                 });
                 
                 if (response.ok) {
-                    closeIndexModal();
-                    loadRepos(); // Refresh the list
-                    btn.innerText = "Synchronize";
-                    btn.disabled = false;
-                    document.getElementById('inline-repo-url').value = '';
+                    const newRepo = await response.json();
+                    const repoId = newRepo.id || newRepo.repo_id;
+                    if (repoId) {
+                        window.location.href = `chat.html?repo=${repoId}`;
+                    } else {
+                        // Fallback: go to dashboard if no ID returned
+                        closeIndexModal();
+                        loadRepos();
+                        btn.innerText = "Synchronize";
+                        btn.disabled = false;
+                        document.getElementById('inline-repo-url').value = '';
+                    }
                 } else {
                     alert("Protocol Error: Ingestion failed.");
                     btn.innerText = "Synchronize";

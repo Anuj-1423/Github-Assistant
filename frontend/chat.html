@@ -112,7 +112,7 @@
                 <p style="font-size: 13px; color: var(--text-muted);">Architecture maps will be generated here during deep analysis.</p>
             </div>
 
-            <button class="btn btn-secondary" style="width: 100%; margin-top: 32px;" onclick="window.location.href='user-analytics.html'"><i class="fas fa-external-link-alt" style="margin-right: 8px;"></i> Open Full Analytics</button>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 32px;" onclick="window.location.href='user-analytics.html' + (repoId ? '?repo=' + repoId : '')"><i class="fas fa-external-link-alt" style="margin-right: 8px;"></i> Open Full Analytics</button>
         </aside>
 
         <!-- History Modal Overlay -->
@@ -177,9 +177,12 @@
         const params = new URLSearchParams(window.location.search);
         const repoId = params.get('repo');
         
+        const currentUserId = localStorage.getItem('auth_user_id') || 'guest';
+        const chatHistoryKey = `chat_history_${currentUserId}_${repoId}`;
+
         function startNewChat() {
             if (!repoId) return;
-            sessionStorage.removeItem(`chat_history_${repoId}`);
+            sessionStorage.removeItem(chatHistoryKey);
             window.location.reload();
         }
 
@@ -261,8 +264,8 @@
                 return;
             }
             
-            // Restore chat history from sessionStorage
-            const savedChat = sessionStorage.getItem(`chat_history_${repoId}`);
+            // Restore chat history from sessionStorage (per-user)
+            const savedChat = sessionStorage.getItem(chatHistoryKey);
             if (savedChat) {
                 document.getElementById('chat-messages').innerHTML = savedChat;
                 const chatBox = document.getElementById('chat-messages');
@@ -392,8 +395,8 @@
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
             
-            // Save chat history to sessionStorage
-            sessionStorage.setItem(`chat_history_${repoId}`, chatBox.innerHTML);
+            // Save chat history to sessionStorage (per-user)
+            sessionStorage.setItem(chatHistoryKey, chatBox.innerHTML);
         }
 
         async function toggleAnalysis() {
@@ -542,7 +545,7 @@
                 </div>
             `);
             
-            sessionStorage.setItem(`chat_history_${repoId}`, chatContainer.innerHTML);
+            sessionStorage.setItem(chatHistoryKey, chatContainer.innerHTML);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
@@ -555,7 +558,10 @@
             list.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">Loading history...</p>';
             
             try {
-                const response = await fetch(`/api/repos/${repoId}/query-logs`);
+                const userId = localStorage.getItem('auth_user_id');
+                const response = await fetch(`/api/repos/${repoId}/query-logs`, {
+                    headers: userId ? { 'X-User-Id': userId } : {}
+                });
                 if (response.ok) {
                     const data = await response.json();
                     if (!data.logs || data.logs.length === 0) {

@@ -14,13 +14,14 @@
         .chart-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; margin-bottom: 60px; }
         .complexity-map { height: 400px; background: rgba(255,255,255,0.02); border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
         .app-shell { grid-template-columns: 80px 300px 1fr !important; }
+        .hotspot-row { display:flex; justify-content:space-between; align-items:center; padding:20px; background:rgba(255,255,255,0.02); border-radius:16px; border:1px solid var(--border-subtle); margin-bottom:12px; }
     </style>
 </head>
 <body>
     <div class="app-shell">
         <aside class="nav-rail">
             <div class="rail-item" onclick="window.location.href='user-dashboard.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <div class="rail-item" onclick="window.location.href='chat.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <div class="rail-item" onclick="goBackToChat()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
             <div class="rail-item active"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
             <div id="user-avatar" class="rail-item" style="margin-top: auto; background: var(--surface-elevated); border: 1px solid var(--border-subtle); font-weight: 800;">U</div>
         </aside>
@@ -29,8 +30,8 @@
             <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
                 <div class="logo-box">CK</div>
                 <div>
-                    <h1 style="font-size: 14px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;">INSIGHTS</h1>
-                    <span style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">USER INTERFACE</span>
+                    <h1 style="font-size: 14px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;" id="sidebar-repo-name">INSIGHTS</h1>
+                    <span style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">REPO ANALYTICS</span>
                 </div>
             </div>
 
@@ -43,82 +44,66 @@
         </aside>
 
         <main class="main-content" style="padding: 60px; overflow-y: auto; flex: 1;">
+
+            <!-- === ANALYTICS VIEW === -->
             <div id="view-analytics">
-            <header class="analytics-hero">
-                <div class="badge" style="margin-bottom: 12px;">GLOBAL TELEMETRY</div>
-                <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">Architectural Insights</h2>
-                <p style="color: var(--text-secondary); font-size: 16px;">Advanced structural analysis across all indexed repositories.</p>
-            </header>
+                <header class="analytics-hero">
+                    <div class="badge" id="repo-badge" style="margin-bottom: 12px;">REPO TELEMETRY</div>
+                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;" id="analytics-title">Architectural Insights</h2>
+                    <p style="color: var(--text-secondary); font-size: 16px;" id="analytics-subtitle">Loading repository report...</p>
+                </header>
 
-            <div class="stat-grid-large">
-                <div class="premium-card">
-                    <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Cyclomatic Complexity</div>
-                    <div style="font-size: 32px; font-weight: 800;">14.2</div>
-                    <div style="font-size: 12px; color: #fbbf24; margin-top: 8px;">Moderate Overload</div>
-                </div>
-                <div class="premium-card">
-                    <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Dependency Depth</div>
-                    <div style="font-size: 32px; font-weight: 800;">8 Levels</div>
-                    <div style="font-size: 12px; color: #22c55e; margin-top: 8px;">Optimal Hierarchy</div>
-                </div>
-                <div class="premium-card">
-                    <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Hotspot Density</div>
-                    <div style="font-size: 32px; font-weight: 800;">4 files</div>
-                    <div style="font-size: 12px; color: #ef4444; margin-top: 8px;">Requires Refactor</div>
-                </div>
-                <div class="premium-card">
-                    <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Semantic Cohesion</div>
-                    <div style="font-size: 32px; font-weight: 800;">88.2%</div>
-                    <div style="font-size: 12px; color: var(--primary-brand); margin-top: 8px;">High Consistency</div>
-                </div>
-            </div>
-
-            <div class="chart-row">
-                <div class="complexity-map">
-                    <h3 style="font-size: 18px; margin-bottom: 24px;">Growth of Knowledge Shards</h3>
-                    <canvas id="growthChart"></canvas>
-                </div>
-                <div class="complexity-map">
-                    <h3 style="font-size: 18px; margin-bottom: 24px;">Language Distribution</h3>
-                    <canvas id="langChart"></canvas>
-                </div>
-            </div>
-
-            <section class="glass-panel" style="margin-bottom: 60px;">
-                <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 32px;">Top Complexity Hotspots</h3>
-                <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border-subtle);">
-                        <div style="display: flex; gap: 20px; align-items: center;">
-                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></div>
-                            <div>
-                                <div style="font-size: 15px; font-weight: 700;">backend/src/main.py</div>
-                                <div style="font-size: 12px; color: var(--text-muted);">High fan-in (82) • High complexity (48)</div>
-                            </div>
-                        </div>
-                        <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 12px;" onclick="alert('Feature under development.');">View in Chat</button>
+                <div class="stat-grid-large">
+                    <div class="premium-card">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Source Files</div>
+                        <div id="stat-files" style="font-size: 32px; font-weight: 800;">—</div>
+                        <div id="stat-files-sub" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Indexed in repo</div>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border-subtle);">
-                        <div style="display: flex; gap: 20px; align-items: center;">
-                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #fbbf24;"></div>
-                            <div>
-                                <div style="font-size: 15px; font-weight: 700;">frontend/src/store/index.ts</div>
-                                <div style="font-size: 12px; color: var(--text-muted);">Circular dependency detected with 'auth_service.ts'</div>
-                            </div>
-                        </div>
-                        <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 12px;" onclick="alert('Feature under development.');">Analyze Conflict</button>
+                    <div class="premium-card">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Graph Nodes</div>
+                        <div id="stat-nodes" style="font-size: 32px; font-weight: 800;">—</div>
+                        <div style="font-size: 12px; color: #22c55e; margin-top: 8px;">Symbols mapped</div>
+                    </div>
+                    <div class="premium-card">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Dependency Links</div>
+                        <div id="stat-edges" style="font-size: 32px; font-weight: 800;">—</div>
+                        <div style="font-size: 12px; color: var(--accent-blue); margin-top: 8px;">Graph edges</div>
+                    </div>
+                    <div class="premium-card">
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Modules</div>
+                        <div id="stat-modules" style="font-size: 32px; font-weight: 800;">—</div>
+                        <div style="font-size: 12px; color: var(--primary-brand); margin-top: 8px;">Top-level dirs</div>
                     </div>
                 </div>
-            </section>
+
+                <div class="chart-row">
+                    <div class="complexity-map">
+                        <h3 style="font-size: 18px; margin-bottom: 24px;">Module Complexity</h3>
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                    <div class="complexity-map">
+                        <h3 style="font-size: 18px; margin-bottom: 24px;">Language Distribution</h3>
+                        <canvas id="langChart"></canvas>
+                    </div>
+                </div>
+
+                <section class="glass-panel" style="margin-bottom: 60px;">
+                    <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 32px;">Top Impact Modules</h3>
+                    <div id="hotspots-container">
+                        <div style="color: var(--text-muted); font-size: 14px;">Loading...</div>
+                    </div>
+                </section>
             </div> <!-- End view-analytics -->
 
+            <!-- === SYSTEM MAP VIEW === -->
             <div id="view-system-map" style="display: none;">
                 <header class="analytics-hero">
                     <div class="badge" style="margin-bottom: 12px;">ARCHITECTURE VISUALIZATION</div>
-                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">System Maps</h2>
-                    <p style="color: var(--text-secondary); font-size: 16px;">Visual structural breakdown of all connected repositories.</p>
+                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">System Map</h2>
+                    <p style="color: var(--text-secondary); font-size: 16px;" id="map-repo-subtitle">Architecture map for this repository.</p>
                 </header>
                 <div id="system-maps-container" style="display: flex; flex-direction: column; gap: 40px;">
-                    <div style="color: var(--text-muted); font-size: 14px;">Loading system maps...</div>
+                    <div style="color: var(--text-muted); font-size: 14px;">Loading system map...</div>
                 </div>
             </div>
         </main>
@@ -132,298 +117,311 @@
                     <button onclick="closeMapModal()" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
                 </div>
             </div>
-            <div id="map-modal-content" style="flex: 1; overflow: auto; background: var(--surface-base); border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 40px;">
-                <!-- Fullscreen mermaid chart here -->
-            </div>
+            <div id="map-modal-content" style="flex: 1; overflow: auto; background: var(--surface-base); border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 40px;"></div>
         </div>
     </div>
 
     <script>
+        // === AUTH GUARD ===
+        (function() {
+            const userId = localStorage.getItem('auth_user_id');
+            if (!userId) window.location.href = 'login.html';
+        })();
+
         mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+
+        const params = new URLSearchParams(window.location.search);
+        const repoId = params.get('repo');
+        const userId = localStorage.getItem('auth_user_id');
+        const headers = userId ? { 'X-User-Id': userId } : {};
+
+        function goBackToChat() {
+            window.location.href = repoId ? `chat.html?repo=${repoId}` : 'chat.html';
+        }
 
         function switchView(viewName) {
             document.getElementById('view-analytics').style.display = viewName === 'analytics' ? 'block' : 'none';
             document.getElementById('view-system-map').style.display = viewName === 'system-map' ? 'block' : 'none';
-            
             document.getElementById('nav-analytics').classList.toggle('active', viewName === 'analytics');
             document.getElementById('nav-system-map').classList.toggle('active', viewName === 'system-map');
-            
+
             if (viewName === 'system-map' && !window.systemMapLoaded) {
                 viewSystemMap();
                 window.systemMapLoaded = true;
             }
         }
-        
-        window.addEventListener('hashchange', function() {
-            const hash = window.location.hash.substring(1) || 'analytics';
-            switchView(hash);
-        });
 
-        window.addEventListener('DOMContentLoaded', function() {
-            const hash = window.location.hash.substring(1) || 'analytics';
-            switchView(hash);
-        });
+        window.addEventListener('hashchange', () => switchView(window.location.hash.substring(1) || 'analytics'));
+        window.addEventListener('DOMContentLoaded', () => switchView(window.location.hash.substring(1) || 'analytics'));
 
         async function loadProfile() {
             try {
-                const response = await fetch('/api/user/profile');
-                if (response.ok) {
-                    const profile = await response.json();
-                    if (profile && profile.full_name) {
-                        document.getElementById('user-avatar').innerText = profile.full_name.charAt(0).toUpperCase();
+                const r = await fetch('/api/user/profile', { headers });
+                if (r.ok) {
+                    const p = await r.json();
+                    if (p && p.full_name) document.getElementById('user-avatar').innerText = p.full_name.charAt(0).toUpperCase();
+                }
+            } catch(e) {}
+        }
+
+        async function loadAnalytics() {
+            if (!repoId) {
+                document.getElementById('analytics-title').innerText = 'No Repository Selected';
+                document.getElementById('analytics-subtitle').innerText = 'Return to the dashboard and open a repository first.';
+                document.getElementById('hotspots-container').innerHTML = '<div style="color: var(--text-muted);">No repo selected.</div>';
+                return;
+            }
+
+            // --- Repo name ---
+            try {
+                const rr = await fetch('/api/repos', { headers });
+                if (rr.ok) {
+                    const repos = await rr.json();
+                    const repo = repos.find(r => r.id === repoId);
+                    if (repo) {
+                        document.getElementById('sidebar-repo-name').innerText = repo.name.toUpperCase();
+                        document.getElementById('analytics-title').innerText = repo.name;
+                        document.getElementById('analytics-subtitle').innerText = `Deep structural analysis for: ${repo.url}`;
+                        document.getElementById('repo-badge').innerText = 'REPO TELEMETRY';
+                        document.getElementById('map-repo-subtitle').innerText = `Architecture map for: ${repo.name}`;
                     }
                 }
-            } catch (err) {}
-        }
-        loadProfile();
+            } catch(e) {}
 
-        const growthCtx = document.getElementById('growthChart').getContext('2d');
-        new Chart(growthCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Knowledge Shards',
-                    data: [2000, 4500, 3200, 8000, 12000, 14282],
-                    borderColor: '#6366f1',
-                    tension: 0.4,
-                    fill: false
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
-        });
-
-        const langCtx = document.getElementById('langChart').getContext('2d');
-        new Chart(langCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Python', 'TypeScript', 'Rust', 'Other'],
-                datasets: [{
-                    data: [45, 30, 15, 10],
-                    backgroundColor: ['#6366f1', '#3b82f6', '#8b5cf6', '#475569'],
-                    borderWidth: 0
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, padding: 20 } } } }
-        });
-        async function exportReport() {
+            // --- Architecture overview (files, nodes, edges, modules) ---
             try {
-                const response = await fetch('/api/admin/overview');
-                const stats = await response.json();
-                
-                const csvContent = `Architectural Insights Report,${new Date().toLocaleString()}\n`
-                    + `Total Connected Repositories,${stats.global_docs || 0}\n`
-                    + `Total Knowledge Shards (Chunks),${stats.total_chunks || 0}\n`
-                    + `Total Telemetry Queries,${stats.total_queries || 0}\n`;
-                    
-                const blob = new Blob([csvContent], {type: 'text/csv'});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'Knowledge_Telemetry_Report.csv';
-                a.click();
-            } catch (err) {
-                alert("Failed to export report.");
-            }
+                const ar = await fetch(`/api/repos/${repoId}/architecture-map`);
+                if (ar.ok) {
+                    const data = await ar.json();
+                    const ov = data.overview || {};
+                    document.getElementById('stat-files').innerText = (ov.files_indexed ?? '—').toLocaleString();
+                    document.getElementById('stat-nodes').innerText = (ov.graph_nodes ?? '—').toLocaleString();
+                    document.getElementById('stat-edges').innerText = (ov.graph_edges ?? '—').toLocaleString();
+                    document.getElementById('stat-modules').innerText = (ov.modules ?? '—').toLocaleString();
+
+                    // Hotspots: top modules by symbol count
+                    const modules = data.modules || [];
+                    const colors = ['#ef4444', '#fbbf24', '#22c55e', '#3b82f6', '#8b5cf6', '#06b6d4'];
+                    if (modules.length > 0) {
+                        document.getElementById('hotspots-container').innerHTML = modules.slice(0, 6).map((m, i) => `
+                            <div class="hotspot-row">
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div style="width: 12px; height: 12px; border-radius: 50%; background: ${colors[i % colors.length]};"></div>
+                                    <div>
+                                        <div style="font-size: 15px; font-weight: 700;">${m.name}</div>
+                                        <div style="font-size: 12px; color: var(--text-muted);">${m.file_count} files · ${m.symbol_count} symbols · Top: ${(m.top_symbols || []).slice(0,3).join(', ') || 'N/A'}</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 12px;" onclick="window.location.href='chat.html?repo=${repoId}'">Ask in Chat</button>
+                            </div>
+                        `).join('');
+                    } else {
+                        document.getElementById('hotspots-container').innerHTML = '<div style="color: var(--text-muted);">No module data available yet.</div>';
+                    }
+                }
+            } catch(e) {}
+
+            // --- Per-repo analytics (complexity chart) ---
+            const moduleLabels = [], moduleValues = [];
+            try {
+                const an = await fetch(`/api/repos/${repoId}/analytics`);
+                if (an.ok) {
+                    const ad = await an.json();
+                    (ad.complexity_over_time?.labels || []).forEach((lbl, i) => {
+                        moduleLabels.push(lbl);
+                        moduleValues.push(ad.complexity_over_time.values[i] || 0);
+                    });
+                }
+            } catch(e) {}
+
+            const growthCtx = document.getElementById('growthChart').getContext('2d');
+            new Chart(growthCtx, {
+                type: 'bar',
+                data: {
+                    labels: moduleLabels.length > 0 ? moduleLabels.slice(0,10) : ['No data'],
+                    datasets: [{ label: 'Complexity', data: moduleValues.length > 0 ? moduleValues.slice(0,10) : [0],
+                        backgroundColor: 'rgba(99,102,241,0.5)', borderColor: '#6366f1', borderWidth: 1, borderRadius: 6 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', maxRotation: 35, font: { size: 10 } } }
+                    }
+                }
+            });
+
+            // --- Language distribution from real files ---
+            const extMap = { '.py':'Python', '.ts':'TypeScript', '.tsx':'TypeScript', '.js':'JavaScript',
+                             '.jsx':'JavaScript', '.go':'Go', '.java':'Java', '.rs':'Rust', '.cs':'C#', '.cpp':'C++' };
+            const langCount = {};
+            try {
+                const fr = await fetch(`/api/repos/${repoId}/files`);
+                if (fr.ok) {
+                    const fd = await fr.json();
+                    (fd.files || []).forEach(f => {
+                        const ext = '.' + f.split('.').pop().toLowerCase();
+                        const lang = extMap[ext] || 'Other';
+                        langCount[lang] = (langCount[lang] || 0) + 1;
+                    });
+                    // Update file count if architecture-map didn't return it
+                    if (document.getElementById('stat-files').innerText === '—') {
+                        document.getElementById('stat-files').innerText = fd.files.length;
+                    }
+                }
+            } catch(e) {}
+
+            const langColors = ['#6366f1','#3b82f6','#8b5cf6','#22c55e','#f59e0b','#ef4444','#06b6d4','#475569'];
+            const langLabels = Object.keys(langCount).length > 0 ? Object.keys(langCount) : ['No files'];
+            const langValues = Object.keys(langCount).length > 0 ? Object.values(langCount) : [1];
+            const langCtx = document.getElementById('langChart').getContext('2d');
+            new Chart(langCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: langLabels,
+                    datasets: [{ data: langValues, backgroundColor: langColors.slice(0, langLabels.length), borderWidth: 0, hoverOffset: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, padding: 20 } } } }
+            });
         }
 
         async function viewSystemMap() {
-            
+            if (!repoId) {
+                document.getElementById('system-maps-container').innerHTML = '<div style="color: var(--text-muted);">No repository selected. Return to the chat page first.</div>';
+                return;
+            }
             const container = document.getElementById('system-maps-container');
-            container.innerHTML = '<div style="color: var(--text-muted); font-size: 14px;"><i class="fas fa-spinner fa-spin"></i> Generating maps...</div>';
-            
+            container.innerHTML = '<div style="color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Generating architecture map...</div>';
+
             try {
-                const response = await fetch('/api/repos');
-                const repos = await response.json();
-                
-                if (repos.length === 0) {
-                    container.innerHTML = '<div>No repositories connected.</div>';
-                    return;
-                }
-                
+                const res = await fetch(`/api/repos/${repoId}/architecture-mermaid`);
+                if (!res.ok) throw new Error('API error');
+                const mapData = await res.json();
+                const repoName = document.getElementById('sidebar-repo-name').innerText;
+
+                const repoBox = document.createElement('div');
+                repoBox.style.cssText = 'display:flex;gap:24px;align-items:stretch;background:rgba(255,255,255,0.02);border:1px solid var(--border-subtle);border-radius:24px;padding:24px;';
+
+                const headerPart = document.createElement('div');
+                headerPart.style.cssText = 'width:220px;flex-shrink:0;';
+                headerPart.innerHTML = `
+                    <h3 style="font-size:18px;font-weight:800;margin-bottom:8px;">${repoName}</h3>
+                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:24px;">Architecture map of all modules and dependencies.</p>
+                    <button class="btn btn-secondary" onclick="downloadMapSVG('${repoId}', '${repoName}')" style="width:100%;margin-bottom:12px;"><i class="fas fa-download"></i> Download SVG</button>
+                    <button class="btn btn-secondary" onclick="openMapModal('${repoName}', null, null, '${repoId}')" style="width:100%;"><i class="fas fa-expand"></i> Fullscreen</button>
+                `;
+
+                const mapPart = document.createElement('div');
+                mapPart.style.cssText = 'flex:1;background:var(--surface-base);border-radius:16px;border:1px solid var(--border-subtle);overflow:hidden;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;min-height:300px;';
+                mapPart.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Rendering...</div>';
+
+                repoBox.appendChild(headerPart);
+                repoBox.appendChild(mapPart);
                 container.innerHTML = '';
-                
-                for (let repo of repos) {
-                    const repoBox = document.createElement('div');
-                    repoBox.style.display = 'flex';
-                    repoBox.style.gap = '24px';
-                    repoBox.style.alignItems = 'stretch';
-                    repoBox.style.background = 'rgba(255,255,255,0.02)';
-                    repoBox.style.border = '1px solid var(--border-subtle)';
-                    repoBox.style.borderRadius = '24px';
-                    repoBox.style.padding = '24px';
-                    
-                    const headerPart = document.createElement('div');
-                    headerPart.style.width = '250px';
-                    headerPart.style.flexShrink = '0';
-                    headerPart.innerHTML = `
-                        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">${repo.name}</h3>
-                        <p style="font-size: 12px; color: var(--text-muted); word-break: break-all; margin-bottom: 24px;">${repo.url}</p>
-                        <button class="btn btn-secondary" onclick="downloadMapSVG('${repo.id}', '${repo.name}')" style="width: 100%;"><i class="fas fa-download"></i> Download Map</button>
-                    `;
-                    
-                    const mapPart = document.createElement('div');
-                    mapPart.style.flex = '1';
-                    mapPart.style.background = 'var(--surface-base)';
-                    mapPart.style.borderRadius = '16px';
-                    mapPart.style.border = '1px solid var(--border-subtle)';
-                    mapPart.style.overflow = 'hidden';
-                    mapPart.style.cursor = 'pointer';
-                    mapPart.style.position = 'relative';
-                    mapPart.style.display = 'flex';
-                    mapPart.style.alignItems = 'center';
-                    mapPart.style.justifyContent = 'center';
-                    mapPart.style.height = '250px';
-                    mapPart.title = "Click to expand map";
-                    mapPart.innerHTML = `<div style="padding: 40px; text-align: center; color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Analyzing architecture...</div>`;
-                    
-                    repoBox.appendChild(headerPart);
-                    repoBox.appendChild(mapPart);
-                    container.appendChild(repoBox);
-                    
-                    // Fetch map
-                    fetch(`/api/repos/${repo.id}/architecture-mermaid`)
-                        .then(res => res.json())
-                        .then(async mapData => {
-                            if (mapData && mapData.mermaid_code) {
-                                const cleanMarkdown = mapData.mermaid_code.replace(/```mermaid/g, '').replace(/```/g, '').trim();
-                                
-                                // Render it!
-                                try {
-                                    const { svg } = await mermaid.render(`svg-${repo.id}`, cleanMarkdown);
-                                    mapPart.innerHTML = svg;
-                                    const svgElement = mapPart.querySelector('svg');
-                                    if (svgElement) {
-                                        svgElement.style.maxWidth = '100%';
-                                        svgElement.style.maxHeight = '100%';
-                                        svgElement.style.width = 'auto';
-                                        svgElement.style.height = 'auto';
-                                    }
-                                    
-                                    // Add click event for expansion
-                                    mapPart.onclick = () => openMapModal(repo.name, svg, cleanMarkdown, repo.id);
-                                    
-                                    // Store raw markdown for download
-                                    mapPart.dataset.markdown = cleanMarkdown;
-                                } catch (e) {
-                                    mapPart.innerHTML = `<div style="padding: 20px; color: #ef4444;">Failed to render graph.</div>`;
-                                }
-                            } else {
-                                mapPart.innerHTML = `<div style="padding: 20px; color: var(--text-muted);">No architecture map available.</div>`;
-                            }
-                        });
+                container.appendChild(repoBox);
+
+                if (mapData && mapData.mermaid_code) {
+                    const cleanCode = mapData.mermaid_code.replace(/```mermaid/g,'').replace(/```/g,'').trim();
+                    try {
+                        const { svg } = await mermaid.render(`svg-${repoId}`, cleanCode);
+                        mapPart.innerHTML = svg;
+                        const svgEl = mapPart.querySelector('svg');
+                        if (svgEl) { svgEl.style.maxWidth='100%'; svgEl.style.height='auto'; }
+                        mapPart.onclick = () => openMapModal(repoName, svg, cleanCode, repoId);
+                        mapPart.dataset.markdown = cleanCode;
+                    } catch(e) {
+                        mapPart.innerHTML = `<div style="padding:20px;color:#ef4444;"><i class="fas fa-exclamation-triangle"></i> Failed to render: ${e.message}</div>`;
+                    }
+                } else {
+                    mapPart.innerHTML = '<div style="padding:20px;color:var(--text-muted);">No architecture map available for this repository yet.</div>';
                 }
-                
-            } catch (e) {
-                container.innerHTML = '<div>Failed to load repositories.</div>';
+            } catch(e) {
+                container.innerHTML = `<div style="color:#ef4444;">Failed to load architecture map. ${e.message}</div>`;
             }
         }
-        
-        let currentScale = 1;
-        let translateX = 0, translateY = 0;
-        let isDragging = false, startX, startY;
 
+        let currentScale = 1, translateX = 0, translateY = 0, isDragging = false, startX, startY;
         function updateTransform(el) {
             el.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
             el.style.transformOrigin = 'center center';
-            el.style.transition = isDragging ? 'none' : 'transform 0.1s ease-out';
         }
 
-        function openMapModal(repoName, svgContent, rawMarkdown, repoId) {
+        async function openMapModal(repoName, svgContent, rawMarkdown, rid) {
             const modalContent = document.getElementById('map-modal-content');
             document.getElementById('map-modal').style.display = 'flex';
-            document.getElementById('map-modal-title').innerText = repoName + " Architecture";
-            modalContent.innerHTML = svgContent;
-            
-            modalContent.style.overflow = 'hidden';
-            modalContent.style.cursor = 'grab';
-            
-            const svgEl = modalContent.querySelector('svg');
-            if (svgEl) {
-                svgEl.style.maxWidth = 'none';
-                svgEl.style.maxHeight = '80vh';
-                svgEl.style.width = 'auto';
-                svgEl.style.height = 'auto';
-                
-                currentScale = 1;
-                translateX = 0;
-                translateY = 0;
-                updateTransform(svgEl);
+            document.getElementById('map-modal-title').innerText = repoName + ' Architecture';
 
-                modalContent.onwheel = function(e) {
-                    e.preventDefault();
-                    const scaleFactor = 0.1;
-                    if (e.deltaY < 0) {
-                        currentScale += scaleFactor; // zoom in
-                    } else {
-                        currentScale = Math.max(0.1, currentScale - scaleFactor); // zoom out
-                    }
-                    updateTransform(svgEl);
-                };
-
-                modalContent.onmousedown = function(e) {
-                    isDragging = true;
-                    modalContent.style.cursor = 'grabbing';
-                    startX = e.clientX - translateX;
-                    startY = e.clientY - translateY;
-                };
-
-                modalContent.onmousemove = function(e) {
-                    if (!isDragging) return;
-                    translateX = e.clientX - startX;
-                    translateY = e.clientY - startY;
-                    updateTransform(svgEl);
-                };
-
-                modalContent.onmouseup = function() {
-                    isDragging = false;
-                    modalContent.style.cursor = 'grab';
-                };
-
-                modalContent.onmouseleave = function() {
-                    isDragging = false;
-                    modalContent.style.cursor = 'grab';
-                };
-            }
-            
-            document.getElementById('map-modal-download').onclick = () => downloadMapSVG(repoId, repoName);
-        }
-        
-        function closeMapModal() {
-            document.getElementById('map-modal').style.display = 'none';
-        }
-        
-        function downloadMapSVG(repoId, repoName) {
-            // Find the rendered SVG
-            let svgElement;
-            if (document.getElementById('map-modal').style.display === 'flex') {
-                svgElement = document.getElementById('map-modal-content').querySelector('svg');
-            } else {
-                // Find it in the grid
-                const container = document.getElementById('system-maps-container');
-                const svgs = container.querySelectorAll('svg');
-                for (let s of svgs) {
-                    if (s.id === `svg-${repoId}`) {
-                        svgElement = s;
-                        break;
-                    }
+            if (!svgContent) {
+                modalContent.innerHTML = '<div style="color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+                try {
+                    const res = await fetch(`/api/repos/${rid}/architecture-mermaid`);
+                    const md = await res.json();
+                    const cleanCode = (md.mermaid_code||'').replace(/```mermaid/g,'').replace(/```/g,'').trim();
+                    const { svg } = await mermaid.render(`modal-svg-${rid}`, cleanCode);
+                    svgContent = svg;
+                } catch(e) {
+                    modalContent.innerHTML = `<div style="color:#ef4444;">Failed to render: ${e.message}</div>`;
+                    return;
                 }
             }
-            
-            if (!svgElement) {
-                alert("Map is not ready yet.");
-                return;
+
+            modalContent.innerHTML = svgContent;
+            modalContent.style.overflow = 'hidden';
+            modalContent.style.cursor = 'grab';
+            const svgEl = modalContent.querySelector('svg');
+            if (svgEl) {
+                svgEl.style.maxHeight = '80vh'; svgEl.style.width = 'auto'; svgEl.style.height = 'auto';
+                currentScale = 1; translateX = 0; translateY = 0; updateTransform(svgEl);
+                modalContent.onwheel = e => { e.preventDefault(); currentScale = Math.max(0.1, currentScale + (e.deltaY < 0 ? 0.1 : -0.1)); updateTransform(svgEl); };
+                modalContent.onmousedown = e => { isDragging = true; modalContent.style.cursor = 'grabbing'; startX = e.clientX - translateX; startY = e.clientY - translateY; };
+                modalContent.onmousemove = e => { if (!isDragging) return; translateX = e.clientX - startX; translateY = e.clientY - startY; updateTransform(svgEl); };
+                modalContent.onmouseup = modalContent.onmouseleave = () => { isDragging = false; modalContent.style.cursor = 'grab'; };
             }
-            
-            const svgData = new XMLSerializer().serializeToString(svgElement);
-            const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${repoName}_architecture.svg`;
+            document.getElementById('map-modal-download').onclick = () => downloadMapSVG(rid, repoName);
+        }
+
+        function closeMapModal() { document.getElementById('map-modal').style.display = 'none'; }
+
+        function downloadMapSVG(rid, rName) {
+            const svgEl = (document.getElementById('map-modal').style.display === 'flex'
+                ? document.getElementById('map-modal-content')
+                : document.getElementById('system-maps-container')).querySelector('svg');
+            if (!svgEl) { alert('Map not ready.'); return; }
+            const blob = new Blob([new XMLSerializer().serializeToString(svgEl)], { type: 'image/svg+xml' });
+            const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `${rName}_architecture.svg` });
             a.click();
         }
+
+        async function exportReport() {
+            const userId = localStorage.getItem('auth_user_id');
+            const headers = userId ? { 'X-User-Id': userId } : {};
+            try {
+                let csv = `Repository Analytics Report,${new Date().toLocaleString()}\n`;
+                csv += `Repo ID,${repoId || 'N/A'}\n`;
+                if (repoId) {
+                    const ar = await fetch(`/api/repos/${repoId}/architecture-map`);
+                    if (ar.ok) {
+                        const d = await ar.json();
+                        csv += `Files Indexed,${d.overview?.files_indexed || 0}\n`;
+                        csv += `Graph Nodes,${d.overview?.graph_nodes || 0}\n`;
+                        csv += `Graph Edges,${d.overview?.graph_edges || 0}\n`;
+                        csv += `Modules,${d.overview?.modules || 0}\n`;
+                    }
+                    const sr = await fetch('/api/user/stats', { headers });
+                    if (sr.ok) { const s = await sr.json(); csv += `Total Queries,${s.total_queries||0}\nTotal Chunks,${s.total_chunks||0}\n`; }
+                }
+                const a = Object.assign(document.createElement('a'), {
+                    href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })),
+                    download: `repo_analytics_report.csv`
+                });
+                a.click();
+            } catch(e) { alert('Failed to export report.'); }
+        }
+
+        loadProfile();
+        loadAnalytics();
     </script>
 </body>
 </html>

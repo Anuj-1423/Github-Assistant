@@ -128,74 +128,86 @@ class RepoFeatureService:
             }
 
     def generate_mermaid_diagram(self) -> Dict[str, str]:
-        """Generates a highly robust, minimal flowchart for Mermaid."""
+        """Generates a directory-tree flowchart showing ALL repo files."""
         try:
-            files = self._collect_repo_files()
+            import re
+            files = self._collect_all_repo_files()
             if not files:
-                # Add debug info to see what path it is checking
                 safe_path = str(self.repo_path).replace("\\", "/").replace('"', '')
                 return {
                     "repo_id": self.repo_id,
                     "mermaid_code": f"flowchart LR\n  Empty(\"No files found in {safe_path}\")"
                 }
 
-            # Build a tree structure from paths
-            tree = {}
+            # Group files by top-level directory
+            dir_files: dict = {}
             for f in files:
-                parts = f.split('/')
-                curr = tree
-                for part in parts:
-                    if part not in curr:
-                        curr[part] = {}
-                    curr = curr[part]
+                parts = f.replace("\\", "/").split("/")
+                top = "(root)" if len(parts) == 1 else parts[0]
+                dir_files.setdefault(top, []).append(parts[-1])
+
+            def nid(text: str) -> str:
+                """Safe mermaid node ID — alphanumeric + underscore only."""
+                return re.sub(r'[^a-zA-Z0-9_]', '_', text)
+
+            def lbl(text: str) -> str:
+                """Human-readable label — strip quotes, keep dots/dashes."""
+                return re.sub(r'["\']', '', text)[:40]
 
             mermaid_lines = ["flowchart LR"]
-            node_idx = 0
-            max_depth = 3
-            max_nodes = 100
-            nodes_count = 0
-            truncated = False
+            # Resolve a human-readable repo name using multiple strategies:
+            # 1. DB 'name' field (most reliable)
+            # 2. Derive from DB 'url' (e.g. github.com/user/my-repo → my-repo)
+            # 3. Fall back to repo_path basename only if it doesn't look like a hash/UUID
+            repo_name = ""
+            if hasattr(self.store, 'get_repo'):
+                try:
+                    repo_info = self.store.get_repo(self.repo_id)
+                    if repo_info:
+                        if repo_info.get('name'):
+                            repo_name = repo_info['name']
+                        elif repo_info.get('url'):
+                            # Extract last path segment from URL, strip .git suffix
+                            url_part = repo_info['url'].rstrip('/').split('/')[-1]
+                            if url_part:
+                                repo_name = url_part.removesuffix('.git')
+                except Exception:
+                    pass
+            if not repo_name:
+                # Only use the basename if it doesn't look like a short hex hash
+                basename = os.path.basename(self.repo_path) or ""
+                if basename and not re.fullmatch(r'[0-9a-f]{6,16}', basename):
+                    repo_name = basename
+                else:
+                    repo_name = "Repository"
+            mermaid_lines.append(f'  ROOT["{lbl(repo_name)}"]')
 
-            import re
-            def clean_label(text):
-                # Only allow alphanumeric and spaces
-                return re.sub(r'[^a-zA-Z0-9 ]', '', text)
+            max_files_per_dir = 15
+            max_dirs = 20
+            dirs_shown = 0
 
-            def process_tree(curr_tree, parent_id, depth):
-                nonlocal node_idx, nodes_count, truncated
-                
-                if depth > max_depth or nodes_count > max_nodes:
-                    truncated = True
-                    return
+            for dir_name, filenames in sorted(dir_files.items()):
+                if dirs_shown >= max_dirs:
+                    remaining = len(dir_files) - max_dirs
+                    mermaid_lines.append(f'  MORE["...{remaining} more dirs"]')
+                    mermaid_lines.append(f'  ROOT --> MORE')
+                    break
 
-                items = sorted(curr_tree.items(), key=lambda x: (len(x[1]) == 0, x[0]))
-                
-                for name, children in items:
-                    if nodes_count > max_nodes:
-                        truncated = True
-                        break
-                        
-                    label = clean_label(name)
-                    node_id = f"v{node_idx}"
-                    node_idx += 1
-                    nodes_count += 1
-                    
-                    prefix = "Folder " if children else "File "
-                    mermaid_lines.append(f"  {node_id}(\"{prefix}{label}\")")
-                    if parent_id:
-                        mermaid_lines.append(f"  {parent_id} --> {node_id}")
-                    
-                    if children:
-                        process_tree(children, node_id, depth + 1)
+                dir_node = nid(f"dir_{dir_name}")
+                mermaid_lines.append(f'  {dir_node}["{lbl(dir_name)}/"]')
+                mermaid_lines.append(f'  ROOT --> {dir_node}')
 
-            root_id = "vroot"
-            mermaid_lines.append(f"  {root_id}(\"Project Root\")")
-            
-            process_tree(tree, root_id, 1)
+                for fname in filenames[:max_files_per_dir]:
+                    fnode = nid(f"f_{dir_name}_{fname}")
+                    mermaid_lines.append(f'  {fnode}("{lbl(fname)}")')
+                    mermaid_lines.append(f'  {dir_node} --> {fnode}')
 
-            if truncated:
-                mermaid_lines.append("  Trunc(\"Diagram Truncated\")")
-                mermaid_lines.append(f"  {root_id} --> Trunc")
+                if len(filenames) > max_files_per_dir:
+                    extra = nid(f"extra_{dir_name}")
+                    mermaid_lines.append(f'  {extra}["...{len(filenames) - max_files_per_dir} more"]')
+                    mermaid_lines.append(f'  {dir_node} --> {extra}')
+
+                dirs_shown += 1
 
             return {
                 "repo_id": self.repo_id,
@@ -206,6 +218,41 @@ class RepoFeatureService:
                 "repo_id": self.repo_id,
                 "mermaid_code": f"flowchart TD\n  Error(\"Error: {str(e)}\")"
             }
+
+    def _collect_all_repo_files(self) -> List[str]:
+        """Collect ALL files in the repo (any extension) for visualization."""
+        IGNORE_DIRS = self.IGNORE_DIRS | {"node_modules", "__pycache__", ".venv", "venv",
+                                           "dist", "build", ".next", "coverage", ".mypy_cache",
+                                           ".git", ".idea", ".vscode"}
+        IGNORE_EXTS = {".pyc", ".pyo", ".pyd", ".so", ".dll", ".exe", ".bin",
+                       ".lock", ".log", ".cache"}
+        collected = []
+
+        if os.path.exists(self.repo_path):
+            for root, dirs, files in os.walk(self.repo_path):
+                dirs[:] = sorted([d for d in dirs if d not in IGNORE_DIRS and not d.startswith('.')])
+                for filename in sorted(files):
+                    if filename.startswith('.'):
+                        continue
+                    _, ext = os.path.splitext(filename)
+                    if ext.lower() in IGNORE_EXTS:
+                        continue
+                    full_path = os.path.join(root, filename)
+                    relative = os.path.relpath(full_path, self.repo_path).replace("\\", "/")
+                    collected.append(relative)
+
+        # Fallback to DB chunks if physical files are missing
+        if not collected:
+            chunks = self._list_repo_chunks(limit=50000)
+            seen = set()
+            for chunk in chunks:
+                path = chunk.get("file_path")
+                if path and path not in seen:
+                    collected.append(path.replace("\\", "/"))
+                    seen.add(path)
+
+        return sorted(collected)
+
 
     def generate_plantuml_diagram(self) -> Dict[str, str]:
         """Generates a PlantUML representation and its image URL."""
