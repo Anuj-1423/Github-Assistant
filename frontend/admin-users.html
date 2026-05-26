@@ -167,9 +167,12 @@
     </div>
 
     <script>
+        const ADMIN_ID = localStorage.getItem('auth_user_id');
+        const ADMIN_HEADERS = ADMIN_ID ? { 'X-User-Id': ADMIN_ID } : {};
+
         async function loadProfile() {
             try {
-                const response = await fetch('/api/user/profile');
+                const response = await fetch('/api/user/profile', { headers: ADMIN_HEADERS });
                 if (response.ok) {
                     const profile = await response.json();
                     if (profile && profile.full_name) {
@@ -183,7 +186,7 @@
 
         async function loadUsers() {
             try {
-                const res = await fetch('/api/admin/users');
+                const res = await fetch('/api/admin/users', { headers: ADMIN_HEADERS });
                 if (!res.ok) return;
                 const data = await res.json();
                 allAdminUsers = data.users || [];
@@ -285,7 +288,7 @@
             try {
                 await fetch(`/api/admin/users/${userId}/status`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...ADMIN_HEADERS },
                     body: JSON.stringify({ status })
                 });
                 loadUsers();
@@ -300,7 +303,7 @@
             document.getElementById('modal-chats-list').innerHTML = '<p style="color: var(--text-muted);">Loading...</p>';
             
             try {
-                const res = await fetch(`/api/admin/users/${userId}`);
+                const res = await fetch(`/api/admin/users/${userId}`, { headers: ADMIN_HEADERS });
                 if (!res.ok) return;
                 const data = await res.json();
                 

@@ -59,97 +59,20 @@
                 </div>
             </header>
 
-            <div class="cluster-node-full">
-                <div class="node-header">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 48px; height: 48px; background: rgba(99,102,241,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary-brand);">
-                            <i class="fas fa-server"></i>
-                        </div>
-                        <div>
-                            <h3 style="font-size: 20px; font-weight: 800;">Node-01 (Primary)</h3>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">us-east-1a • 8 Cores / 32GB RAM</div>
-                        </div>
-                    </div>
-                    <div class="badge-blue" style="font-size: 12px; padding: 6px 12px;">ACTIVE - 99.9% UPTIME</div>
-                </div>
-                <div class="node-stats">
-                    <div>
-                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">CPU Utilization (45%)</div>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 45%; background: #22c55e;"></div></div>
-                    </div>
-                    <div>
-                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Memory Usage (18.4 GB)</div>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 58%; background: #eab308;"></div></div>
-                    </div>
-                    <div>
-                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Network I/O (142 Mbps)</div>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 32%; background: var(--primary-brand);"></div></div>
-                    </div>
-                </div>
-                <div style="margin-top: 24px; display: flex; gap: 12px;">
-                    <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px;">Restart Service</button>
-                    <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; border-color: rgba(255,255,255,0.1);">View Logs</button>
-                </div>
-            </div>
-
-            <div class="cluster-node-full">
-                <div class="node-header">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 48px; height: 48px; background: rgba(99,102,241,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary-brand);">
-                            <i class="fas fa-server"></i>
-                        </div>
-                        <div>
-                            <h3 style="font-size: 20px; font-weight: 800;">Node-02 (Inference Hub)</h3>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">eu-west-2b • 16 Cores / 64GB RAM • NVIDIA L40S</div>
-                        </div>
-                    </div>
-                    <div class="badge-blue" style="font-size: 12px; padding: 6px 12px;">ACTIVE - INFERENCE</div>
-                </div>
-                <div class="node-stats">
-                    <div>
-                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">GPU Utilization (82%)</div>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 82%; background: #ef4444;"></div></div>
-                    </div>
-                    <div>
-                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">VRAM Usage (42 GB)</div>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 87%; background: #ef4444;"></div></div>
-                    </div>
-                    <div>
-                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Queue Depth (14 req)</div>
-                        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 40%; background: var(--primary-brand);"></div></div>
-                    </div>
-                </div>
-                <div style="margin-top: 24px; display: flex; gap: 12px;">
-                    <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px;">Restart Service</button>
-                    <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; border-color: rgba(255,255,255,0.1);">View Logs</button>
-                </div>
-            </div>
-
-            <div class="cluster-node-full" style="opacity: 0.6; filter: grayscale(1);">
-                <div class="node-header">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 48px; height: 48px; background: rgba(255,255,255,0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--text-muted);">
-                            <i class="fas fa-server"></i>
-                        </div>
-                        <div>
-                            <h3 style="font-size: 20px; font-weight: 800;">Node-03 (Backup)</h3>
-                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">ap-south-1a • 4 Cores / 16GB RAM</div>
-                        </div>
-                    </div>
-                    <div style="font-size: 12px; padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,0.1); font-weight: 800;">IDLE / STANDBY</div>
-                </div>
-                <div style="margin-top: 24px; display: flex; gap: 12px;">
-                    <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; color: var(--primary-brand); border-color: rgba(99,102,241,0.3);">Spin Up Node</button>
-                </div>
+            <div id="clusters-container">
+                <div style="color: var(--text-muted); font-size: 13px; font-style: italic;">Loading dynamic cluster telemetry...</div>
             </div>
 
         </main>
     </div>
 
     <script>
+        const ADMIN_ID = localStorage.getItem('auth_user_id');
+        const ADMIN_HEADERS = { 'X-User-Id': ADMIN_ID };
+
         async function loadProfile() {
             try {
-                const response = await fetch('/api/user/profile');
+                const response = await fetch('/api/user/profile', { headers: ADMIN_HEADERS });
                 if (response.ok) {
                     const profile = await response.json();
                     if (profile && profile.full_name) {
@@ -158,7 +81,63 @@
                 }
             } catch (err) {}
         }
+        
+        async function loadClusters() {
+            try {
+                const res = await fetch('/api/admin/clusters', { headers: ADMIN_HEADERS });
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                const clusters = data.clusters || [];
+                const container = document.getElementById('clusters-container');
+                
+                if (clusters.length === 0) {
+                    container.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; font-style: italic;">No active clusters found.</div>';
+                    return;
+                }
+                
+                container.innerHTML = clusters.map(c => `
+                    <div class="cluster-node-full">
+                        <div class="node-header">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="width: 48px; height: 48px; background: rgba(99,102,241,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary-brand);">
+                                    <i class="fas fa-server"></i>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 20px; font-weight: 800;">${c.name}</h3>
+                                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">${c.region} • ${c.cores} Cores / ${c.ram_total} RAM</div>
+                                </div>
+                            </div>
+                            <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 12px; padding: 6px 12px; border-radius: 6px; font-weight: 800;">${c.status}</div>
+                        </div>
+                        <div class="node-stats">
+                            <div>
+                                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">CPU Utilization (${c.cpu_utilization.toFixed(1)}%)</div>
+                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${c.cpu_utilization}%; background: ${c.cpu_utilization > 80 ? '#ef4444' : '#22c55e'};"></div></div>
+                            </div>
+                            <div>
+                                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Memory Usage (${c.memory_used})</div>
+                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${c.memory_utilization}%; background: ${c.memory_utilization > 80 ? '#ef4444' : '#eab308'};"></div></div>
+                            </div>
+                            <div>
+                                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Network I/O (${c.network_io})</div>
+                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 32%; background: var(--primary-brand);"></div></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 24px; display: flex; gap: 12px;">
+                            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px;">Restart Service</button>
+                            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; border-color: rgba(255,255,255,0.1);">View Logs</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (err) {
+                document.getElementById('clusters-container').innerHTML = '<div style="color: #ef4444; font-size: 13px;">Failed to load cluster data.</div>';
+            }
+        }
+        
         loadProfile();
+        loadClusters();
+        setInterval(loadClusters, 5000); // Poll every 5s for dynamic effect
     </script>
     <script>
         if (window.self !== window.top) {

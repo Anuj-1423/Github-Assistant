@@ -53,14 +53,13 @@
                 <div>
                     <span class="badge-admin" style="margin-bottom: 12px; display: inline-block;">SYSTEM OVERSEER</span>
                     <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;">Global System Nexus</h2>
-                    <p style="color: var(--text-secondary); font-size: 16px;">Comprehensive real-time monitoring of Codebase Knowledge AI neural network.</p>
+                    <p style="color: var(--text-secondary); font-size: 16px;">Logged in as: <strong id="admin-name-display" style="color: var(--primary-brand);">Admin</strong> &nbsp;|&nbsp; Comprehensive real-time monitoring of all users and repositories.</p>
                 </div>
                 <div style="display: flex; gap: 16px;">
                     <div style="text-align: right; margin-right: 16px;">
-                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Server Uptime</div>
-                        <div style="font-size: 18px; font-weight: 700; color: #22c55e;">14d 22h 04m</div>
+                        <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Session Uptime</div>
+                        <div id="server-uptime" style="font-size: 18px; font-weight: 700; color: #22c55e;">00h 00m 00s</div>
                     </div>
-                    <button class="btn btn-secondary" id="btn-shutdown" style="border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; background: transparent; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; padding: 8px 16px; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'" onmouseout="this.style.background='transparent'" onclick="executeShutdown()">EMERGENCY SHUTDOWN</button>
                 </div>
             </header>
 
@@ -105,34 +104,9 @@
                 </section>
 
                 <section>
-                    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 24px;">Active Node Clusters</h3>
-                    <div class="cluster-node">
-                        <div>
-                            <div style="font-size: 13px; font-weight: 700;">Node-01 (Primary)</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">US-East-1 • 8 cores</div>
-                        </div>
-                        <div class="badge-blue" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);">ACTIVE</div>
-                    </div>
-                    <div class="cluster-node">
-                        <div>
-                            <div style="font-size: 13px; font-weight: 700;">Node-02</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">EU-West-2 • 16 cores</div>
-                        </div>
-                        <div class="badge-blue" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);">ACTIVE</div>
-                    </div>
-                    <div class="cluster-node">
-                        <div>
-                            <div style="font-size: 13px; font-weight: 700;">Node-03</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">AP-South-1 • 4 cores</div>
-                        </div>
-                        <div class="badge-green" style="background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2);">IDLE</div>
-                    </div>
-                    <div class="cluster-node" style="opacity: 0.5;">
-                        <div>
-                            <div style="font-size: 13px; font-weight: 700;">Node-04</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">US-West-2 • 8 cores</div>
-                        </div>
-                        <div style="font-size: 10px; font-weight: 800; color: #ef4444;">OFFLINE</div>
+                    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 24px;">User Activity Breakdown</h3>
+                    <div id="user-activity-panel" style="display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto;">
+                        <div style="color: var(--text-muted); font-size: 13px; font-style: italic;">Loading user activity...</div>
                     </div>
                 </section>
             </div>
@@ -140,25 +114,51 @@
     </div>
 
     <script>
+        // === ADMIN AUTH GUARD ===
+        (function() {
+            const userId = localStorage.getItem('auth_user_id');
+            const role   = localStorage.getItem('auth_user_role');
+            if (!userId || role !== 'admin') {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        const ADMIN_ID = localStorage.getItem('auth_user_id');
+        const ADMIN_HEADERS = { 'X-User-Id': ADMIN_ID };
+
+        // Server start time (tracked per admin session)
+        const SESSION_START = Date.now();
+        function updateUptime() {
+            const elapsed = Math.floor((Date.now() - SESSION_START) / 1000);
+            const h = Math.floor(elapsed / 3600);
+            const m = Math.floor((elapsed % 3600) / 60);
+            const s = elapsed % 60;
+            document.getElementById('server-uptime').innerText =
+                `${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+        }
+        setInterval(updateUptime, 1000);
+        updateUptime();
+
         async function loadProfile() {
             try {
-                const response = await fetch('/api/user/profile');
+                const response = await fetch('/api/user/profile', { headers: ADMIN_HEADERS });
                 if (response.ok) {
                     const profile = await response.json();
                     if (profile && profile.full_name) {
                         document.getElementById('user-avatar').innerText = profile.full_name.charAt(0).toUpperCase();
+                        document.getElementById('admin-name-display').innerText = profile.full_name;
                     }
                 }
             } catch (err) {}
         }
-        
+
         let allGlobalRepos = [];
 
         async function loadGlobalRepos() {
             try {
-                const response = await fetch('/api/repos');
-                if (!response.ok) return;
-                const data = await response.json();
+                const response = await fetch('/api/admin/repos-all', { headers: ADMIN_HEADERS });
+                const fallback = await fetch('/api/repos', { headers: ADMIN_HEADERS });
+                const data = response.ok ? await response.json() : (fallback.ok ? await fallback.json() : []);
                 
                 // Parse GitHub owners as fallback for system uploads
                 allGlobalRepos = data.map(r => {
@@ -223,7 +223,7 @@
         
         async function loadStats() {
             try {
-                const response = await fetch('/api/admin/overview');
+                const response = await fetch('/api/admin/overview', { headers: ADMIN_HEADERS });
                 if (response.ok) {
                     const data = await response.json();
                     document.getElementById('stat-users').innerText = data.total_users || 0;
@@ -232,47 +232,42 @@
                     document.getElementById('stat-ready').innerText = data.repo_status ? (data.repo_status.ready || 0) : 0;
                 }
             } catch(e) {}
-        }
-        
-        async function executeShutdown() {
-            if (!confirm("CRITICAL WARNING: Are you sure you want to completely shut down the Core Control neural engine? The backend server will terminate instantly, and all active user sessions will disconnect. The server will require manual restart.")) return;
-            
-            const btn = document.getElementById('btn-shutdown');
-            btn.innerText = "TERMINATING...";
-            btn.style.background = "#ef4444";
-            btn.style.color = "white";
-            btn.disabled = true;
-            
+
+            // Load per-user activity breakdown
             try {
-                await fetch('/api/admin/shutdown', { method: 'POST' });
-            } catch(e) {
-                // Fetch will fail when server dies, which is expected
-            }
-            
-            setTimeout(() => {
-                document.body.innerHTML = `
-                    <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #050508; color: #ef4444; font-family: 'JetBrains Mono', monospace;">
-                        <i class="fas fa-power-off" style="font-size: 64px; margin-bottom: 24px;"></i>
-                        <h1 style="font-weight: 800; letter-spacing: 0.1em;">SYSTEM OFFLINE</h1>
-                        <p style="color: var(--text-muted); margin-top: 12px; font-size: 14px;">The neural engine is currently locked in Emergency Maintenance Mode.</p>
-                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 32px;">All user queries and endpoints are actively blocked with a 503 error.</p>
-                        <button onclick="restoreSystem()" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 12px 24px; border-radius: 8px; font-weight: 800; letter-spacing: 0.1em; cursor: pointer; transition: all 0.2s;">
-                            <i class="fas fa-bolt" style="margin-right: 8px;"></i> RESTORE SYSTEM POWER
-                        </button>
-                    </div>
-                `;
-            }, 500);
+                const ur = await fetch('/api/admin/users', { headers: ADMIN_HEADERS });
+                if (ur.ok) {
+                    const ud = await ur.json();
+                    const users = (ud.users || []).filter(u => u.role !== 'admin').slice(0, 8);
+                    const panel = document.getElementById('user-activity-panel');
+                    if (users.length === 0) {
+                        panel.innerHTML = '<div style="color: var(--text-muted); font-size: 13px;">No regular users registered yet.</div>';
+                    } else {
+                        panel.innerHTML = users.map(u => {
+                            const queries = u.total_queries || 0;
+                            const maxQ = Math.max(...users.map(x => x.total_queries || 0), 1);
+                            const pct = Math.round((queries / maxQ) * 100);
+                            const initial = (u.full_name || u.email || '?').charAt(0).toUpperCase();
+                            return `
+                            <div class="cluster-node">
+                                <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-brand); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0;">${initial}</div>
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${u.full_name || u.email}</div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">${u.email} &nbsp;·&nbsp; ${queries} queries</div>
+                                        <div style="width: 100%; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 6px;">
+                                            <div style="width: ${pct}%; height: 100%; background: var(--primary-brand); border-radius: 2px; transition: width 0.5s;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span style="font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px; background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); margin-left: 12px; flex-shrink: 0;">${(u.status || 'ACTIVE').toUpperCase()}</span>
+                            </div>`;
+                        }).join('');
+                    }
+                }
+            } catch(e) {}
         }
 
-        async function restoreSystem() {
-            try {
-                await fetch('/api/admin/resume', { method: 'POST' });
-                window.location.reload();
-            } catch(e) {
-                alert("Failed to contact the backend to restore power.");
-            }
-        }
-        
         loadProfile();
         loadStats();
         loadGlobalRepos();

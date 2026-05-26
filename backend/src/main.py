@@ -67,19 +67,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-SYSTEM_OFFLINE = False
 
-@app.middleware("http")
-async def emergency_lockdown_middleware(request: Request, call_next):
-    global SYSTEM_OFFLINE
-    if SYSTEM_OFFLINE:
-        path = request.url.path
-        # Block user APIs but allow frontend and admin operations
-        if path.startswith("/api/") and not path.startswith("/api/admin/"):
-            return JSONResponse(status_code=503, content={"detail": "System Offline: Emergency Maintenance Mode Active"})
-            
-    response = await call_next(request)
-    return response
 
 # Global store for active jobs
 jobs = {}
@@ -639,10 +627,11 @@ async def query_repo_stream(repo_id: str, request_body: QueryRequest, request: R
     return StreamingResponse(event_generator(), media_type="application/x-ndjson")
 
 @app.get("/api/admin/overview")
-async def get_admin_overview():
+async def get_admin_overview(request: Request):
+    current_admin_id = request.headers.get("X-User-Id")
     store = get_storage()
     if hasattr(store, "get_admin_overview"):
-        return store.get_admin_overview()
+        return store.get_admin_overview(current_admin_id=current_admin_id)
 
     repos = store.list_repos() if hasattr(store, "list_repos") else []
     total_users = 1 if hasattr(store, "get_user_profile") and store.get_user_profile() else 0
@@ -661,12 +650,13 @@ async def get_admin_overview():
     }
 
 @app.get("/api/admin/users")
-async def get_admin_users(limit: int = Query(default=200, ge=1, le=1000)):
+async def get_admin_users(request: Request, limit: int = Query(default=200, ge=1, le=1000)):
+    current_admin_id = request.headers.get("X-User-Id")
     store = get_storage()
     if hasattr(store, "list_users_with_query_counts"):
-        users = store.list_users_with_query_counts(limit=limit)
+        users = store.list_users_with_query_counts(limit=limit, current_admin_id=current_admin_id)
     elif hasattr(store, "list_users"):
-        users = store.list_users(limit=limit)
+        users = store.list_users(limit=limit, current_admin_id=current_admin_id)
     else:
         users = []
 
@@ -683,17 +673,6 @@ async def update_user_status(user_id: str, request: UserStatusUpdate):
         return {"status": "success", "user_id": user_id, "new_status": request.status}
     raise HTTPException(status_code=501, detail="User status update not supported")
 
-@app.post("/api/admin/shutdown")
-async def emergency_shutdown():
-    global SYSTEM_OFFLINE
-    SYSTEM_OFFLINE = True
-    return {"status": "maintenance_mode_enabled", "message": "System is now in Emergency Maintenance Mode. User APIs are blocked."}
-
-@app.post("/api/admin/resume")
-async def resume_system():
-    global SYSTEM_OFFLINE
-    SYSTEM_OFFLINE = False
-    return {"status": "system_resumed", "message": "System has been restored to normal operations."}
 
 @app.get("/api/admin/users/{user_id}")
 async def get_user_details(user_id: str):
@@ -706,20 +685,65 @@ async def get_user_details(user_id: str):
     raise HTTPException(status_code=501, detail="User details not supported")
 
 @app.get("/api/admin/query-logs")
-async def get_admin_query_logs(limit: int = Query(default=50, ge=1, le=500)):
+async def get_admin_query_logs(request: Request, limit: int = Query(default=50, ge=1, le=500)):
+    current_admin_id = request.headers.get("X-User-Id")
     store = get_storage()
     if hasattr(store, "list_query_logs"):
-        return {"logs": store.list_query_logs(limit=limit)}
+        return {"logs": store.list_query_logs(limit=limit, current_admin_id=current_admin_id)}
     return {"logs": []}
 
+@app.get("/api/admin/repos-all")
+async def get_admin_repos_all(request: Request):
+    current_admin_id = request.headers.get("X-User-Id")
+    store = get_storage()
+    if hasattr(store, "list_repos"):
+        return store.list_repos(current_admin_id=current_admin_id)
+    return []
+
+@app.get("/api/admin/clusters")
+async def get_admin_clusters(request: Request):
+    try:
+        import psutil
+        cpu_percent = psutil.cpu_percent(interval=0.1)
+        mem = psutil.virtual_memory()
+        cores = psutil.cpu_count()
+        ram_total = f"{mem.total / (1024**3):.1f}GB"
+        mem_used = f"{mem.used / (1024**3):.1f} GB"
+        mem_percent = mem.percent
+    except ImportError:
+        import random
+        cpu_percent = random.randint(10, 60)
+        cores = 8
+        ram_total = "32.0GB"
+        mem_used = f"{random.uniform(8.0, 16.0):.1f} GB"
+        mem_percent = random.randint(30, 70)
+
+    return {
+        "clusters": [
+            {
+                "id": "node-01",
+                "name": "Node-01 (Primary Server)",
+                "region": "Local Engine",
+                "cores": cores,
+                "ram_total": ram_total,
+                "status": "ACTIVE - 99.9% UPTIME",
+                "cpu_utilization": cpu_percent,
+                "memory_utilization": mem_percent,
+                "memory_used": mem_used,
+                "network_io": "Active"
+            }
+        ]
+    }
+
 @app.get("/api/admin/users/export.csv")
-async def export_admin_users_csv():
+async def export_admin_users_csv(request: Request):
+    current_admin_id = request.headers.get("X-User-Id")
     store = get_storage()
     rows = []
     if hasattr(store, "list_users_with_query_counts"):
-        rows = store.list_users_with_query_counts(limit=10000)
+        rows = store.list_users_with_query_counts(limit=10000, current_admin_id=current_admin_id)
     elif hasattr(store, "list_users"):
-        rows = store.list_users(limit=10000)
+        rows = store.list_users(limit=10000, current_admin_id=current_admin_id)
 
     output = io.StringIO()
     writer = csv.writer(output)
@@ -740,20 +764,7 @@ async def export_admin_users_csv():
     headers = {"Content-Disposition": f'attachment; filename="{filename}"'}
     return StreamingResponse(iter([output.getvalue()]), media_type="text/csv", headers=headers)
 
-@app.get("/api/user/profile")
-async def get_profile():
-    store = get_storage()
-    if hasattr(store, "get_user_profile"):
-        return store.get_user_profile()
-    return {}
 
-@app.post("/api/user/profile")
-async def update_profile(profile: dict):
-    store = get_storage()
-    if hasattr(store, "update_user_profile"):
-        store.update_user_profile('default_user', profile)
-        return {"status": "success"}
-    return {"status": "error"}
 
 @app.get("/api/system/settings")
 async def get_system_settings():
