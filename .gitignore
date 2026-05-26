@@ -36,6 +36,8 @@ env/
 # Storage / Database / Cache
 storage/
 scratch/
+*.db
+*.sqlite
 out.txt
 mermaid_debug.txt
 
