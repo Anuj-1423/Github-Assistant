@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Configuration | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=light-theme-final">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
         .config-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; }
-        .toggle-group { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .toggle-group { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .toggle-group:last-child { border-bottom: none; }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0,0.1); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #0f172a; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary-brand); }
         input:checked + .slider:before { transform: translateX(20px); }
-        .form-input-admin { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px; color: white; font-family: var(--font-mono); font-size: 13px; margin-top: 12px; }
+        .form-input-admin { width: 100%; background: rgba(0,0,0,0.03); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px; color: #0f172a; font-family: var(--font-mono); font-size: 13px; margin-top: 12px; }
     </style>
 </head>
 <body>
@@ -30,7 +30,7 @@
         <aside class="sidebar">
             <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
                 <div class="logo-box" style="width: 36px; height: 36px; background: #ef4444;">
-                    <i class="fas fa-shield-alt" style="font-size: 16px; color: white;"></i>
+                    <i class="fas fa-shield-alt" style="font-size: 16px; color: #0f172a;"></i>
                 </div>
                 <div>
                     <h1 style="font-size: 15px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;">CORE CONTROL</h1>
@@ -78,7 +78,7 @@
 
                     <div style="margin-top: 32px;">
                         <label class="form-label">Intelligence Model Threshold</label>
-                        <select class="form-input-admin" style="background: rgba(255,255,255,0.05);">
+                        <select class="form-input-admin" style="background: rgba(0,0,0,0.05);">
                             <option>Gemini 1.5 Pro (Standard)</option>
                             <option>Gemini 1.5 Flash (Low Latency)</option>
                             <option>Custom Neural Cluster (On-Prem)</option>

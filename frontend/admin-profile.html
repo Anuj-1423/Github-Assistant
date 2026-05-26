@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile | Codebase Knowledge AI</title>
+    <link rel="stylesheet" href="style.css?v=light-theme-final">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .profile-container { max-width: 800px; margin: 0 auto; }
+        .config-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 40px; margin-bottom: 32px; }
+        .form-input-admin { width: 100%; background: rgba(0,0,0,0.03); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px; color: #0f172a; font-family: var(--font-main); font-size: 15px; margin-top: 12px; }
+        .form-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+        .avatar-lg { width: 120px; height: 120px; border-radius: 24px; background: var(--primary-brand); display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 800; color: #0f172a; margin-bottom: 24px; border: 4px solid rgba(0, 0, 0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="nav-rail"></aside>
+        <aside class="sidebar"></aside>
+
+        <main class="main-content" style="padding: 60px; overflow-y: auto; flex: 1;">
+            <div class="profile-container">
+                <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px;">
+                    <div>
+                        <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;">My Account</h2>
+                        <p style="color: var(--text-secondary); font-size: 16px;">Manage your administrator profile and security credentials.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveProfile()"><i class="fas fa-save" style="margin-right: 8px;"></i> Save Changes</button>
+                </header>
+
+                <section class="config-card" style="display: flex; gap: 40px; align-items: center;">
+                    <div class="avatar-lg" id="profile-avatar">A</div>
+                    <div style="flex: 1;">
+                        <div style="margin-bottom: 24px;">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="profile-name" class="form-input-admin" placeholder="Loading...">
+                        </div>
+                        <div>
+                            <label class="form-label">Email Address</label>
+                            <input type="email" id="profile-email" class="form-input-admin" placeholder="Loading..." readonly style="opacity: 0.7; cursor: not-allowed;">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="config-card">
+                    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 32px;"><i class="fas fa-shield-alt" style="color: #fbbf24; margin-right: 12px;"></i> Security Settings</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                        <div>
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-input-admin" placeholder="••••••••">
+                        </div>
+                        <div>
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-input-admin" placeholder="Leave blank to keep current">
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="config-card">
+                    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 32px;"><i class="fas fa-id-badge" style="color: #10b981; margin-right: 12px;"></i> Role Information</h3>
+                    <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 20px;">
+                        <p style="font-size: 14px; line-height: 1.6;">You are currently logged in with <strong style="color: #10b981;">Administrator</strong> privileges. You have full access to system configuration, user management, and global analytics.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            try {
+                const userId = localStorage.getItem('auth_user_id');
+                if (!userId) return;
+                
+                const response = await fetch('/api/user/profile', {
+                    headers: { 'X-User-Id': userId }
+                });
+                
+                if (response.ok) {
+                    const profile = await response.json();
+                    if (profile) {
+                        if (profile.full_name) {
+                            document.getElementById('profile-name').value = profile.full_name;
+                            document.getElementById('profile-avatar').innerText = profile.full_name.charAt(0).toUpperCase();
+                        }
+                        if (profile.email) {
+                            document.getElementById('profile-email').value = profile.email;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to load profile", err);
+            }
+        }
+
+        function saveProfile() {
+            alert("Profile updates successfully saved.");
+        }
+
+        loadProfile();
+    </script>
+    <script>
+        if (window.self !== window.top) {
+            const rail = document.querySelector('.nav-rail');
+            const sidebar = document.querySelector('.sidebar');
+            const appShell = document.querySelector('.app-shell');
+            if (rail) rail.style.display = 'none';
+            if (sidebar) sidebar.style.display = 'none';
+            if (appShell) appShell.style.gridTemplateColumns = '1fr';
+        }
+    </script>
+</body>
+</html>

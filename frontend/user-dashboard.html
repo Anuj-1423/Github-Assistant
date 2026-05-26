@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Central Nexus | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=light-theme-final">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -12,19 +12,19 @@
         .analytics-hero { padding-bottom: 60px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 60px; }
         .stat-grid-large { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 60px; }
         .chart-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; margin-bottom: 60px; }
-        .complexity-map { height: 400px; background: rgba(255,255,255,0.02); border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
+        .complexity-map { height: 400px; background: #0f172a; border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
         
         .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-bottom: 48px; }
         .repo-list { display: grid; grid-template-columns: 1fr; gap: 20px; }
         .repo-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 24px; display: flex; justify-content: space-between; align-items: center; transition: var(--transition-smooth); }
-        .repo-card:hover { border-color: var(--primary-brand); background: rgba(255,255,255,0.04); transform: translateX(8px); }
+        .repo-card:hover { border-color: var(--primary-brand); background: rgba(0,0,0,0.04); transform: translateX(8px); }
         .activity-log { background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; height: 400px; overflow-y: auto; }
-        .activity-item { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .activity-item { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .activity-item:last-child { border-bottom: none; }
         .health-indicator { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
         .app-shell { grid-template-columns: 80px 300px 1fr !important; }
         .btn-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-size: 12px; }
-        .btn-danger:hover { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #ef4444; color: #0f172a; }
     </style>
 </head>
 <body>
@@ -65,7 +65,7 @@
 
             <div class="premium-card" style="margin-top: auto; padding: 20px;">
                 <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Storage Quota</div>
-                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-bottom: 8px;">
+                <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.05); border-radius: 2px; margin-bottom: 8px;">
                     <div style="width: 65%; height: 100%; background: var(--primary-brand); border-radius: 2px;"></div>
                 </div>
                 <div style="font-size: 11px; color: var(--text-secondary); display: flex; justify-content: space-between;">
@@ -83,10 +83,10 @@
                     <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 32px;">Provide the path or URL to your source repository. Our neural engine will automatically decompose and index its semantic structure.</p>
                     
                     <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">REPOSITORY URL / PATH</label>
-                    <input type="text" id="inline-repo-url" placeholder="e.g. C:\Projects\MyRepo or https://github.com/..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); color: white; border-radius: 8px; margin-bottom: 24px;">
+                    <input type="text" id="inline-repo-url" placeholder="e.g. C:\Projects\MyRepo or https://github.com/..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); color: #0f172a; border-radius: 8px; margin-bottom: 24px;">
                     
                     <div style="display: flex; justify-content: flex-end; gap: 16px;">
-                        <button onclick="closeIndexModal()" style="background: transparent; border: 1px solid var(--border-subtle); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancel</button>
+                        <button onclick="closeIndexModal()" style="background: transparent; border: 1px solid var(--border-subtle); color: #0f172a; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancel</button>
                         <button id="inline-ingest-btn" onclick="startInlineIngest()" style="background: var(--primary-brand); border: none; color: black; font-weight: 700; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Synchronize</button>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                         <!-- Polled via API -->
                         <div class="repo-card">
                             <div style="display: flex; align-items: center; gap: 20px;">
-                                <div class="logo-box" style="background: rgba(255,255,255,0.05); color: white;"><i class="fas fa-code"></i></div>
+                                <div class="logo-box" style="background: rgba(0,0,0,0.05); color: #0f172a;"><i class="fas fa-code"></i></div>
                                 <div>
                                     <h4 style="font-size: 16px; margin-bottom: 4px;">Loading repositories...</h4>
                                     <p style="font-size: 12px; color: var(--text-muted);">Synchronizing with neural engine</p>
@@ -145,9 +145,9 @@
                     <p style="color: var(--text-secondary); font-size: 16px;">View and manage your core system parameters.</p>
                 </header>
 
-                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; max-width: 800px; box-shadow: 0 4px 30px rgba(0,0,0,0.2);">
+                <div style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; max-width: 800px; box-shadow: 0 4px 30px rgba(0,0,0,0.2);">
                     <div style="display: flex; gap: 32px; align-items: flex-start;">
-                        <div style="width: 100px; height: 100px; background: var(--primary-brand); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: white; box-shadow: 0 10px 25px rgba(99,102,241,0.3);" id="profile-avatar-large">U</div>
+                        <div style="width: 100px; height: 100px; background: var(--primary-brand); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: #0f172a; box-shadow: 0 10px 25px rgba(99,102,241,0.3);" id="profile-avatar-large">U</div>
                         <div style="flex: 1;">
                             <div style="margin-bottom: 24px;">
                                 <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Full Designation</div>
@@ -341,7 +341,7 @@
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(0, 0, 0,0.05)' }, ticks: { color: '#94a3b8' } },
                         x: { grid: { display: false }, ticks: { color: '#94a3b8', maxRotation: 35, font: { size: 10 } } }
                     }
                 }

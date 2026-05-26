@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bg: #000000;
-            --panel: #0a0a0a;
-            --ink: #ffffff;
+            --bg: #f8fafc;
+            --panel: #0f172a;
+            --ink: #0f172a;
             --muted: #94a3b8;
             --brand: #6366f1; /* Changed from red to professional indigo */
-            --border: rgba(255, 255, 255, 0.08);
+            --border: rgba(0, 0, 0, 0.08);
             --ok: #10b981;
             --warn: #fbbf24;
             --danger: #ef4444;
@@ -34,7 +34,7 @@
         }
 
         .sidebar {
-            background: #000000;
+            background: #f8fafc;
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
@@ -54,7 +54,7 @@
             height: 40px;
             border-radius: 12px;
             background: var(--brand);
-            color: white;
+            color: #0f172a;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -92,13 +92,13 @@
         }
 
         .nav-link:hover {
-            background: rgba(255, 255, 255, 0.03);
-            color: white;
+            background: rgba(0, 0, 0, 0.03);
+            color: #0f172a;
         }
 
         .nav-link.active {
-            background: #0a0a0a;
-            color: white;
+            background: #0f172a;
+            color: #0f172a;
             border-color: var(--border);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
@@ -170,8 +170,8 @@
         }
 
         .stat-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: #0f172a;
+            border: 1px solid rgba(0, 0, 0,0.08);
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
@@ -206,8 +206,8 @@
         }
 
         .panel {
-            background: linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%);
-            border: 1px solid rgba(255,255,255,0.05);
+            background: #0f172a;
+            border: 1px solid rgba(0,0,0,0.05);
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
@@ -218,7 +218,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 24px 28px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .panel-title {
@@ -238,19 +238,19 @@
         }
 
         thead th {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.03);
             color: var(--muted);
             text-transform: uppercase;
             letter-spacing: 0.07em;
             font-size: 12px;
             text-align: left;
             padding: 14px 28px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         tbody td {
             padding: 16px 28px;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(0,0,0,0.02);
             font-size: 14px;
             color: var(--ink);
             vertical-align: top;
@@ -282,10 +282,10 @@
         }
 
         .metric {
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
             border-radius: 12px;
             padding: 16px;
-            background: rgba(255, 255, 255, 0.02);
+            background: #0f172a;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -351,7 +351,8 @@
                 <a class="nav-link" href="#" onclick="loadPage('admin-clusters.html', this); return false;"><i class="fa-solid fa-microchip"></i><span>Node Clusters</span></a>
                 <a class="nav-link" href="#" onclick="loadPage('admin-settings.html', this); return false;"><i class="fa-solid fa-cog"></i><span>Global Settings</span></a>
                 
-                <a class="nav-link" href="index.html" style="margin-top: 32px; color: #ef4444; background: rgba(239, 68, 68, 0.05); border-radius: 8px;"><i class="fa-solid fa-power-off"></i><span>Terminate Session</span></a>
+                <a class="nav-link" href="#" onclick="loadPage('admin-profile.html', this); return false;" style="margin-top: 32px;"><i class="fa-solid fa-user-shield"></i><span>My Account</span></a>
+                <a class="nav-link" href="index.html" style="margin-top: 8px; color: #ef4444; background: rgba(239, 68, 68, 0.05); border-radius: 8px;"><i class="fa-solid fa-power-off"></i><span>Terminate Session</span></a>
             </nav>
 
             <div class="sidebar-foot">Admin session active</div>

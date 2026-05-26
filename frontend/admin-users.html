@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operator Directory | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=light-theme-final">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .user-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
         .user-table th { text-align: left; padding: 0 24px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
         .user-row { background: var(--surface-card); border-radius: 16px; transition: var(--transition-smooth); }
-        .user-row:hover { background: rgba(255,255,255,0.05); transform: scale(1.005); }
+        .user-row:hover { background: rgba(0,0,0,0.05); transform: scale(1.005); }
         .user-row td { padding: 24px; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
         .user-row td:first-child { border-left: 1px solid var(--border-subtle); border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
         .user-row td:last-child { border-right: 1px solid var(--border-subtle); border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
         .avatar-circle { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-elevated); display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid var(--border-subtle); }
-        .search-bar-admin { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px 20px; width: 300px; color: white; outline: none; }
+        .search-bar-admin { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px 20px; width: 300px; color: #0f172a; outline: none; }
     </style>
 </head>
 <body>
@@ -29,7 +29,7 @@
         <aside class="sidebar">
             <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
                 <div class="logo-box" style="width: 36px; height: 36px; background: #ef4444;">
-                    <i class="fas fa-shield-alt" style="font-size: 16px; color: white;"></i>
+                    <i class="fas fa-shield-alt" style="font-size: 16px; color: #0f172a;"></i>
                 </div>
                 <div>
                     <h1 style="font-size: 15px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;">CORE CONTROL</h1>
@@ -92,7 +92,7 @@
         <!-- User Details Modal -->
         <div id="user-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
             <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 20px; width: 800px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
-                <div style="padding: 32px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2);">
+                <div style="padding: 32px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.03);">
                     <div style="display: flex; gap: 20px; align-items: center;">
                         <div class="avatar-circle" id="modal-avatar" style="width: 64px; height: 64px; font-size: 24px; color: var(--primary-brand); border-color: var(--primary-brand);">U</div>
                         <div>
@@ -100,16 +100,16 @@
                             <p style="color: var(--text-muted); font-size: 14px;" id="modal-email">email@example.com</p>
                         </div>
                     </div>
-                    <button onclick="document.getElementById('user-modal').style.display='none'" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'"><i class="fas fa-times"></i></button>
+                    <button onclick="document.getElementById('user-modal').style.display='none'" style="background: rgba(0,0,0,0.05); border: 1px solid var(--border-subtle); color: #0f172a; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(0, 0, 0,0.1)'" onmouseout="this.style.background='rgba(0, 0, 0,0.05)'"><i class="fas fa-times"></i></button>
                 </div>
                 
                 <div style="padding: 32px; overflow-y: auto; flex: 1;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px;">
-                        <div class="admin-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px;">
+                        <div class="admin-card" style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px;">
                             <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Total Uploaded Repos</div>
                             <div style="font-size: 32px; font-weight: 800;" id="modal-repos-count">0</div>
                         </div>
-                        <div class="admin-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px;">
+                        <div class="admin-card" style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px;">
                             <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Total Inquiries</div>
                             <div style="font-size: 32px; font-weight: 800;" id="modal-queries-count">0</div>
                         </div>
@@ -133,7 +133,7 @@
         <!-- Provision Modal -->
         <div id="provision-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
             <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 20px; width: 450px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
-                <div style="padding: 24px; border-bottom: 1px solid var(--border-subtle); background: rgba(0,0,0,0.2);">
+                <div style="padding: 24px; border-bottom: 1px solid var(--border-subtle); background: rgba(0,0,0,0.03);">
                     <h2 style="font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
                         <i class="fas fa-user-plus" style="color: var(--primary-brand);"></i> Provision Operator
                     </h2>
@@ -142,22 +142,22 @@
                     <div id="provision-error" style="color: #ef4444; font-size: 13px; font-weight: 600; display: none;"></div>
                     <div>
                         <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Username</label>
-                        <input type="text" id="prov-username" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: white;" placeholder="developer_01">
+                        <input type="text" id="prov-username" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: #0f172a;" placeholder="developer_01">
                     </div>
                     <div>
                         <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Full Name</label>
-                        <input type="text" id="prov-fullname" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: white;" placeholder="John Doe">
+                        <input type="text" id="prov-fullname" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: #0f172a;" placeholder="John Doe">
                     </div>
                     <div>
                         <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Email</label>
-                        <input type="email" id="prov-email" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: white;" placeholder="john@example.com">
+                        <input type="email" id="prov-email" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: #0f172a;" placeholder="john@example.com">
                     </div>
                     <div>
                         <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Temporary Password</label>
-                        <input type="password" id="prov-password" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: white;" placeholder="••••••••">
+                        <input type="password" id="prov-password" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: #0f172a;" placeholder="••••••••">
                     </div>
                 </div>
-                <div style="padding: 16px 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2);">
+                <div style="padding: 16px 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.03);">
                     <button class="btn btn-secondary" onclick="closeProvisionModal()">Cancel</button>
                     <button class="btn btn-primary" id="btn-provision" onclick="provisionOperator()">Provision Account</button>
                 </div>
@@ -315,7 +315,7 @@
                 document.getElementById('modal-queries-count').innerText = data.queries.length;
                 
                 document.getElementById('modal-repos-list').innerHTML = data.repos.length ? data.repos.map(r => `
-                    <div style="background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                    <div style="background: #0f172a; border: 1px solid rgba(0, 0, 0,0.08); border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
                         <div>
                             <div style="font-weight: 800; font-size: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em;">
                                 <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99,102,241,0.1); color: var(--primary-brand); display: flex; align-items: center; justify-content: center; font-size: 14px;"><i class="fas fa-code-branch"></i></div>
@@ -325,14 +325,14 @@
                         </div>
                         <div style="display: flex; gap: 12px; align-items: center;">
                             <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);"><div style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></div> ${(r.status || 'READY').toUpperCase()}</span>
-                            <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'" onclick="window.location.href='/api/repos/${r.id}/download'" title="Download Archive"><i class="fas fa-cloud-download-alt"></i></button>
+                            <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; border-radius: 8px; border: 1px solid rgba(0, 0, 0,0.1); background: rgba(0,0,0,0.03); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(0, 0, 0,0.1)'" onmouseout="this.style.background='rgba(0, 0, 0,0.03)'" onclick="window.location.href='/api/repos/${r.id}/download'" title="Download Archive"><i class="fas fa-cloud-download-alt"></i></button>
                         </div>
                     </div>
-                `).join('') : '<p style="color: var(--text-muted); font-style: italic; padding: 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">No repositories synchronized yet.</p>';
+                `).join('') : '<p style="color: var(--text-muted); font-style: italic; padding: 20px; text-align: center; border: 1px dashed rgba(0, 0, 0,0.1); border-radius: 12px;">No repositories synchronized yet.</p>';
                 
                 document.getElementById('modal-chats-list').innerHTML = data.queries.length ? data.queries.map(q => `
-                    <div style="background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 16px;">
+                    <div style="background: #0f172a; border: 1px solid rgba(0, 0, 0,0.08); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 16px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(16,185,129,0.1); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 12px;"><i class="fas fa-microchip"></i></div>
                                 <span style="font-weight: 800; font-size: 13px; letter-spacing: 0.05em; color: var(--text-main); text-transform: uppercase;">${q.repo_name || 'Unknown Hub'}</span>
@@ -341,14 +341,14 @@
                         </div>
                         <div style="margin-bottom: 16px;">
                             <div style="font-size: 11px; font-weight: 800; color: var(--primary-brand); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;"><i class="fas fa-user" style="margin-right: 4px;"></i> INQUIRY</div>
-                            <div style="font-size: 14px; color: white; line-height: 1.6;">${q.query}</div>
+                            <div style="font-size: 14px; color: #0f172a; line-height: 1.6;">${q.query}</div>
                         </div>
-                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px; padding: 16px;">
+                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(0, 0, 0,0.03); border-radius: 12px; padding: 16px;">
                             <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;"><i class="fas fa-robot" style="margin-right: 4px;"></i> RESPONSE</div>
                             <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; max-height: 120px; overflow: auto;">${q.answer ? q.answer.replace(/</g, '&lt;').replace(/>/g, '&gt;') : '<span style="font-style: italic; opacity: 0.5;">Awaiting synthesis...</span>'}</div>
                         </div>
                     </div>
-                `).join('') : '<p style="color: var(--text-muted); font-style: italic; padding: 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">No intelligence queries executed yet.</p>';
+                `).join('') : '<p style="color: var(--text-muted); font-style: italic; padding: 20px; text-align: center; border: 1px dashed rgba(0, 0, 0,0.1); border-radius: 12px;">No intelligence queries executed yet.</p>';
                 
                 // Store queries globally for export
                 window.currentUserQueries = data.queries;

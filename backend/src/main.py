@@ -700,37 +700,81 @@ async def get_admin_repos_all(request: Request):
         return store.list_repos(current_admin_id=current_admin_id)
     return []
 
+# Global state for network tracking
+last_net_io = None
+last_net_time = None
+
 @app.get("/api/admin/clusters")
 async def get_admin_clusters(request: Request):
+    global last_net_io, last_net_time
     try:
         import psutil
+        import socket
+        import time
+        
         cpu_percent = psutil.cpu_percent(interval=0.1)
         mem = psutil.virtual_memory()
-        cores = psutil.cpu_count()
+        cores = psutil.cpu_count(logical=False) or psutil.cpu_count()
         ram_total = f"{mem.total / (1024**3):.1f}GB"
         mem_used = f"{mem.used / (1024**3):.1f} GB"
         mem_percent = mem.percent
+        
+        boot_time = psutil.boot_time()
+        uptime_seconds = time.time() - boot_time
+        days = int(uptime_seconds // (24 * 3600))
+        hours = int((uptime_seconds % (24 * 3600)) // 3600)
+        minutes = int((uptime_seconds % 3600) // 60)
+        
+        if days > 0:
+            uptime_str = f"ACTIVE - {days}d {hours}h {minutes}m UPTIME"
+        else:
+            uptime_str = f"ACTIVE - {hours}h {minutes}m UPTIME"
+
+        net_io = psutil.net_io_counters()
+        current_time = time.time()
+        
+        network_speed = "0.0 KB/s"
+        network_percent = 0.0
+        
+        if last_net_io and last_net_time:
+            time_diff = current_time - last_net_time
+            if time_diff > 0:
+                bytes_sent_diff = net_io.bytes_sent - last_net_io.bytes_sent
+                bytes_recv_diff = net_io.bytes_recv - last_net_io.bytes_recv
+                total_bytes_per_sec = (bytes_sent_diff + bytes_recv_diff) / time_diff
+                
+                if total_bytes_per_sec > 1024**2:
+                    network_speed = f"{total_bytes_per_sec / (1024**2):.1f} MB/s"
+                else:
+                    network_speed = f"{total_bytes_per_sec / 1024:.1f} KB/s"
+                
+                # Assume 100MB/s is 100% for the progress bar scaling
+                network_percent = min(100.0, (total_bytes_per_sec / (100 * 1024**2)) * 100)
+                if total_bytes_per_sec > 0:
+                    network_percent = max(2.0, network_percent)
+                    
+        last_net_io = net_io
+        last_net_time = current_time
+
+        node_name = socket.gethostname()
+
     except ImportError:
-        import random
-        cpu_percent = random.randint(10, 60)
-        cores = 8
-        ram_total = "32.0GB"
-        mem_used = f"{random.uniform(8.0, 16.0):.1f} GB"
-        mem_percent = random.randint(30, 70)
+        return {"clusters": []}
 
     return {
         "clusters": [
             {
                 "id": "node-01",
-                "name": "Node-01 (Primary Server)",
+                "name": f"{node_name} (Primary Server)",
                 "region": "Local Engine",
                 "cores": cores,
                 "ram_total": ram_total,
-                "status": "ACTIVE - 99.9% UPTIME",
+                "status": uptime_str,
                 "cpu_utilization": cpu_percent,
                 "memory_utilization": mem_percent,
                 "memory_used": mem_used,
-                "network_io": "Active"
+                "network_io": network_speed,
+                "network_percent": network_percent
             }
         ]
     }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neural Interface | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=light-theme-final">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
@@ -16,26 +16,26 @@
         .chat-input-area { position: absolute; bottom: 0; left: 0; right: 0; padding: 32px 60px; background: linear-gradient(to top, #000 80%, transparent); z-index: 100; box-sizing: border-box; }
         .input-wrapper { position: relative; background: var(--surface-elevated); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 8px; transition: var(--transition-smooth); }
         .input-wrapper:focus-within { border-color: var(--primary-brand); box-shadow: var(--shadow-glow); }
-        #chat-input { background: transparent; border: none; color: white; padding: 12px 16px; width: calc(100% - 60px); font-size: 15px; outline: none; }
+        #chat-input { background: transparent; border: none; color: #0f172a; padding: 12px 16px; width: calc(100% - 60px); font-size: 15px; outline: none; }
         .send-btn { position: absolute; right: 8px; top: 8px; bottom: 8px; width: 44px; background: var(--primary-brand); border: none; border-radius: 14px; color: black; cursor: pointer; transition: var(--transition-smooth); }
         .send-btn:hover { transform: scale(1.05); background: white; }
         .orb-container { position: absolute; top: 40px; right: 40px; }
         .orb { width: 48px; height: 48px; border-radius: 50%; background: var(--primary-brand); filter: blur(15px); opacity: 0.3; animation: pulse 4s infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.5); opacity: 0.4; } }
         .pinned-section { display: flex; flex-direction: column; margin-top: 32px; }
-        .pinned-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; display: flex; align-items: center; }
-        .pinned-item:hover { background: rgba(255,255,255,0.08); border-color: var(--primary-brand); transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .pinned-item { background: rgba(0,0,0,0.03); border: 1px solid rgba(0, 0, 0,0.08); border-radius: 10px; padding: 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; display: flex; align-items: center; }
+        .pinned-item:hover { background: rgba(0, 0, 0,0.08); border-color: var(--primary-brand); transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         /* Markdown prose styles inside AI bubbles */
         .ai-prose { line-height: 1.7; font-size: 14px; color: var(--text-secondary); }
         .ai-prose p { margin: 0 0 10px; }
         .ai-prose p:last-child { margin-bottom: 0; }
-        .ai-prose h1,.ai-prose h2,.ai-prose h3 { color: white; font-weight: 700; margin: 14px 0 6px; }
-        .ai-prose code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 12px; color: #a5b4fc; }
-        .ai-prose pre { background: #0d0d14; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 14px 18px; overflow-x: auto; margin: 10px 0; }
+        .ai-prose h1,.ai-prose h2,.ai-prose h3 { color: #0f172a; font-weight: 700; margin: 14px 0 6px; }
+        .ai-prose code { background: rgba(0, 0, 0,0.08); padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 12px; color: #a5b4fc; }
+        .ai-prose pre { background: #0d0d14; border: 1px solid rgba(0, 0, 0,0.1); border-radius: 10px; padding: 14px 18px; overflow-x: auto; margin: 10px 0; }
         .ai-prose pre code { background: none; padding: 0; color: inherit; font-size: 12px; }
         .ai-prose ul,.ai-prose ol { padding-left: 20px; margin: 8px 0; }
         .ai-prose li { margin-bottom: 4px; color: var(--text-secondary); }
-        .ai-prose strong { color: white; font-weight: 700; }
+        .ai-prose strong { color: #0f172a; font-weight: 700; }
         .ai-prose blockquote { border-left: 3px solid var(--primary-brand); padding-left: 12px; color: var(--text-muted); margin: 8px 0; }
         .ai-prose a { color: var(--primary-brand); }
     </style>
@@ -107,7 +107,7 @@
 
         <aside class="right-panel" style="display: flex; flex-direction: column; height: 100vh; padding-bottom: 40px; box-sizing: border-box;">
             <div class="panel-section-title" style="margin-bottom: 16px;">Active Visualizer</div>
-            <div id="visualizer-preview" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; min-height: 400px; overflow: hidden;">
+            <div id="visualizer-preview" style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; min-height: 400px; overflow: hidden;">
                 <i class="fas fa-project-diagram" style="font-size: 48px; color: var(--text-muted); margin-bottom: 16px;"></i>
                 <p style="font-size: 13px; color: var(--text-muted);">Architecture maps will be generated here during deep analysis.</p>
             </div>
@@ -123,7 +123,7 @@
                         <h2 style="font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 12px;"><i class="fas fa-history" style="color: var(--primary-brand);"></i> Inquiry History</h2>
                         <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Review past intelligence sessions and redirect them to the active chat.</p>
                     </div>
-                    <button onclick="closeHistoryModal()" style="background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s;"><i class="fas fa-times"></i></button>
+                    <button onclick="closeHistoryModal()" style="background: rgba(0,0,0,0.05); border: none; color: var(--text-muted); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s;"><i class="fas fa-times"></i></button>
                 </div>
                 <div id="history-list" style="padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 16px;">
                     <!-- History items injected here -->
@@ -215,7 +215,7 @@
 
                         <!-- Spacer Fillers to look professional -->
                         <div style="margin-top: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
-                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                            <div style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
                                 <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center;"><i class="fas fa-lightbulb" style="color: #fbbf24; margin-right: 12px; font-size: 24px;"></i> Inquiry Best Practices</h3>
                                 <ul style="color: var(--text-muted); font-size: 14px; line-height: 2; padding-left: 20px; margin: 0;">
                                     <li>Ask specific questions about architectural patterns.</li>
@@ -224,13 +224,13 @@
                                     <li>Open the Architecture Map to visualize dependencies.</li>
                                 </ul>
                             </div>
-                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                            <div style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
                                 <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center;"><i class="fas fa-network-wired" style="color: var(--primary-brand); margin-right: 12px; font-size: 24px;"></i> Neural Engine Status</h3>
                                 <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px;">
                                     <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Vector Database</span> <span style="color: #22c55e; font-weight: 800; background: rgba(34,197,94,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;"><i class="fas fa-circle" style="font-size: 8px; margin-right: 4px; vertical-align: middle;"></i> ONLINE</span></div>
                                     <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Inference Model</span> <span style="color: #22c55e; font-weight: 800; background: rgba(34,197,94,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;"><i class="fas fa-circle" style="font-size: 8px; margin-right: 4px; vertical-align: middle;"></i> OPTIMIZED</span></div>
-                                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Context Window</span> <span style="color: white; font-weight: 700; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;">128K TOKENS</span></div>
-                                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Base Latency</span> <span style="color: white; font-weight: 700; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;">~24ms</span></div>
+                                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Context Window</span> <span style="color: #0f172a; font-weight: 700; background: rgba(0,0,0,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;">128K TOKENS</span></div>
+                                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Base Latency</span> <span style="color: #0f172a; font-weight: 700; background: rgba(0,0,0,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;">~24ms</span></div>
                                 </div>
                             </div>
                         </div>
@@ -250,7 +250,7 @@
                             return;
                         }
                         container.innerHTML = repos.map(repo => `
-                            <div onclick="window.location.href='chat.html?repo=${repo.id}'" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 24px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);" onmouseover="this.style.borderColor='var(--primary-brand)'; this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 40px rgba(99,102,241,0.1)';" onmouseout="this.style.borderColor='var(--border-subtle)'; this.style.transform='none'; this.style.boxShadow='none';">
+                            <div onclick="window.location.href='chat.html?repo=${repo.id}'" style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 24px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);" onmouseover="this.style.borderColor='var(--primary-brand)'; this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 40px rgba(99,102,241,0.1)';" onmouseout="this.style.borderColor='var(--border-subtle)'; this.style.transform='none'; this.style.boxShadow='none';">
                                 <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
                                     <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(99,102,241,0.1); color: var(--primary-brand); display: flex; align-items: center; justify-content: center; font-size: 20px;"><i class="fas fa-folder-open"></i></div>
                                     <h3 style="font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${repo.name}</h3>
@@ -410,7 +410,7 @@
                     
                     visualizer.innerHTML = `
                         <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
-                            <button class="btn btn-secondary" onclick="downloadMermaidImage()" style="padding: 6px 12px; font-size: 11px; display: flex; gap: 6px; align-items: center; background: rgba(255,255,255,0.1); border: 1px solid var(--border-subtle); border-radius: 6px; color: white; cursor: pointer;" title="Download Map (PNG)">
+                            <button class="btn btn-secondary" onclick="downloadMermaidImage()" style="padding: 6px 12px; font-size: 11px; display: flex; gap: 6px; align-items: center; background: rgba(0,0,0,0.1); border: 1px solid var(--border-subtle); border-radius: 6px; color: #0f172a; cursor: pointer;" title="Download Map (PNG)">
                                 <i class="fas fa-download"></i> PNG
                             </button>
                         </div>
@@ -474,7 +474,7 @@
                 <div style="width: 100%; text-align: left; display: flex; flex-direction: column; height: 100%;">
                     <h3 style="margin-bottom: 12px;">Deep Code Search</h3>
                     <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-                        <input type="text" id="search-input" placeholder="Search code/symbols..." style="flex: 1; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); color: white; border-radius: 6px;">
+                        <input type="text" id="search-input" placeholder="Search code/symbols..." style="flex: 1; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); color: #0f172a; border-radius: 6px;">
                         <button onclick="performDeepSearch()" style="background: var(--primary-brand); color: black; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Search</button>
                     </div>
                     <div id="search-results" style="flex: 1; overflow-y: auto; font-size: 11px; text-align: left;"></div>
@@ -505,7 +505,7 @@
                     }
                     let html = '';
                     data.results.forEach(r => {
-                        html += `<div style="background: rgba(255,255,255,0.05); padding: 8px; margin-bottom: 8px; border-radius: 6px; border-left: 2px solid var(--primary-brand);">
+                        html += `<div style="background: rgba(0,0,0,0.05); padding: 8px; margin-bottom: 8px; border-radius: 6px; border-left: 2px solid var(--primary-brand);">
                             <div style="color: var(--primary-brand); font-weight: bold; margin-bottom: 4px;">${r.file_path}</div>
                             <div style="color: var(--text-muted); margin-bottom: 4px;">Symbol: ${r.symbol_name}</div>
                             <pre style="margin: 0; background: rgba(0,0,0,0.5); padding: 4px; overflow-x: auto;">${r.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
@@ -574,9 +574,9 @@
                         const answerHtml = log.answer ? renderMarkdown(log.answer) : '<span style="color: var(--text-muted); font-style: italic;">No response recorded.</span>';
                         
                         html += `
-                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; margin-bottom: 16px;">
+                        <div style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; margin-bottom: 16px;">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
-                                <div style="font-weight: 800; font-size: 16px; color: white;">
+                                <div style="font-weight: 800; font-size: 16px; color: #0f172a;">
                                     <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 4px;">Operator</span>
                                     ${log.query}
                                 </div>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Architectural Insights | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=light-theme-final">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
@@ -12,9 +12,9 @@
         .analytics-hero { padding-bottom: 60px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 60px; }
         .stat-grid-large { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 60px; }
         .chart-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; margin-bottom: 60px; }
-        .complexity-map { height: 400px; background: rgba(255,255,255,0.02); border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
+        .complexity-map { height: 400px; background: #0f172a; border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
         .app-shell { grid-template-columns: 80px 300px 1fr !important; }
-        .hotspot-row { display:flex; justify-content:space-between; align-items:center; padding:20px; background:rgba(255,255,255,0.02); border-radius:16px; border:1px solid var(--border-subtle); margin-bottom:12px; }
+        .hotspot-row { display:flex; justify-content:space-between; align-items:center; padding:20px; background:rgba(0, 0, 0,0.02); border-radius:16px; border:1px solid var(--border-subtle); margin-bottom:12px; }
     </style>
 </head>
 <body>
@@ -114,7 +114,7 @@
                 <h2 id="map-modal-title" style="font-size: 24px; font-weight: 800;">Repository Map</h2>
                 <div>
                     <button id="map-modal-download" class="btn btn-primary" style="margin-right: 16px;"><i class="fas fa-download"></i> Download SVG</button>
-                    <button onclick="closeMapModal()" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
+                    <button onclick="closeMapModal()" style="background: rgba(0,0,0,0.1); border: none; color: #0f172a; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
                 </div>
             </div>
             <div id="map-modal-content" style="flex: 1; overflow: auto; background: var(--surface-base); border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 40px;"></div>
@@ -246,7 +246,7 @@
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(0, 0, 0,0.05)' }, ticks: { color: '#94a3b8' } },
                         x: { grid: { display: false }, ticks: { color: '#94a3b8', maxRotation: 35, font: { size: 10 } } }
                     }
                 }
@@ -302,7 +302,7 @@
                 const repoName = document.getElementById('sidebar-repo-name').innerText;
 
                 const repoBox = document.createElement('div');
-                repoBox.style.cssText = 'display:flex;gap:24px;align-items:stretch;background:rgba(255,255,255,0.02);border:1px solid var(--border-subtle);border-radius:24px;padding:24px;';
+                repoBox.style.cssText = 'display:flex;gap:24px;align-items:stretch;background:rgba(0, 0, 0,0.02);border:1px solid var(--border-subtle);border-radius:24px;padding:24px;';
 
                 const headerPart = document.createElement('div');
                 headerPart.style.cssText = 'width:220px;flex-shrink:0;';

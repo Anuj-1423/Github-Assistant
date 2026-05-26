@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Node Clusters | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=light-theme-final">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .admin-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px; }
         .admin-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 24px; padding: 32px; transition: var(--transition-smooth); }
         .admin-card:hover { border-color: var(--primary-brand); transform: translateY(-4px); box-shadow: var(--shadow-glow); }
-        .badge-admin { background: #ef4444; color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; }
-        .cluster-node-full { background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
-        .node-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 16px; }
+        .badge-admin { background: #ef4444; color: #0f172a; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; }
+        .cluster-node-full { background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+        .node-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 16px; }
         .node-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .stat-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+        .stat-bar-bg { width: 100%; height: 6px; background: rgba(0,0,0,0.05); border-radius: 3px; margin-top: 8px; overflow: hidden; }
         .stat-bar-fill { height: 100%; border-radius: 3px; }
     </style>
 </head>
@@ -29,7 +29,7 @@
         <aside class="sidebar">
             <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 16px;">
                 <div class="logo-box" style="width: 36px; height: 36px; background: #ef4444;">
-                    <i class="fas fa-shield-alt" style="font-size: 16px; color: white;"></i>
+                    <i class="fas fa-shield-alt" style="font-size: 16px; color: #0f172a;"></i>
                 </div>
                 <div>
                     <h1 style="font-size: 15px; font-weight: 800; letter-spacing: 0.05em; line-height: 1;">CORE CONTROL</h1>
@@ -55,7 +55,7 @@
                     <p style="color: var(--text-secondary); font-size: 16px;">Manage distributed inference and indexing nodes across all regions.</p>
                 </div>
                 <div style="display: flex; gap: 16px;">
-                    <button class="btn btn-secondary" style="border-color: var(--primary-brand); color: white;" onclick="alert('Provisioning new node...');"><i class="fas fa-plus"></i> Provision Node</button>
+                    <button class="btn btn-secondary" style="border-color: var(--primary-brand); color: #0f172a;" onclick="alert('Provisioning new node...');"><i class="fas fa-plus"></i> Provision Node</button>
                 </div>
             </header>
 
@@ -120,12 +120,12 @@
                             </div>
                             <div>
                                 <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Network I/O (${c.network_io})</div>
-                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 32%; background: var(--primary-brand);"></div></div>
+                                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${c.network_percent}%; background: var(--primary-brand);"></div></div>
                             </div>
                         </div>
                         <div style="margin-top: 24px; display: flex; gap: 12px;">
                             <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px;">Restart Service</button>
-                            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; border-color: rgba(255,255,255,0.1);">View Logs</button>
+                            <button class="btn btn-secondary" style="font-size: 12px; padding: 8px 16px; border-color: rgba(0,0,0,0.1);">View Logs</button>
                         </div>
                     </div>
                 `).join('');
