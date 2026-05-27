@@ -27,21 +27,12 @@ from starlette.background import BackgroundTask
 # This fixes common "ModuleNotFoundError" and IDE unresolved reference errors
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-try:
-    from src.jobs.indexing_job import IndexingJob
-    from src.retrieval.hybrid_retriever import HybridRetriever
-    from src.storage.storage_factory import get_storage
-    from src.graph.graph_builder import CodeGraph
-    from src.agent.code_agent import CodeAgent
-    from src.intelligence.repo_features import RepoFeatureService
-except ImportError as e:
-    # Fallback for different execution contexts
-    from jobs.indexing_job import IndexingJob
-    from retrieval.hybrid_retriever import HybridRetriever
-    from storage.storage_factory import get_storage
-    from graph.graph_builder import CodeGraph
-    from agent.code_agent import CodeAgent
-    from intelligence.repo_features import RepoFeatureService
+from src.jobs.indexing_job import IndexingJob
+from src.retrieval.hybrid_retriever import HybridRetriever
+from src.storage.storage_factory import get_storage
+from src.graph.graph_builder import CodeGraph
+from src.agent.code_agent import CodeAgent
+from src.intelligence.repo_features import RepoFeatureService
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
