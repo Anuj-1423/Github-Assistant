@@ -26,7 +26,8 @@ class MySQLStore:
                 host=self.config["host"],
                 port=self.config["port"],
                 user=self.config["user"],
-                password=self.config["password"]
+                password=self.config["password"],
+                database=self.config["database"]
             )
             cursor = conn.cursor()
             cursor.execute(f"CREATE DATABASE IF NOT EXISTS {self.config['database']}")
