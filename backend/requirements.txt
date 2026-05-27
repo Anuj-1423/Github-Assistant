@@ -17,3 +17,4 @@ gitpython
 requests
 python-multipart
 langchain-google-genai
+mysql-connector-python
