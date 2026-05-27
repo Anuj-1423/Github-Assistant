@@ -113,6 +113,12 @@ class MySQLStore:
                         logger.warning(f"Error adding status column: {err}")
 
                 try:
+                    cursor.execute("ALTER TABLE users ADD COLUMN bio TEXT")
+                except mysql.connector.Error as err:
+                    if err.errno != 1060:
+                        logger.warning(f"Error adding bio column: {err}")
+
+                try:
                     cursor.execute("ALTER TABLE repositories ADD COLUMN description TEXT")
                 except mysql.connector.Error as err:
                     if err.errno != 1060:
@@ -123,6 +129,12 @@ class MySQLStore:
                 except mysql.connector.Error as err:
                     if err.errno != 1060:
                         logger.warning(f"Error adding is_public column: {err}")
+
+                try:
+                    cursor.execute("ALTER TABLE repositories ADD COLUMN user_id VARCHAR(255)")
+                except mysql.connector.Error as err:
+                    if err.errno != 1060:
+                        logger.warning(f"Error adding user_id column: {err}")
                         
                 conn.commit()
                 logger.info("MySQL Database initialized successfully.")
@@ -271,14 +283,14 @@ class MySQLStore:
             ''', (repo_id, limit))
             return cursor.fetchall()
 
-    def upsert_repo(self, repo_id: str, name: str, url: str, branch: str = "main", status: str = "READY"):
+    def upsert_repo(self, repo_id: str, name: str, url: str, branch: str = "main", status: str = "READY", user_id: str = "system"):
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                INSERT INTO repositories (id, name, url, branch, status)
-                VALUES (%s, %s, %s, %s, %s)
-                ON DUPLICATE KEY UPDATE name=VALUES(name), url=VALUES(url), branch=VALUES(branch), status=VALUES(status)
-            ''', (repo_id, name, url, branch, status))
+                INSERT INTO repositories (id, name, url, branch, status, user_id)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE name=VALUES(name), url=VALUES(url), branch=VALUES(branch), status=VALUES(status), user_id=VALUES(user_id)
+            ''', (repo_id, name, url, branch, status, user_id))
             conn.commit()
 
     def list_repos(self) -> List[Dict[str, Any]]:
