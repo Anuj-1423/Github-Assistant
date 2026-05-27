@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 8000
 
 # Entry point updated from app.main to src.main
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD sh -c "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"
