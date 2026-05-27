@@ -310,7 +310,7 @@ class MySQLStore:
                 cursor.execute('SELECT * FROM repositories ORDER BY created_at DESC')
             elif user_id:
                 # Users see only their repos (or global repos where user_id='system' if you want)
-                cursor.execute('SELECT * FROM repositories WHERE user_id = %s OR user_id = "system" OR user_id IS NULL ORDER BY created_at DESC', (user_id,))
+                cursor.execute("SELECT * FROM repositories WHERE user_id = %s OR user_id = 'system' OR user_id IS NULL ORDER BY created_at DESC", (user_id,))
             else:
                 cursor.execute('SELECT * FROM repositories ORDER BY created_at DESC')
             return cursor.fetchall()
