@@ -202,7 +202,8 @@ class SQLiteStore:
             cursor = conn.cursor()
             
             # 1. Try FTS5 phrase match
-            formatted_query = f'"{query.replace("\"", "")}"'
+            clean_query = query.replace('"', '')
+            formatted_query = f'"{clean_query}"'
             cursor.execute('''
                 SELECT chunk_id, symbol_name, content, bm25(code_search) as rank
                 FROM code_search
