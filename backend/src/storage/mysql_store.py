@@ -99,6 +99,31 @@ class MySQLStore:
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                 ''')
+                # Schema migrations for older DB instances
+                try:
+                    cursor.execute("ALTER TABLE users ADD COLUMN username VARCHAR(255)")
+                except mysql.connector.Error as err:
+                    if err.errno != 1060: # 1060 is Duplicate column name
+                        logger.warning(f"Error adding username column: {err}")
+                        
+                try:
+                    cursor.execute("ALTER TABLE users ADD COLUMN status VARCHAR(50) DEFAULT 'ACTIVE'")
+                except mysql.connector.Error as err:
+                    if err.errno != 1060:
+                        logger.warning(f"Error adding status column: {err}")
+
+                try:
+                    cursor.execute("ALTER TABLE repositories ADD COLUMN description TEXT")
+                except mysql.connector.Error as err:
+                    if err.errno != 1060:
+                        logger.warning(f"Error adding description column: {err}")
+                        
+                try:
+                    cursor.execute("ALTER TABLE repositories ADD COLUMN is_public BOOLEAN DEFAULT FALSE")
+                except mysql.connector.Error as err:
+                    if err.errno != 1060:
+                        logger.warning(f"Error adding is_public column: {err}")
+                        
                 conn.commit()
                 logger.info("MySQL Database initialized successfully.")
         except Exception as e:
