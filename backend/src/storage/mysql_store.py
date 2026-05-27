@@ -350,3 +350,114 @@ class MySQLStore:
                 profile_data.get('bio')
             ))
             conn.commit()
+
+    def log_query(self, repo_id: str, query: str, user_id: str = 'default_user', answer: str = ''):
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS query_logs (
+                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                    user_id VARCHAR(255),
+                    repo_id VARCHAR(255),
+                    query TEXT,
+                    answer TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            cursor.execute('''
+                INSERT INTO query_logs (user_id, repo_id, query, answer)
+                VALUES (%s, %s, %s, %s)
+            ''', (user_id, repo_id, query, answer))
+            conn.commit()
+
+    def count_chunks(self) -> int:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT COUNT(*) FROM chunks')
+            row = cursor.fetchone()
+            return int(row[0]) if row else 0
+
+    def list_query_logs(self, limit: int = 50, current_admin_id: str = None):
+        with self._get_connection() as conn:
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS query_logs (
+                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                    user_id VARCHAR(255),
+                    repo_id VARCHAR(255),
+                    query TEXT,
+                    answer TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            q = '''
+                SELECT q.id, q.user_id, q.repo_id, q.query, q.created_at, u.full_name, u.email
+                FROM query_logs q
+                LEFT JOIN users u ON u.id = q.user_id
+            '''
+            params = []
+            if current_admin_id:
+                q += " WHERE (u.role != 'admin' OR u.id IS NULL OR q.user_id = %s)"
+                params.append(current_admin_id)
+            q += " ORDER BY q.created_at DESC, q.id DESC LIMIT %s"
+            params.append(limit)
+            cursor.execute(q, tuple(params))
+            return cursor.fetchall()
+            
+    def list_query_logs_for_repo(self, repo_id: str, limit: int = 50):
+        with self._get_connection() as conn:
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS query_logs (
+                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                    user_id VARCHAR(255),
+                    repo_id VARCHAR(255),
+                    query TEXT,
+                    answer TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            cursor.execute('''
+                SELECT q.id, q.user_id, q.repo_id, q.query, q.answer, q.created_at
+                FROM query_logs q
+                WHERE q.repo_id = %s
+                ORDER BY q.created_at DESC, q.id DESC
+                LIMIT %s
+            ''', (repo_id, limit))
+            return cursor.fetchall()
+
+    def get_admin_overview(self, current_admin_id: str = None):
+        repos = self.list_repos()
+        users = self.list_users(current_admin_id=current_admin_id)
+        queries = self.list_query_logs(limit=25, current_admin_id=current_admin_id)
+        
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            q = "SELECT COUNT(*) FROM query_logs q LEFT JOIN users u ON u.id = q.user_id"
+            params = []
+            if current_admin_id:
+                q += " WHERE (u.role != 'admin' OR u.id IS NULL OR q.user_id = %s)"
+                params.append(current_admin_id)
+            try:
+                cursor.execute(q, tuple(params))
+                row = cursor.fetchone()
+                total_queries = int(row[0]) if row else 0
+            except:
+                total_queries = 0
+
+        status_counts = {"ready": 0, "pending": 0, "failed": 0}
+        for repo in repos:
+            status = (repo.get("status") or "").upper()
+            if status == "READY": status_counts["ready"] += 1
+            elif status == "FAILED": status_counts["failed"] += 1
+            else: status_counts["pending"] += 1
+
+        return {
+            "total_users": len(users),
+            "global_docs": len(repos),
+            "personal_docs": status_counts["ready"],
+            "total_queries": total_queries,
+            "total_chunks": self.count_chunks(),
+            "repo_status": status_counts,
+            "recent_queries": queries
+        }
