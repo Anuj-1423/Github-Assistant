@@ -1,6 +1,9 @@
 import subprocess
 import webbrowser
-import pyperclip
+try:
+    import pyperclip
+except ImportError:
+    pyperclip = None
 import platform
 import sys
 import os
@@ -58,6 +61,8 @@ class SystemControlTools:
 
     def read_clipboard(self) -> str:
         """Reads the current text from the system clipboard."""
+        if pyperclip is None:
+            return "Clipboard is not available in the server environment."
         try:
             return pyperclip.paste()
         except Exception as e:
@@ -65,6 +70,8 @@ class SystemControlTools:
 
     def write_clipboard(self, text: str) -> str:
         """Writes text to the system clipboard."""
+        if pyperclip is None:
+            return "Clipboard is not available in the server environment."
         try:
             pyperclip.copy(text)
             return "Content copied to clipboard successfully, Sir."
