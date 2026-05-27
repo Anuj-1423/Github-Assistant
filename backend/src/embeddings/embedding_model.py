@@ -1,10 +1,7 @@
 import hashlib
 import logging
 from typing import List
-
 import numpy as np
-import torch
-from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
 
@@ -13,15 +10,19 @@ class EmbeddingModel:
     Generates embeddings using BGE-small-en-v1.5.
     Following PRD Section 7.4 requirements.
     """
-    _remote_model_unavailable = False
+    _remote_model_unavailable = True
     _shared_model = None
 
     def __init__(self, model_name: str = "BAAI/bge-small-en-v1.5", dimension: int = 384):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = "cpu"
         self.dimension = dimension
 
         if not EmbeddingModel._remote_model_unavailable:
             try:
+                import torch
+                from sentence_transformers import SentenceTransformer
+                self.device = "cuda" if torch.cuda.is_available() else "cpu"
+                
                 if EmbeddingModel._shared_model is None:
                     logger.info(f"Loading Embedding Model {model_name} into memory...")
                     EmbeddingModel._shared_model = SentenceTransformer(model_name, device=self.device)
