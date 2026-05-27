@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise Gateway | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-v2">
+    <link rel="stylesheet" href="style.css?v=professional-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .contact-hero { padding: 160px 40px 80px; text-align: center; }
@@ -39,8 +39,7 @@
     </nav>
 
     <header class="contact-hero">
-        <div class="badge" style="margin-bottom: 24px;">ENTERPRISE SOLUTIONS</div>
-        <h1 style="font-size: 64px; letter-spacing: -0.03em; margin-bottom: 24px;">Ready to Scale Your <span class="text-gradient">Neural Intelligence?</span></h1>
+<h1 style="font-size: 64px; letter-spacing: -0.03em; margin-bottom: 24px;">Ready to Scale Your <span class="text-gradient">Neural Intelligence?</span></h1>
         <p style="color: var(--text-secondary); max-width: 800px; margin: 0 auto; font-size: 18px;">From high-growth startups to Fortune 500 engineering organizations, we provide the dedicated infrastructure and support needed for deep codebase context.</p>
     </header>
 
@@ -132,5 +131,25 @@
             </div>
         </div>
     </footer>
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = { threshold: 0.1 };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.contact-info-card, form, h1, p').forEach(item => {
+            item.style.opacity = "0";
+            item.style.transform = "translateY(40px)";
+            item.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+            observer.observe(item);
+        });
+    </script>
 </body>
 </html>

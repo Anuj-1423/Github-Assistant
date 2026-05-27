@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Codebase Knowledge AI | The Future of Repository Intelligence</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-v2">
+    <link rel="stylesheet" href="style.css?v=professional-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 120px; }
@@ -39,29 +39,13 @@
 
     <header class="hero">
         <div class="hero-glow"></div>
-        <div class="badge" style="margin-bottom: 24px; background: rgba(99, 102, 241, 0.1); color: var(--primary-brand); border: 1px solid var(--primary-glow);">NEXT-GEN CODE INTELLIGENCE IS HERE</div>
-        <h1 style="text-align: center; max-width: 1000px; margin-bottom: 32px;">Unlock the Deep Context of Your <span class="text-gradient">Entire Codebase</span></h1>
+<h1 style="text-align: center; max-width: 1000px; margin-bottom: 32px;">Unlock the Deep Context of Your <span class="text-gradient">Entire Codebase</span></h1>
         <p style="text-align: center; max-width: 700px; margin-bottom: 56px;">Codebase Knowledge AI parses your repositories into a semantic graph, allowing you to query, visualize, and optimize complex architectures with agentic precision.</p>
         <div style="display: flex; gap: 24px;">
             <a href="login.html" class="btn btn-primary" style="padding: 18px 48px; font-size: 16px;">Initialize Core Sync</a>
             <a href="features.html" class="btn btn-secondary" style="padding: 18px 48px; font-size: 16px;">View Protocols</a>
         </div>
-        <div style="margin-top: 80px; display: flex; gap: 40px; opacity: 0.4;">
-            <span><i class="fab fa-github"></i> GitHub Sync</span>
-            <span><i class="fas fa-microchip"></i> AST Parsing</span>
-            <span><i class="fas fa-project-diagram"></i> Graph Neural Networks</span>
-        </div>
     </header>
-
-    <section class="trusted-by">
-        <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.2em; margin-bottom: 32px; color: var(--text-muted); text-transform: uppercase;">TRUSTED BY INNOVATIVE ENGINEERING TEAMS</div>
-        <div style="display: flex; justify-content: center; gap: 80px; align-items: center; font-size: 24px; font-weight: 800; color: var(--text-secondary);">
-            <div style="display: flex; align-items: center; gap: 12px;"><i class="fab fa-aws"></i> CloudScale</div>
-            <div style="display: flex; align-items: center; gap: 12px;"><i class="fab fa-node-js"></i> TechFlow</div>
-            <div style="display: flex; align-items: center; gap: 12px;"><i class="fab fa-python"></i> PyNeural</div>
-            <div style="display: flex; align-items: center; gap: 12px;"><i class="fab fa-docker"></i> ContainerX</div>
-        </div>
-    </section>
 
     <section class="feature-grid-modern">
         <div class="feature-card-premium">
@@ -98,8 +82,7 @@
 
     <section class="use-case-section">
         <div>
-            <div class="badge" style="margin-bottom: 24px;">USE CASE: THE ARCHITECT</div>
-            <h2 style="font-size: 48px; margin-bottom: 24px;">Master Your Modular Complexity</h2>
+<h2 style="font-size: 48px; margin-bottom: 24px;">Master Your Modular Complexity</h2>
             <p style="font-size: 18px; color: var(--text-secondary); margin-bottom: 40px;">Stop guessing how your microservices interact. Codebase Knowledge AI builds a live "Digital Twin" of your repository, allowing you to simulate changes and visualize impact before a single line is committed.</p>
             <div style="display: flex; flex-direction: column; gap: 24px;">
                 <div style="display: flex; gap: 20px; align-items: flex-start;">
@@ -200,5 +183,25 @@
             </div>
         </div>
     </footer>
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = { threshold: 0.1 };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card-premium, .use-case-card, section h2, section p, .btn').forEach(item => {
+            item.style.opacity = "0";
+            item.style.transform = "translateY(40px)";
+            item.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+            observer.observe(item);
+        });
+    </script>
 </body>
 </html>

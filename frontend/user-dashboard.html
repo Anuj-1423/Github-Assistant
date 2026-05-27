@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Central Nexus | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-v2">
+    <link rel="stylesheet" href="style.css?v=professional-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -46,12 +46,12 @@
                 </div>
             </div>
 
-            <nav style="display: flex; flex-direction: column; gap: 10px;">
+            <nav style="display: flex; flex-direction: column; gap: 10px; margin-top: 56px;">
                 <button id="nav-dashboard" class="sidebar-nav-btn active" onclick="window.location.hash='dashboard'"><i class="fas fa-th-large"></i> Dashboard Home</button>
                 <button class="sidebar-nav-btn" onclick="showIndexModal()"><i class="fas fa-plus-circle"></i> Index Repository</button>
                 <button id="nav-analytics" class="sidebar-nav-btn" onclick="window.location.hash='analytics'"><i class="fas fa-chart-line"></i> Global Analytics</button>
                 <button id="nav-profile" class="sidebar-nav-btn" onclick="window.location.hash='profile'"><i class="fas fa-user-circle"></i> Operator Profile</button>
-                <button class="sidebar-nav-btn" style="margin-top: 32px; color: #ef4444;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout Session</button>
+                <button class="sidebar-nav-btn" style="margin-top: 32px; color: var(--text-secondary); transition: all 0.2s;" onmouseover="this.style.color='#ef4444'; this.style.background='rgba(239, 68, 68, 0.05)'" onmouseout="this.style.color='var(--text-secondary)'; this.style.background='transparent'" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout Session</button>
             </nav>
 
             <script>
@@ -86,8 +86,8 @@
                     <input type="text" id="inline-repo-url" placeholder="e.g. C:\Projects\MyRepo or https://github.com/..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); color: #0f172a; border-radius: 8px; margin-bottom: 24px;">
                     
                     <div style="display: flex; justify-content: flex-end; gap: 16px;">
-                        <button onclick="closeIndexModal()" style="background: transparent; border: 1px solid var(--border-subtle); color: #0f172a; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancel</button>
-                        <button id="inline-ingest-btn" onclick="startInlineIngest()" style="background: var(--primary-brand); border: none; color: black; font-weight: 700; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Synchronize</button>
+                        <button onclick="closeIndexModal()" style="background: transparent; border: 1px solid var(--border-subtle); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancel</button>
+                        <button id="inline-ingest-btn" onclick="startInlineIngest()" style="background: var(--primary-brand); border: none; color: white; font-weight: 700; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Synchronize</button>
                     </div>
                 </div>
             </div>
@@ -140,14 +140,13 @@
 
             <div id="view-profile" style="display: none;">
                 <header style="margin-bottom: 64px;">
-                    <span class="badge" style="margin-bottom: 16px; display: inline-block;">OPERATOR CLEARANCE</span>
-                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;">Identity Matrix</h2>
+<h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;">Identity Matrix</h2>
                     <p style="color: var(--text-secondary); font-size: 16px;">View and manage your core system parameters.</p>
                 </header>
 
                 <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; max-width: 800px; box-shadow: 0 4px 30px rgba(0,0,0,0.2);">
                     <div style="display: flex; gap: 32px; align-items: flex-start;">
-                        <div style="width: 100px; height: 100px; background: var(--primary-brand); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: #0f172a; box-shadow: 0 10px 25px rgba(99,102,241,0.3);" id="profile-avatar-large">U</div>
+                        <div style="width: 100px; height: 100px; background: var(--primary-brand); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: #ffffff; box-shadow: 0 10px 25px rgba(99,102,241,0.3);" id="profile-avatar-large">U</div>
                         <div style="flex: 1;">
                             <div style="margin-bottom: 24px;">
                                 <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Full Designation</div>
@@ -178,8 +177,7 @@
 
             <div id="view-analytics" style="display: none;">
                 <header class="analytics-hero">
-                    <div class="badge" style="margin-bottom: 12px;">GLOBAL TELEMETRY</div>
-                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">Architectural Insights</h2>
+<h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">Architectural Insights</h2>
                     <p style="color: var(--text-secondary); font-size: 16px;">Advanced structural analysis across all indexed repositories.</p>
                 </header>
 
@@ -241,6 +239,22 @@
             if (viewName === 'analytics' && !window.chartsRendered) {
                 renderCharts();
                 window.chartsRendered = true;
+            }
+
+            // Animate newly active view
+            const activeView = document.getElementById('view-' + viewName);
+            if (activeView) {
+                const elements = activeView.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
+                elements.forEach((el, index) => {
+                    el.style.opacity = "0";
+                    el.style.transform = "translateY(20px)";
+                    el.style.transition = "none";
+                    setTimeout(() => {
+                        el.style.transition = "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
+                        el.style.opacity = "1";
+                        el.style.transform = "translateY(0)";
+                    }, 50 + (index * 30));
+                });
             }
         }
         
@@ -559,5 +573,21 @@
         loadProfile();
         loadRepos();
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
+            elements.forEach((el, index) => {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                setTimeout(() => {
+                    el.style.opacity = "1";
+                    el.style.transform = "translateY(0)";
+                }, 50 + (index * 40)); // Staggered delay
+            });
+        });
+    </script>
 </body>
+
 </html>

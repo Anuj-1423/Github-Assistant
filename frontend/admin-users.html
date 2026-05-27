@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operator Directory | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-v2">
+    <link rel="stylesheet" href="style.css?v=professional-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .user-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
@@ -37,7 +37,7 @@
                 </div>
             </div>
 
-            <nav style="display: flex; flex-direction: column; gap: 10px;">
+            <nav style="display: flex; flex-direction: column; gap: 10px; margin-top: 56px;">
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin-dashboard.html'"><i class="fas fa-server"></i> System Overview</button>
                 <button class="sidebar-nav-btn active"><i class="fas fa-users-cog"></i> User Management</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin-analytics.html'"><i class="fas fa-database"></i> Database Health</button>
@@ -100,7 +100,7 @@
                             <p style="color: var(--text-muted); font-size: 14px;" id="modal-email">email@example.com</p>
                         </div>
                     </div>
-                    <button onclick="document.getElementById('user-modal').style.display='none'" style="background: rgba(0,0,0,0.05); border: 1px solid var(--border-subtle); color: #0f172a; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(0, 0, 0,0.1)'" onmouseout="this.style.background='rgba(0, 0, 0,0.05)'"><i class="fas fa-times"></i></button>
+                    <button onclick="document.getElementById('user-modal').style.display='none'" style="background: rgba(0,0,0,0.05); border: 1px solid var(--border-subtle); color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(0, 0, 0,0.1)'" onmouseout="this.style.background='rgba(0, 0, 0,0.05)'"><i class="fas fa-times"></i></button>
                 </div>
                 
                 <div style="padding: 32px; overflow-y: auto; flex: 1;">
@@ -452,5 +452,21 @@
             if (appShell) appShell.style.gridTemplateColumns = '1fr';
         }
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
+            elements.forEach((el, index) => {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                setTimeout(() => {
+                    el.style.opacity = "1";
+                    el.style.transform = "translateY(0)";
+                }, 50 + (index * 40)); // Staggered delay
+            });
+        });
+    </script>
 </body>
+
 </html>

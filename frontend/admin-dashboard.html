@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Core Control | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-v2">
+    <link rel="stylesheet" href="style.css?v=professional-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .admin-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px; }
@@ -38,20 +38,19 @@
                 </div>
             </div>
 
-            <nav style="display: flex; flex-direction: column; gap: 10px;">
+            <nav style="display: flex; flex-direction: column; gap: 10px; margin-top: 56px;">
                 <button class="sidebar-nav-btn active"><i class="fas fa-server"></i> System Overview</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin-users.html'"><i class="fas fa-users-cog"></i> User Management</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin-analytics.html'"><i class="fas fa-database"></i> Database Health</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin-clusters.html'"><i class="fas fa-microchip"></i> Node Clusters</button>
                 <button class="sidebar-nav-btn" onclick="window.location.href='admin-settings.html'"><i class="fas fa-cog"></i> Global Settings</button>
-                <button class="sidebar-nav-btn" style="margin-top: 32px; color: #ef4444;" onclick="window.location.href='login.html'"><i class="fas fa-power-off"></i> Terminate Admin Session</button>
+                <button class="sidebar-nav-btn" style="margin-top: 32px; color: var(--text-secondary); transition: all 0.2s;" onmouseover="this.style.color='#ef4444'; this.style.background='rgba(239, 68, 68, 0.05)'" onmouseout="this.style.color='var(--text-secondary)'; this.style.background='transparent'" onclick="window.location.href='login.html'"><i class="fas fa-power-off"></i> Terminate Admin Session</button>
             </nav>
         </aside>
 
         <main class="main-content" style="padding: 60px; overflow-y: auto; flex: 1;">
             <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px;">
                 <div>
-                    <span class="badge-admin" style="margin-bottom: 12px; display: inline-block;">SYSTEM OVERSEER</span>
                     <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;">Global System Nexus</h2>
                     <p style="color: var(--text-secondary); font-size: 16px;">Logged in as: <strong id="admin-name-display" style="color: var(--primary-brand);">Admin</strong> &nbsp;|&nbsp; Comprehensive real-time monitoring of all users and repositories.</p>
                 </div>
@@ -251,7 +250,7 @@
                             return `
                             <div class="cluster-node">
                                 <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-brand); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0;">${initial}</div>
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-brand); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; color: #ffffff;">${initial}</div>
                                     <div style="flex: 1; min-width: 0;">
                                         <div style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${u.full_name || u.email}</div>
                                         <div style="font-size: 11px; color: var(--text-muted);">${u.email} &nbsp;·&nbsp; ${queries} queries</div>
@@ -282,5 +281,21 @@
             if (appShell) appShell.style.gridTemplateColumns = '1fr';
         }
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
+            elements.forEach((el, index) => {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                setTimeout(() => {
+                    el.style.opacity = "1";
+                    el.style.transform = "translateY(0)";
+                }, 50 + (index * 40)); // Staggered delay
+            });
+        });
+    </script>
 </body>
+
 </html>

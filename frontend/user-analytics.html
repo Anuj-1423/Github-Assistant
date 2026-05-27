@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Architectural Insights | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-v2">
+    <link rel="stylesheet" href="style.css?v=professional-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <nav style="display: flex; flex-direction: column; gap: 10px;">
+            <nav style="display: flex; flex-direction: column; gap: 10px; margin-top: 56px;">
                 <button class="sidebar-nav-btn" onclick="window.location.href='user-dashboard.html'"><i class="fas fa-th-large"></i> Dashboard Home</button>
                 <button id="nav-analytics" class="sidebar-nav-btn active" onclick="window.location.hash='analytics'"><i class="fas fa-chart-line"></i> Deep Analytics</button>
                 <button id="nav-system-map" class="sidebar-nav-btn" onclick="window.location.hash='system-map'"><i class="fas fa-project-diagram"></i> System Map</button>
@@ -48,8 +48,7 @@
             <!-- === ANALYTICS VIEW === -->
             <div id="view-analytics">
                 <header class="analytics-hero">
-                    <div class="badge" id="repo-badge" style="margin-bottom: 12px;">REPO TELEMETRY</div>
-                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;" id="analytics-title">Architectural Insights</h2>
+<h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;" id="analytics-title">Architectural Insights</h2>
                     <p style="color: var(--text-secondary); font-size: 16px;" id="analytics-subtitle">Loading repository report...</p>
                 </header>
 
@@ -98,8 +97,7 @@
             <!-- === SYSTEM MAP VIEW === -->
             <div id="view-system-map" style="display: none;">
                 <header class="analytics-hero">
-                    <div class="badge" style="margin-bottom: 12px;">ARCHITECTURE VISUALIZATION</div>
-                    <h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">System Map</h2>
+<h2 style="font-size: 40px; font-weight: 800; margin-bottom: 8px;">System Map</h2>
                     <p style="color: var(--text-secondary); font-size: 16px;" id="map-repo-subtitle">Architecture map for this repository.</p>
                 </header>
                 <div id="system-maps-container" style="display: flex; flex-direction: column; gap: 40px;">
@@ -114,7 +112,7 @@
                 <h2 id="map-modal-title" style="font-size: 24px; font-weight: 800;">Repository Map</h2>
                 <div>
                     <button id="map-modal-download" class="btn btn-primary" style="margin-right: 16px;"><i class="fas fa-download"></i> Download PNG</button>
-                    <button onclick="closeMapModal()" style="background: rgba(0,0,0,0.1); border: none; color: #0f172a; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
+                    <button onclick="closeMapModal()" style="background: rgba(0,0,0,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
                 </div>
             </div>
             <div id="map-modal-content" style="flex: 1; overflow: auto; background: var(--surface-base); border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 40px;"></div>
@@ -454,5 +452,21 @@
         loadProfile();
         loadAnalytics();
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
+            elements.forEach((el, index) => {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                setTimeout(() => {
+                    el.style.opacity = "1";
+                    el.style.transform = "translateY(0)";
+                }, 50 + (index * 40)); // Staggered delay
+            });
+        });
+    </script>
 </body>
+
 </html>

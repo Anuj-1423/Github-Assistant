@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neural Interface | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-v2">
+    <link rel="stylesheet" href="style.css?v=professional-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
@@ -17,8 +17,8 @@
         .input-wrapper { position: relative; background: var(--surface-elevated); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 8px; transition: var(--transition-smooth); }
         .input-wrapper:focus-within { border-color: var(--primary-brand); box-shadow: var(--shadow-glow); }
         #chat-input { background: transparent; border: none; color: #0f172a; padding: 12px 16px; width: calc(100% - 60px); font-size: 15px; outline: none; }
-        .send-btn { position: absolute; right: 8px; top: 8px; bottom: 8px; width: 44px; background: var(--primary-brand); border: none; border-radius: 14px; color: black; cursor: pointer; transition: var(--transition-smooth); }
-        .send-btn:hover { transform: scale(1.05); background: white; }
+        .send-btn { position: absolute; right: 8px; top: 8px; bottom: 8px; width: 44px; background: var(--primary-brand); border: none; border-radius: 14px; color: white; cursor: pointer; transition: var(--transition-smooth); }
+        .send-btn:hover { transform: scale(1.05); background: white; color: var(--primary-brand); }
         .orb-container { position: absolute; top: 40px; right: 40px; }
         .orb { width: 48px; height: 48px; border-radius: 50%; background: var(--primary-brand); filter: blur(15px); opacity: 0.3; animation: pulse 4s infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.5); opacity: 0.4; } }
@@ -45,7 +45,7 @@
         <aside class="nav-rail">
             <div class="rail-item" onclick="window.location.href='user-dashboard.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
             <div class="rail-item active"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-            <div class="rail-item" onclick="window.location.href='user-analytics.html'"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+            <div class="rail-item" onclick="window.location.href='user-analytics.html' + (new URLSearchParams(window.location.search).get('repo') ? '?repo=' + new URLSearchParams(window.location.search).get('repo') : '')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
             <div id="user-avatar" class="rail-item" style="margin-top: auto; background: var(--surface-elevated); border: 1px solid var(--border-subtle); font-weight: 800;">U</div>
         </aside>
 
@@ -57,11 +57,11 @@
                 </div>
             </div>
 
-            <button onclick="startNewChat()" style="background: var(--primary-brand); color: black; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 24px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(99,102,241,0.2);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(99,102,241,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.2)';">
+            <button onclick="startNewChat()" style="background: var(--primary-brand); color: white; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 24px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(99,102,241,0.2);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(99,102,241,0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.2)';">
                 <i class="fas fa-plus"></i> New Chat
             </button>
 
-            <nav style="display: flex; flex-direction: column; gap: 10px;">
+            <nav style="display: flex; flex-direction: column; gap: 10px; margin-top: 56px;">
                 <button class="sidebar-nav-btn active" onclick="window.location.reload()"><i class="fas fa-comment-alt"></i> Intelligence Chat</button>
                 <button class="sidebar-nav-btn" onclick="toggleAnalysis()"><i class="fas fa-project-diagram"></i> Architecture Map</button>
                 <button class="sidebar-nav-btn" onclick="toggleDeepSearch()"><i class="fas fa-search-plus"></i> Deep Code Search</button>
@@ -81,8 +81,7 @@
                 <div class="orb-container"><div class="orb"></div></div>
                 
                 <header style="margin-bottom: 80px; text-align: center;">
-                    <span class="badge" style="margin-bottom: 16px; display: inline-block;">NEURAL INTERFACE V1.0</span>
-                    <h2 style="font-size: 32px; font-weight: 800;">Direct Repository Inquiry</h2>
+<h2 style="font-size: 32px; font-weight: 800;">Direct Repository Inquiry</h2>
                     <p style="color: var(--text-secondary); max-width: 500px; margin: 12px auto 0;">Your codebase is fully indexed and ready for deep reasoning. Ask about architectural patterns, data flows, or logical implementations.</p>
                 </header>
 
@@ -97,10 +96,10 @@
                     <input type="text" id="chat-input" placeholder="Ask anything about the codebase... (e.g. 'How does the auth flow work?')">
                     <button class="send-btn" id="send-btn"><i class="fas fa-paper-plane"></i></button>
                 </div>
-                <div style="display: flex; gap: 16px; margin-top: 16px; font-size: 11px; color: var(--text-muted);">
+                <div style="display: flex; gap: 16px; margin-top: 16px; font-size: 11px; color: rgba(255, 255, 255, 0.7);">
                     <span><i class="fas fa-keyboard" style="margin-right: 4px;"></i> Enter to Transmit</span>
                     <span><i class="fas fa-terminal" style="margin-right: 4px;"></i> Markdown Supported</span>
-                    <span id="typing-indicator" style="margin-left: auto; display: none; color: var(--primary-brand);">Neural engine is planning...</span>
+                    <span id="typing-indicator" style="margin-left: auto; display: none; color: white;">Neural engine is planning...</span>
                 </div>
             </div>
         </main>
@@ -216,7 +215,6 @@
                 chatContainer.innerHTML = `
                     <div style="max-width: 1200px; margin: 0 auto; width: 100%;">
                         <header style="margin-bottom: 60px; text-align: left;">
-                            <span class="badge badge-blue" style="margin-bottom: 16px; border: 1px solid rgba(99,102,241,0.3); background: rgba(99,102,241,0.1); color: var(--primary-brand); display: inline-block;">NEURAL HUB</span>
                             <h2 style="font-size: 48px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.02em;">Select Repository</h2>
                             <p style="color: var(--text-secondary); font-size: 18px;">Choose an indexed codebase to initiate a neural chat session.</p>
                         </header>
@@ -421,7 +419,7 @@
                     
                     visualizer.innerHTML = `
                         <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
-                            <button class="btn btn-secondary" onclick="downloadMermaidImage()" style="padding: 6px 12px; font-size: 11px; display: flex; gap: 6px; align-items: center; background: rgba(0,0,0,0.1); border: 1px solid var(--border-subtle); border-radius: 6px; color: #0f172a; cursor: pointer;" title="Download Map (PNG)">
+                            <button class="btn btn-secondary" onclick="downloadMermaidImage()" style="padding: 6px 12px; font-size: 11px; display: flex; gap: 6px; align-items: center; background: rgba(0,0,0,0.1); border: 1px solid var(--border-subtle); border-radius: 6px; color: white; cursor: pointer;" title="Download Map (PNG)">
                                 <i class="fas fa-download"></i> PNG
                             </button>
                         </div>
@@ -486,7 +484,7 @@
                     <h3 style="margin-bottom: 12px;">Deep Code Search</h3>
                     <div style="display: flex; gap: 8px; margin-bottom: 16px;">
                         <input type="text" id="search-input" placeholder="Search code/symbols..." style="flex: 1; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); color: #0f172a; border-radius: 6px;">
-                        <button onclick="performDeepSearch()" style="background: var(--primary-brand); color: black; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Search</button>
+                        <button onclick="performDeepSearch()" style="background: var(--primary-brand); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Search</button>
                     </div>
                     <div id="search-results" style="flex: 1; overflow-y: auto; font-size: 11px; text-align: left;"></div>
                 </div>
@@ -632,5 +630,21 @@
             }
         }
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
+            elements.forEach((el, index) => {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                setTimeout(() => {
+                    el.style.opacity = "1";
+                    el.style.transform = "translateY(0)";
+                }, 50 + (index * 40)); // Staggered delay
+            });
+        });
+    </script>
 </body>
+
 </html>

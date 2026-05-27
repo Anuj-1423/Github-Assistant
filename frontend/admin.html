@@ -50,15 +50,16 @@
         }
 
         .brand-badge {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             background: var(--brand);
-            color: #0f172a;
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
         }
 
         .brand h1 {
@@ -76,31 +77,32 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            margin-top: 56px;
         }
 
         .nav-link {
             border: 1px solid transparent;
-            border-radius: 12px;
-            padding: 14px 16px;
+            border-radius: 10px;
+            padding: 12px 14px;
             text-decoration: none;
-            color: var(--muted);
+            color: #475569;
             font-weight: 600;
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
+            gap: 12px;
+            transition: all 0.2s ease;
         }
 
         .nav-link:hover {
-            background: rgba(0, 0, 0, 0.03);
+            background: rgba(0, 0, 0, 0.04);
             color: #0f172a;
         }
 
         .nav-link.active {
-            background: #ffffff;
-            color: #0f172a;
-            border-color: var(--border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--brand);
+            border: 1px solid rgba(99, 102, 241, 0.1);
         }
 
         .sidebar-foot {
@@ -337,7 +339,7 @@
     <div class="layout">
         <aside class="sidebar">
             <div class="brand">
-                <div class="brand-badge" style="background: #ef4444;"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="brand-badge"><i class="fa-solid fa-shield-halved"></i></div>
                 <div class="brand-text">
                     <h1 style="font-size: 20px; font-weight: 800; letter-spacing: 0.05em; line-height: 1; text-transform: uppercase;">Core Control</h1>
                     <p style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Administrative Interface</p>
@@ -352,7 +354,7 @@
                 <a class="nav-link" href="#" onclick="loadPage('admin-settings.html', this); return false;"><i class="fa-solid fa-cog"></i><span>Global Settings</span></a>
                 
                 <a class="nav-link" href="#" onclick="loadPage('admin-profile.html', this); return false;" style="margin-top: 32px;"><i class="fa-solid fa-user-shield"></i><span>My Account</span></a>
-                <a class="nav-link" href="index.html" style="margin-top: 8px; color: #ef4444; background: rgba(239, 68, 68, 0.05); border-radius: 8px;"><i class="fa-solid fa-power-off"></i><span>Terminate Session</span></a>
+                <a class="nav-link" href="index.html" style="margin-top: 8px; color: #475569; transition: all 0.2s;" onmouseover="this.style.color='#ef4444'; this.style.background='rgba(239, 68, 68, 0.05)'" onmouseout="this.style.color='#475569'; this.style.background='transparent'"><i class="fa-solid fa-power-off"></i><span>Terminate Session</span></a>
             </nav>
 
             <div class="sidebar-foot">Admin session active</div>
@@ -370,7 +372,20 @@
             
             if(url === 'dashboard') url = 'admin-dashboard.html';
             
-            document.getElementById('content-frame').src = url + "?v=" + new Date().getTime();
+            const frame = document.getElementById('content-frame');
+            frame.style.opacity = '0';
+            frame.style.transform = 'translateY(10px)';
+            frame.style.transition = 'none';
+
+            setTimeout(() => {
+                frame.src = url + "?v=" + new Date().getTime();
+                frame.onload = () => {
+                    frame.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    frame.style.opacity = '1';
+                    frame.style.transform = 'translateY(0)';
+                };
+            }, 50);
+
             window.location.hash = url;
         }
 
@@ -394,5 +409,21 @@
             }
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
+            elements.forEach((el, index) => {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                setTimeout(() => {
+                    el.style.opacity = "1";
+                    el.style.transform = "translateY(0)";
+                }, 50 + (index * 40)); // Staggered delay
+            });
+        });
+    </script>
 </body>
+
 </html>
