@@ -15,10 +15,19 @@ class MySQLStore:
             "password": password,
             "database": database
         }
+        
+        # Create a connection pool to avoid opening a new TCP connection on every query (which causes massive lag)
+        import mysql.connector.pooling
+        self.pool = mysql.connector.pooling.MySQLConnectionPool(
+            pool_name="code_intel_pool",
+            pool_size=10,
+            pool_reset_session=True,
+            **self.config
+        )
         self._init_db()
 
     def _get_connection(self):
-        return mysql.connector.connect(**self.config)
+        return self.pool.get_connection()
 
     def _init_db(self):
         try:
@@ -293,10 +302,17 @@ class MySQLStore:
             ''', (repo_id, name, url, branch, status, user_id))
             conn.commit()
 
-    def list_repos(self) -> List[Dict[str, Any]]:
+    def list_repos(self, user_id: str = None, current_admin_id: str = None) -> List[Dict[str, Any]]:
         with self._get_connection() as conn:
             cursor = conn.cursor(dictionary=True)
-            cursor.execute('SELECT * FROM repositories ORDER BY created_at DESC')
+            if current_admin_id:
+                # Admins see all repos
+                cursor.execute('SELECT * FROM repositories ORDER BY created_at DESC')
+            elif user_id:
+                # Users see only their repos (or global repos where user_id='system' if you want)
+                cursor.execute('SELECT * FROM repositories WHERE user_id = %s OR user_id = "system" OR user_id IS NULL ORDER BY created_at DESC', (user_id,))
+            else:
+                cursor.execute('SELECT * FROM repositories ORDER BY created_at DESC')
             return cursor.fetchall()
 
     def delete_repo(self, repo_id: str):
