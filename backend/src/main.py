@@ -105,7 +105,7 @@ class AuthRegister(BaseModel):
     role: str = "user"
 
 @app.post("/api/auth/register")
-async def register_user(req: AuthRegister):
+def register_user(req: AuthRegister):
     store = get_storage()
     if hasattr(store, "create_user"):
         user = store.create_user(req.email, req.password, req.full_name, req.role)
@@ -115,7 +115,7 @@ async def register_user(req: AuthRegister):
     raise HTTPException(status_code=501, detail="Auth not implemented")
 
 @app.post("/api/auth/login")
-async def login_user(req: AuthLogin):
+def login_user(req: AuthLogin):
     store = get_storage()
     if hasattr(store, "authenticate_user"):
         user = store.authenticate_user(req.email, req.password)
@@ -125,7 +125,7 @@ async def login_user(req: AuthLogin):
     raise HTTPException(status_code=501, detail="Auth not implemented")
 
 @app.get("/api/user/profile")
-async def get_user_profile(request: Request):
+def get_user_profile(request: Request):
     user_id = request.headers.get("X-User-Id")
     if not user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -139,7 +139,7 @@ async def get_user_profile(request: Request):
     raise HTTPException(status_code=404, detail="User not found")
 
 @app.get("/api/user/stats")
-async def get_user_stats(request: Request):
+def get_user_stats(request: Request):
     user_id = request.headers.get("X-User-Id")
     if not user_id:
         return {"total_queries": 0, "total_chunks": 0}
@@ -262,7 +262,7 @@ async def create_repo(repo: RepoCreate, background_tasks: BackgroundTasks, reque
     return {"repo_id": job.repo_id, "status": "PENDING"}
 
 @app.get("/api/repos")
-async def list_repositories(request: Request):
+def list_repositories(request: Request):
     user_id = request.headers.get("X-User-Id")
     if not user_id:
         return []
@@ -273,7 +273,7 @@ async def list_repositories(request: Request):
     return []
 
 @app.delete("/api/repos/{repo_id}")
-async def delete_repository(repo_id: str):
+def delete_repository(repo_id: str):
     store = get_storage()
     # 1. Clear DB Metadata
     if hasattr(store, "delete_repo"):
@@ -310,7 +310,7 @@ async def delete_repository(repo_id: str):
     return {"status": "DELETED", "repo_id": repo_id}
 
 @app.get("/api/repos/{repo_id}/status")
-async def get_repo_status(repo_id: str):
+def get_repo_status(repo_id: str):
     if repo_id not in jobs:
         store = get_storage()
         repo = store.get_repo(repo_id)
@@ -330,7 +330,7 @@ async def get_repo_status(repo_id: str):
     }
 
 @app.get("/api/repos/{repo_id}/files")
-async def get_repo_files(repo_id: str):
+def get_repo_files(repo_id: str):
     store = get_storage()
     if hasattr(store, "db_path"):
         import sqlite3
@@ -342,7 +342,7 @@ async def get_repo_files(repo_id: str):
     return {"files": []}
 
 @app.get("/api/repos/{repo_id}/graph")
-async def get_repo_graph(repo_id: str):
+def get_repo_graph(repo_id: str):
     graph = CodeGraph(repo_id)
     if not os.path.exists(graph.storage_path):
         raise HTTPException(status_code=404, detail="Graph not found")
@@ -351,7 +351,7 @@ async def get_repo_graph(repo_id: str):
         return json.load(f)
 
 @app.get("/api/repos/{repo_id}/download")
-async def download_repo_zip(repo_id: str):
+def download_repo_zip(repo_id: str):
     ensure_repo_exists(repo_id)
 
     if repo_id in jobs:
@@ -381,7 +381,7 @@ async def download_repo_zip(repo_id: str):
     )
 
 @app.get("/api/repos/{repo_id}/architecture-map")
-async def get_architecture_map(repo_id: str):
+def get_architecture_map(repo_id: str):
     ensure_repo_exists(repo_id)
     graph = CodeGraph(repo_id)
     graph.load()
@@ -391,7 +391,7 @@ async def get_architecture_map(repo_id: str):
     return service.build_architecture_map()
 
 @app.get("/api/repos/{repo_id}/architecture-mermaid")
-async def get_repo_architecture_mermaid(repo_id: str):
+def get_repo_architecture_mermaid(repo_id: str):
     ensure_repo_exists(repo_id)
     graph = CodeGraph(repo_id)
     graph.load()
@@ -401,7 +401,7 @@ async def get_repo_architecture_mermaid(repo_id: str):
     return service.generate_mermaid_diagram()
 
 @app.get("/api/repos/{repo_id}/architecture-puml")
-async def get_repo_architecture_puml(repo_id: str):
+def get_repo_architecture_puml(repo_id: str):
     ensure_repo_exists(repo_id)
     graph = CodeGraph(repo_id)
     graph.load()
@@ -411,7 +411,7 @@ async def get_repo_architecture_puml(repo_id: str):
     return service.generate_plantuml_diagram()
 
 @app.get("/api/repos/{repo_id}/architecture-graph")
-async def get_repo_architecture_graph(repo_id: str):
+def get_repo_architecture_graph(repo_id: str):
     ensure_repo_exists(repo_id)
     graph = CodeGraph(repo_id)
     graph.load()
@@ -421,7 +421,7 @@ async def get_repo_architecture_graph(repo_id: str):
     return service.generate_graph_json()
 
 @app.get("/api/repos/{repo_id}/structure")
-async def get_repo_structure(repo_id: str):
+def get_repo_structure(repo_id: str):
     ensure_repo_exists(repo_id)
     graph = CodeGraph(repo_id)
     graph.load()
@@ -431,7 +431,7 @@ async def get_repo_structure(repo_id: str):
     return service.generate_repo_tree()
 
 @app.get("/api/repos/{repo_id}/onboarding")
-async def get_onboarding_guide(repo_id: str):
+def get_onboarding_guide(repo_id: str):
     ensure_repo_exists(repo_id)
     graph = CodeGraph(repo_id)
     graph.load()
@@ -441,7 +441,7 @@ async def get_onboarding_guide(repo_id: str):
     return service.build_onboarding_guide()
 
 @app.get("/api/repos/{repo_id}/memory")
-async def get_repo_memory(repo_id: str):
+def get_repo_memory(repo_id: str):
     ensure_repo_exists(repo_id)
     graph = CodeGraph(repo_id)
     graph.load()
@@ -451,7 +451,7 @@ async def get_repo_memory(repo_id: str):
     return service.get_memory_snapshot()
 
 @app.get("/api/repos/{repo_id}/analytics")
-async def get_repo_analytics(repo_id: str):
+def get_repo_analytics(repo_id: str):
     ensure_repo_exists(repo_id)
     graph = CodeGraph(repo_id)
     graph.load()
@@ -461,7 +461,7 @@ async def get_repo_analytics(repo_id: str):
     return service.get_analytics_data()
 
 @app.post("/api/repos/{repo_id}/memory/glossary")
-async def upsert_repo_glossary(repo_id: str, request: GlossaryUpsertRequest):
+def upsert_repo_glossary(repo_id: str, request: GlossaryUpsertRequest):
     ensure_repo_exists(repo_id)
     term = request.term.strip()
     definition = request.definition.strip()
@@ -476,7 +476,7 @@ async def upsert_repo_glossary(repo_id: str, request: GlossaryUpsertRequest):
     return {"status": "ok", "term": term}
 
 @app.delete("/api/repos/{repo_id}/memory/glossary")
-async def delete_repo_glossary(repo_id: str, term: str = Query(..., min_length=1)):
+def delete_repo_glossary(repo_id: str, term: str = Query(..., min_length=1)):
     ensure_repo_exists(repo_id)
     store = get_storage()
     if not hasattr(store, "delete_glossary_term"):
@@ -486,7 +486,7 @@ async def delete_repo_glossary(repo_id: str, term: str = Query(..., min_length=1
     return {"status": "ok", "term": term.strip()}
 
 @app.post("/api/repos/{repo_id}/memory/notes")
-async def add_repo_note(repo_id: str, request: NoteCreateRequest):
+def add_repo_note(repo_id: str, request: NoteCreateRequest):
     ensure_repo_exists(repo_id)
     note = request.note.strip()
     if not note:
@@ -562,7 +562,7 @@ async def query_repo(repo_id: str, request_body: QueryRequest, request: Request)
     }
 
 @app.get("/api/repos/{repo_id}/query-logs")
-async def get_repo_query_logs(repo_id: str, request: Request, limit: int = Query(default=50, ge=1, le=500)):
+def get_repo_query_logs(repo_id: str, request: Request, limit: int = Query(default=50, ge=1, le=500)):
     user_id = request.headers.get("X-User-Id")
     if not user_id:
         return {"logs": []}
@@ -574,7 +574,7 @@ async def get_repo_query_logs(repo_id: str, request: Request, limit: int = Query
     return {"logs": []}
 
 @app.post("/api/repos/{repo_id}/search")
-async def deep_code_search(repo_id: str, request: QueryRequest):
+def deep_code_search(repo_id: str, request: QueryRequest):
     ensure_repo_exists(repo_id)
     store = get_storage()
     
@@ -622,7 +622,7 @@ async def query_repo_stream(repo_id: str, request_body: QueryRequest, request: R
     return StreamingResponse(event_generator(), media_type="application/x-ndjson")
 
 @app.get("/api/admin/overview")
-async def get_admin_overview(request: Request):
+def get_admin_overview(request: Request):
     current_admin_id = request.headers.get("X-User-Id")
     store = get_storage()
     if hasattr(store, "get_admin_overview"):
@@ -645,7 +645,7 @@ async def get_admin_overview(request: Request):
     }
 
 @app.get("/api/admin/users")
-async def get_admin_users(request: Request, limit: int = Query(default=200, ge=1, le=1000)):
+def get_admin_users(request: Request, limit: int = Query(default=200, ge=1, le=1000)):
     current_admin_id = request.headers.get("X-User-Id")
     store = get_storage()
     if hasattr(store, "list_users_with_query_counts"):
@@ -661,7 +661,7 @@ class UserStatusUpdate(BaseModel):
     status: str
 
 @app.put("/api/admin/users/{user_id}/status")
-async def update_user_status(user_id: str, request: UserStatusUpdate):
+def update_user_status(user_id: str, request: UserStatusUpdate):
     store = get_storage()
     if hasattr(store, "update_user_status"):
         store.update_user_status(user_id, request.status)
@@ -670,7 +670,7 @@ async def update_user_status(user_id: str, request: UserStatusUpdate):
 
 
 @app.get("/api/admin/users/{user_id}")
-async def get_user_details(user_id: str):
+def get_user_details(user_id: str):
     store = get_storage()
     if hasattr(store, "get_user_details"):
         details = store.get_user_details(user_id)
@@ -680,7 +680,7 @@ async def get_user_details(user_id: str):
     raise HTTPException(status_code=501, detail="User details not supported")
 
 @app.get("/api/admin/query-logs")
-async def get_admin_query_logs(request: Request, limit: int = Query(default=50, ge=1, le=500)):
+def get_admin_query_logs(request: Request, limit: int = Query(default=50, ge=1, le=500)):
     current_admin_id = request.headers.get("X-User-Id")
     store = get_storage()
     if hasattr(store, "list_query_logs"):
@@ -688,7 +688,7 @@ async def get_admin_query_logs(request: Request, limit: int = Query(default=50, 
     return {"logs": []}
 
 @app.get("/api/admin/repos-all")
-async def get_admin_repos_all(request: Request):
+def get_admin_repos_all(request: Request):
     current_admin_id = request.headers.get("X-User-Id")
     store = get_storage()
     if hasattr(store, "list_repos"):
@@ -700,7 +700,7 @@ last_net_io = None
 last_net_time = None
 
 @app.get("/api/admin/clusters")
-async def get_admin_clusters(request: Request):
+def get_admin_clusters(request: Request):
     global last_net_io, last_net_time
     try:
         import psutil
@@ -775,7 +775,7 @@ async def get_admin_clusters(request: Request):
     }
 
 @app.get("/api/admin/users/export.csv")
-async def export_admin_users_csv(request: Request):
+def export_admin_users_csv(request: Request):
     current_admin_id = request.headers.get("X-User-Id")
     store = get_storage()
     rows = []
@@ -806,14 +806,14 @@ async def export_admin_users_csv(request: Request):
 
 
 @app.get("/api/system/settings")
-async def get_system_settings():
+def get_system_settings():
     store = get_storage()
     if hasattr(store, "get_system_settings"):
         return store.get_system_settings()
     return {}
 
 @app.post("/api/system/settings")
-async def update_system_settings(settings: dict):
+def update_system_settings(settings: dict):
     store = get_storage()
     if hasattr(store, "update_system_settings"):
         store.update_system_settings(settings)
