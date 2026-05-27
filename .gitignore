@@ -35,6 +35,7 @@ env/
 
 # Storage / Database / Cache
 storage/
+!backend/src/storage/
 scratch/
 *.db
 *.sqlite
