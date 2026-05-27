@@ -16,6 +16,7 @@ class EmbeddingModel:
     def __init__(self, model_name: str = "BAAI/bge-small-en-v1.5", dimension: int = 384):
         self.device = "cpu"
         self.dimension = dimension
+        self.model = None
 
         if not EmbeddingModel._remote_model_unavailable:
             try:
