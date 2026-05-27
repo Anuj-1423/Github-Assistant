@@ -39,7 +39,9 @@ logger = logging.getLogger(__name__)
 
 # Paths
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FRONTEND_DIR = os.path.join(os.path.dirname(ROOT_DIR), "frontend")
+FRONTEND_DIR = os.path.join(ROOT_DIR, "frontend")
+if not os.path.exists(FRONTEND_DIR):
+    FRONTEND_DIR = os.path.join(os.path.dirname(ROOT_DIR), "frontend")
 
 app = FastAPI(title="Codebase Knowledge AI API", version="1.0.0")
 print("\n" + "="*50)
@@ -203,7 +205,9 @@ def _to_safe_filename(value: str) -> str:
 @app.get("/")
 async def serve_index():
     index_path = os.path.join(FRONTEND_DIR, "index.html")
-    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"status": "API is live", "message": "Frontend not found in container"}
 
 @app.get("/{page}.html")
 async def serve_page(page: str):

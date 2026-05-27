@@ -12,6 +12,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Hack to get the frontend folder since Docker build context is restricted to /backend
+RUN git clone https://github.com/Anuj-1423/Github-Assistant.git /tmp/repo && \
+    cp -r /tmp/repo/frontend /app/frontend && \
+    rm -rf /tmp/repo
+
 EXPOSE 8000
 
 # Entry point updated from app.main to src.main
