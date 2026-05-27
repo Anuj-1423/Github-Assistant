@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neural Interface | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-final">
+    <link rel="stylesheet" href="style.css?v=light-theme-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
@@ -107,7 +107,7 @@
 
         <aside class="right-panel" style="display: flex; flex-direction: column; height: 100vh; padding-bottom: 40px; box-sizing: border-box;">
             <div class="panel-section-title" style="margin-bottom: 16px;">Active Visualizer</div>
-            <div id="visualizer-preview" style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; min-height: 400px; overflow: hidden;">
+            <div id="visualizer-preview" style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 20px; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; min-height: 400px; overflow: hidden;">
                 <i class="fas fa-project-diagram" style="font-size: 48px; color: var(--text-muted); margin-bottom: 16px;"></i>
                 <p style="font-size: 13px; color: var(--text-muted);">Architecture maps will be generated here during deep analysis.</p>
             </div>
@@ -163,7 +163,18 @@
             }
         });
 
-        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#000000',
+                primaryTextColor: '#ffffff',
+                lineColor: '#ffffff',
+                background: '#000000',
+                mainBkg: '#000000',
+                nodeBorder: '#ffffff'
+            }
+        });
 
         function renderMarkdown(text) {
             if (!text || !text.trim()) return '';
@@ -215,7 +226,7 @@
 
                         <!-- Spacer Fillers to look professional -->
                         <div style="margin-top: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
-                            <div style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                            <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
                                 <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center;"><i class="fas fa-lightbulb" style="color: #fbbf24; margin-right: 12px; font-size: 24px;"></i> Inquiry Best Practices</h3>
                                 <ul style="color: var(--text-muted); font-size: 14px; line-height: 2; padding-left: 20px; margin: 0;">
                                     <li>Ask specific questions about architectural patterns.</li>
@@ -224,7 +235,7 @@
                                     <li>Open the Architecture Map to visualize dependencies.</li>
                                 </ul>
                             </div>
-                            <div style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                            <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
                                 <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center;"><i class="fas fa-network-wired" style="color: var(--primary-brand); margin-right: 12px; font-size: 24px;"></i> Neural Engine Status</h3>
                                 <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px;">
                                     <div style="display: flex; justify-content: space-between; color: var(--text-muted); align-items: center;"><span>Vector Database</span> <span style="color: #22c55e; font-weight: 800; background: rgba(34,197,94,0.1); padding: 4px 8px; border-radius: 6px; font-size: 12px;"><i class="fas fa-circle" style="font-size: 8px; margin-right: 4px; vertical-align: middle;"></i> ONLINE</span></div>
@@ -250,7 +261,7 @@
                             return;
                         }
                         container.innerHTML = repos.map(repo => `
-                            <div onclick="window.location.href='chat.html?repo=${repo.id}'" style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 24px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);" onmouseover="this.style.borderColor='var(--primary-brand)'; this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 40px rgba(99,102,241,0.1)';" onmouseout="this.style.borderColor='var(--border-subtle)'; this.style.transform='none'; this.style.boxShadow='none';">
+                            <div onclick="window.location.href='chat.html?repo=${repo.id}'" style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 24px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);" onmouseover="this.style.borderColor='var(--primary-brand)'; this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 40px rgba(99,102,241,0.1)';" onmouseout="this.style.borderColor='var(--border-subtle)'; this.style.transform='none'; this.style.boxShadow='none';">
                                 <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
                                     <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(99,102,241,0.1); color: var(--primary-brand); display: flex; align-items: center; justify-content: center; font-size: 20px;"><i class="fas fa-folder-open"></i></div>
                                     <h3 style="font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${repo.name}</h3>
@@ -414,7 +425,7 @@
                                 <i class="fas fa-download"></i> PNG
                             </button>
                         </div>
-                        <div class="mermaid" id="mermaid-container" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; overflow: auto; background: rgba(0,0,0,0.3); border-radius: 12px;">
+                        <div class="mermaid" id="mermaid-container" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; overflow: auto; background: #000000; border-radius: 12px;">
                             ${data.mermaid_code}
                         </div>
                     `;
@@ -454,7 +465,7 @@
                 canvas.height = Math.max(img.height || 600, svg.viewBox?.baseVal?.height || 600);
                 
                 // Dark background
-                ctx.fillStyle = "#0d0d14"; 
+                ctx.fillStyle = "#000000"; 
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -574,7 +585,7 @@
                         const answerHtml = log.answer ? renderMarkdown(log.answer) : '<span style="color: var(--text-muted); font-style: italic;">No response recorded.</span>';
                         
                         html += `
-                        <div style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; margin-bottom: 16px;">
+                        <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; margin-bottom: 16px;">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
                                 <div style="font-weight: 800; font-size: 16px; color: #0f172a;">
                                     <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 4px;">Operator</span>

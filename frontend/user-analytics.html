@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Architectural Insights | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-final">
+    <link rel="stylesheet" href="style.css?v=light-theme-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
@@ -12,7 +12,7 @@
         .analytics-hero { padding-bottom: 60px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 60px; }
         .stat-grid-large { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 60px; }
         .chart-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; margin-bottom: 60px; }
-        .complexity-map { height: 400px; background: #0f172a; border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
+        .complexity-map { height: 400px; background: #ffffff; border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
         .app-shell { grid-template-columns: 80px 300px 1fr !important; }
         .hotspot-row { display:flex; justify-content:space-between; align-items:center; padding:20px; background:rgba(0, 0, 0,0.02); border-radius:16px; border:1px solid var(--border-subtle); margin-bottom:12px; }
     </style>
@@ -113,7 +113,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 id="map-modal-title" style="font-size: 24px; font-weight: 800;">Repository Map</h2>
                 <div>
-                    <button id="map-modal-download" class="btn btn-primary" style="margin-right: 16px;"><i class="fas fa-download"></i> Download SVG</button>
+                    <button id="map-modal-download" class="btn btn-primary" style="margin-right: 16px;"><i class="fas fa-download"></i> Download PNG</button>
                     <button onclick="closeMapModal()" style="background: rgba(0,0,0,0.1); border: none; color: #0f172a; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
                 </div>
             </div>
@@ -128,7 +128,18 @@
             if (!userId) window.location.href = 'login.html';
         })();
 
-        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#000000',
+                primaryTextColor: '#ffffff',
+                lineColor: '#ffffff',
+                background: '#000000',
+                mainBkg: '#000000',
+                nodeBorder: '#ffffff'
+            }
+        });
 
         const params = new URLSearchParams(window.location.search);
         const repoId = params.get('repo');
@@ -309,12 +320,12 @@
                 headerPart.innerHTML = `
                     <h3 style="font-size:18px;font-weight:800;margin-bottom:8px;">${repoName}</h3>
                     <p style="font-size:12px;color:var(--text-muted);margin-bottom:24px;">Architecture map of all modules and dependencies.</p>
-                    <button class="btn btn-secondary" onclick="downloadMapSVG('${repoId}', '${repoName}')" style="width:100%;margin-bottom:12px;"><i class="fas fa-download"></i> Download SVG</button>
+                    <button class="btn btn-secondary" onclick="downloadMapSVG('${repoId}', '${repoName}')" style="width:100%;margin-bottom:12px;"><i class="fas fa-download"></i> Download PNG</button>
                     <button class="btn btn-secondary" onclick="openMapModal('${repoName}', null, null, '${repoId}')" style="width:100%;"><i class="fas fa-expand"></i> Fullscreen</button>
                 `;
 
                 const mapPart = document.createElement('div');
-                mapPart.style.cssText = 'flex:1;background:var(--surface-base);border-radius:16px;border:1px solid var(--border-subtle);overflow:hidden;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;min-height:300px;';
+                mapPart.style.cssText = 'flex:1;background:#000000;border-radius:16px;border:1px solid var(--border-subtle);overflow:hidden;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;min-height:300px;';
                 mapPart.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Rendering...</div>';
 
                 repoBox.appendChild(headerPart);
@@ -389,9 +400,29 @@
                 ? document.getElementById('map-modal-content')
                 : document.getElementById('system-maps-container')).querySelector('svg');
             if (!svgEl) { alert('Map not ready.'); return; }
-            const blob = new Blob([new XMLSerializer().serializeToString(svgEl)], { type: 'image/svg+xml' });
-            const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `${rName}_architecture.svg` });
-            a.click();
+            
+            const svgString = new XMLSerializer().serializeToString(svgEl);
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const img = new Image();
+            
+            const b64 = btoa(unescape(encodeURIComponent(svgString)));
+            img.src = "data:image/svg+xml;base64," + b64;
+            
+            img.onload = function() {
+                canvas.width = Math.max(img.width || 800, svgEl.viewBox?.baseVal?.width || 800);
+                canvas.height = Math.max(img.height || 600, svgEl.viewBox?.baseVal?.height || 600);
+                
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                const pngData = canvas.toDataURL("image/png");
+                const a = document.createElement('a');
+                a.href = pngData;
+                a.download = `${rName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_architecture.png`;
+                a.click();
+            };
         }
 
         async function exportReport() {

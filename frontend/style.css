@@ -2,9 +2,9 @@
 
 :root {
   --canvas: #f8fafc;
-  --surface: #0f172a;
+  --surface: #ffffff;
   --surface-elevated: #f1f5f9;
-  --surface-card: #0f172a;
+  --surface-card: #ffffff;
   --surface-accent: rgba(99, 102, 241, 0.05);
   --primary-brand: #6366f1;
   --primary-glow: rgba(99, 102, 241, 0.2);
@@ -48,7 +48,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
@@ -281,7 +281,7 @@ body {
 
 /* PANELS & CARDS */
 .glass-panel {
-  background: #0f172a;
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 40px;
@@ -385,5 +385,5 @@ body {
 
 /* ADMIN DASHBOARD SPECIFIC */
 .admin-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px; }
-.admin-card { background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; box-shadow: none; transition: var(--transition-smooth); }
+.admin-card { background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; box-shadow: none; transition: var(--transition-smooth); }
 .admin-card:hover { border-color: rgba(0,0,0,0.15); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }

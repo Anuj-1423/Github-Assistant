@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Database Health | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-final">
+    <link rel="stylesheet" href="style.css?v=light-theme-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
@@ -360,7 +360,18 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             try {
                 if (!window.mermaidInitialized) {
-                    mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                    mermaid.initialize({
+            startOnLoad: false,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#000000',
+                primaryTextColor: '#ffffff',
+                lineColor: '#ffffff',
+                background: '#000000',
+                mainBkg: '#000000',
+                nodeBorder: '#ffffff'
+            }
+        });
                     window.mermaidInitialized = true;
                 }
 
@@ -395,7 +406,7 @@
                 canvas.width = Math.max(img.width || 800, svg.viewBox?.baseVal?.width || 800);
                 canvas.height = Math.max(img.height || 600, svg.viewBox?.baseVal?.height || 600);
                 
-                ctx.fillStyle = "#0d0d14"; 
+                ctx.fillStyle = "#000000"; 
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Central Nexus | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-final">
+    <link rel="stylesheet" href="style.css?v=light-theme-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -12,7 +12,7 @@
         .analytics-hero { padding-bottom: 60px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 60px; }
         .stat-grid-large { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 60px; }
         .chart-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; margin-bottom: 60px; }
-        .complexity-map { height: 400px; background: #0f172a; border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
+        .complexity-map { height: 400px; background: #ffffff; border-radius: 24px; border: 1px solid var(--border-subtle); padding: 32px; }
         
         .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-bottom: 48px; }
         .repo-list { display: grid; grid-template-columns: 1fr; gap: 20px; }
@@ -66,10 +66,10 @@
             <div class="premium-card" style="margin-top: auto; padding: 20px;">
                 <div style="font-size: 10px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Storage Quota</div>
                 <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.05); border-radius: 2px; margin-bottom: 8px;">
-                    <div style="width: 65%; height: 100%; background: var(--primary-brand); border-radius: 2px;"></div>
+                    <div id="storage-progress" style="width: 0%; height: 100%; background: var(--primary-brand); border-radius: 2px; transition: width 0.5s;"></div>
                 </div>
                 <div style="font-size: 11px; color: var(--text-secondary); display: flex; justify-content: space-between;">
-                    <span>652.4 MB Used</span>
+                    <span id="storage-used-text">0.0 MB Used</span>
                     <span>1.0 GB Total</span>
                 </div>
             </div>
@@ -145,7 +145,7 @@
                     <p style="color: var(--text-secondary); font-size: 16px;">View and manage your core system parameters.</p>
                 </header>
 
-                <div style="background: #0f172a; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; max-width: 800px; box-shadow: 0 4px 30px rgba(0,0,0,0.2);">
+                <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 40px; max-width: 800px; box-shadow: 0 4px 30px rgba(0,0,0,0.2);">
                     <div style="display: flex; gap: 32px; align-items: flex-start;">
                         <div style="width: 100px; height: 100px; background: var(--primary-brand); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; color: #0f172a; box-shadow: 0 10px 25px rgba(99,102,241,0.3);" id="profile-avatar-large">U</div>
                         <div style="flex: 1;">
@@ -403,6 +403,9 @@
             const userId = localStorage.getItem('auth_user_id');
             const headers = userId ? { 'X-User-Id': userId } : {};
 
+            let repoCount = 0;
+            let chunksCount = 0;
+
             // Always default the stats to 0 immediately (never "Loading...")
             document.getElementById('stat-repos').innerText = '0';
             document.getElementById('stat-chunks').innerText = '0';
@@ -412,6 +415,7 @@
                 const response = await fetch('/api/repos', { headers });
                 if (response.ok) {
                     const repos = await response.json();
+                    repoCount = repos.length;
                     const container = document.getElementById('repo-list-container');
 
                     // Always update repo count stat
@@ -450,10 +454,24 @@
                 const statsRes = await fetch('/api/user/stats', { headers });
                 if (statsRes.ok) {
                     const stats = await statsRes.json();
+                    chunksCount = stats.total_chunks ?? 0;
                     document.getElementById('stat-chunks').innerText = stats.total_chunks ?? 0;
                     document.getElementById('stat-queries').innerText = stats.total_queries ?? 0;
                 }
             } catch (err) {}
+
+            // Dynamic storage calculation
+            // Assign ~4.2MB base per repo, and ~0.08MB per semantic chunk
+            const usedMB = (repoCount * 4.2) + (chunksCount * 0.08);
+            const totalMB = 1024; // 1.0 GB
+            const percentage = Math.min((usedMB / totalMB) * 100, 100);
+            
+            const progressEl = document.getElementById('storage-progress');
+            const textEl = document.getElementById('storage-used-text');
+            if (progressEl && textEl) {
+                progressEl.style.width = percentage + '%';
+                textEl.innerText = (usedMB > 0 ? usedMB.toFixed(1) : '0.0') + ' MB Used';
+            }
         }
 
         function downloadRepo(repoId, event) {

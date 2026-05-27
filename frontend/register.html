@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Provision Identity | Codebase Knowledge AI</title>
-    <link rel="stylesheet" href="style.css?v=light-theme-final">
+    <link rel="stylesheet" href="style.css?v=light-theme-v2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -13,7 +13,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #050508;
+            background-color: var(--canvas);
             overflow: hidden;
             position: relative;
         }
@@ -67,8 +67,8 @@
             border-radius: 40px;
             padding: 1px;
             background: linear-gradient(to bottom right, rgba(0, 0, 0,0.1), transparent, rgba(99,102,241,0.2));
-            -webkit-mask: linear-gradient(#0f172a 0 0) content-box, linear-gradient(#0f172a 0 0);
-            mask: linear-gradient(#0f172a 0 0) content-box, linear-gradient(#0f172a 0 0);
+            -webkit-mask: linear-gradient(#ffffff 0 0) content-box, linear-gradient(#ffffff 0 0);
+            mask: linear-gradient(#ffffff 0 0) content-box, linear-gradient(#ffffff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             pointer-events: none;
@@ -183,7 +183,7 @@
         .loading-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(5, 5, 8, 0.9);
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 40px;
             display: none;
             align-items: center;
@@ -237,7 +237,7 @@
             </div>
             <div class="input-group">
                 <i class="fas fa-user-shield input-icon"></i>
-                <select id="operatorRole" class="auth-input" style="appearance: none; cursor: pointer; color: var(--text-muted);" required onchange="this.style.color='white'">
+                <select id="operatorRole" class="auth-input" style="appearance: none; cursor: pointer; color: var(--text-muted);" required onchange="this.style.color='#0f172a'">
                     <option value="" disabled selected>Select Operator Designation</option>
                     <option value="user" style="color: black;">Standard Operator (User)</option>
                     <option value="admin" style="color: black;">System Overseer (Admin)</option>
