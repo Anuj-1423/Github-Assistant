@@ -461,3 +461,123 @@ class MySQLStore:
             "repo_status": status_counts,
             "recent_queries": queries
         }
+
+    def count_query_logs(self) -> int:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT COUNT(*) FROM query_logs')
+            row = cursor.fetchone()
+            return int(row[0]) if row else 0
+
+    def list_users_with_query_counts(self, limit: int = 200, current_admin_id: str = None):
+        with self._get_connection() as conn:
+            cursor = conn.cursor(dictionary=True)
+            query = '''
+                SELECT 
+                    u.id,
+                    u.username,
+                    u.email,
+                    u.full_name,
+                    u.role,
+                    u.bio,
+                    u.status,
+                    u.updated_at,
+                    COUNT(q.id) AS total_queries,
+                    MAX(q.created_at) AS last_query_at
+                FROM users u
+                LEFT JOIN query_logs q ON q.user_id = u.id
+            '''
+            params = []
+            if current_admin_id:
+                query += " WHERE u.role != 'admin' OR u.id = %s"
+                params.append(current_admin_id)
+                
+            query += '''
+                GROUP BY u.id
+                ORDER BY total_queries DESC, u.updated_at DESC
+                LIMIT %s
+            '''
+            params.append(limit)
+            cursor.execute(query, tuple(params))
+            return cursor.fetchall()
+
+    def get_user_details(self, user_id: str):
+        with self._get_connection() as conn:
+            cursor = conn.cursor(dictionary=True)
+            
+            cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))
+            user_row = cursor.fetchone()
+            if not user_row:
+                return {}
+            
+            cursor.execute('''
+                SELECT DISTINCT r.id, r.name, r.url, r.status
+                FROM query_logs q
+                JOIN repositories r ON r.id = q.repo_id
+                WHERE q.user_id = %s
+            ''', (user_id,))
+            repos = cursor.fetchall()
+            
+            cursor.execute('''
+                SELECT q.id, q.query, q.answer, q.created_at, r.name as repo_name
+                FROM query_logs q
+                LEFT JOIN repositories r ON r.id = q.repo_id
+                WHERE q.user_id = %s
+                ORDER BY q.created_at DESC
+                LIMIT 50
+            ''', (user_id,))
+            queries = cursor.fetchall()
+            
+            return {
+                "user": user_row,
+                "repos": repos,
+                "queries": queries
+            }
+
+    def get_system_settings(self):
+        with self._get_connection() as conn:
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS system_settings (
+                    id VARCHAR(255) PRIMARY KEY,
+                    ai_provider VARCHAR(255),
+                    api_key VARCHAR(255),
+                    model_name VARCHAR(255),
+                    temperature FLOAT,
+                    max_tokens INT,
+                    chunk_size INT,
+                    chunk_overlap INT,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                )
+            ''')
+            
+            cursor.execute("SELECT id FROM system_settings WHERE id = 'default_settings'")
+            if not cursor.fetchone():
+                cursor.execute('''
+                    INSERT INTO system_settings (id, ai_provider, model_name, temperature, max_tokens, chunk_size, chunk_overlap)
+                    VALUES ('default_settings', 'gemini', 'gemini-1.5-flash', 0.7, 4096, 1500, 150)
+                ''')
+                conn.commit()
+                
+            cursor.execute("SELECT * FROM system_settings WHERE id = 'default_settings'")
+            row = cursor.fetchone()
+            return row if row else {}
+
+    def update_system_settings(self, settings_data: dict):
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE system_settings 
+                SET ai_provider = %s, api_key = %s, model_name = %s, temperature = %s, 
+                    max_tokens = %s, chunk_size = %s, chunk_overlap = %s, updated_at = CURRENT_TIMESTAMP
+                WHERE id = 'default_settings'
+            ''', (
+                settings_data.get('ai_provider'),
+                settings_data.get('api_key'),
+                settings_data.get('model_name'),
+                settings_data.get('temperature'),
+                settings_data.get('max_tokens'),
+                settings_data.get('chunk_size'),
+                settings_data.get('chunk_overlap')
+            ))
+            conn.commit()
