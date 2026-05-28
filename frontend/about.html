@@ -18,32 +18,6 @@
         .timeline-item.right { text-align: left; left: 50%; }
         .timeline-dot { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; border-radius: 50%; background: var(--primary-brand); box-shadow: 0 0 15px var(--primary-glow); }
     </style>
-<script>
-    const __originalFetch = window.fetch;
-    window.fetch = async function(...args) {
-        const url = args[0];
-        const options = args[1] || {};
-        const method = options.method || 'GET';
-        if (method !== 'GET' || typeof url !== 'string' || !url.startsWith('/api/')) { return __originalFetch.apply(this, args); }
-        const cacheKey = 'api_cache_' + url;
-        const cachedData = sessionStorage.getItem(cacheKey);
-        if (cachedData) {
-            __originalFetch.apply(this, args).then(async res => {
-                if (res.ok) {
-                    const text = await res.clone().text();
-                    sessionStorage.setItem(cacheKey, text);
-                }
-            }).catch(e => {});
-            return new Response(cachedData, { status: 200, headers: new Headers({ 'Content-Type': 'application/json' }) });
-        }
-        const response = await __originalFetch.apply(this, args);
-        if (response.ok) {
-            const text = await response.clone().text();
-            sessionStorage.setItem(cacheKey, text);
-        }
-        return response;
-    };
-</script>
 </head>
 <body>
     <nav class="nav-bar">
@@ -208,4 +182,5 @@
     </script>
 </body>
 </html>
+
 

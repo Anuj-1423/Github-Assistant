@@ -16,32 +16,6 @@
         .app-shell { grid-template-columns: 80px 300px 1fr !important; }
         .hotspot-row { display:flex; justify-content:space-between; align-items:center; padding:20px; background:rgba(0, 0, 0,0.02); border-radius:16px; border:1px solid var(--border-subtle); margin-bottom:12px; }
     </style>
-<script>
-    const __originalFetch = window.fetch;
-    window.fetch = async function(...args) {
-        const url = args[0];
-        const options = args[1] || {};
-        const method = options.method || 'GET';
-        if (method !== 'GET' || typeof url !== 'string' || !url.startsWith('/api/')) { return __originalFetch.apply(this, args); }
-        const cacheKey = 'api_cache_' + url;
-        const cachedData = sessionStorage.getItem(cacheKey);
-        if (cachedData) {
-            __originalFetch.apply(this, args).then(async res => {
-                if (res.ok) {
-                    const text = await res.clone().text();
-                    sessionStorage.setItem(cacheKey, text);
-                }
-            }).catch(e => {});
-            return new Response(cachedData, { status: 200, headers: new Headers({ 'Content-Type': 'application/json' }) });
-        }
-        const response = await __originalFetch.apply(this, args);
-        if (response.ok) {
-            const text = await response.clone().text();
-            sessionStorage.setItem(cacheKey, text);
-        }
-        return response;
-    };
-</script>
 </head>
 <body>
     <div class="app-shell">
@@ -502,4 +476,5 @@
 </body>
 
 </html>
+
 
