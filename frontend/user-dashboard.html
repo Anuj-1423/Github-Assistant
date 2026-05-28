@@ -301,6 +301,9 @@
                              '.js': 'JavaScript', '.jsx': 'JavaScript', '.go': 'Go',
                              '.java': 'Java', '.rs': 'Rust', '.cs': 'C#', '.cpp': 'C++' };
 
+            const repoLabels = [];
+            const repoFileCounts = [];
+
             for (const repo of repos) {
                 try {
                     const fr = await fetch(`/api/repos/${repo.id}/files`);
@@ -308,6 +311,9 @@
                         const fd = await fr.json();
                         const files = fd.files || [];
                         totalFiles += files.length;
+                        repoLabels.push(repo.name);
+                        repoFileCounts.push(files.length);
+
                         files.forEach(f => {
                             const ext = '.' + f.split('.').pop().toLowerCase();
                             const lang = extMap[ext] || 'Other';
@@ -321,33 +327,15 @@
             document.getElementById('ana-total-files-sub').innerText =
                 repos.length > 0 ? `Across ${repos.length} repo${repos.length > 1 ? 's' : ''}` : 'No repos yet';
 
-            // --- 4. Module complexity chart (per-repo analytics aggregated) ---
-            const moduleLabels = [];
-            const moduleValues = [];
-            for (const repo of repos.slice(0, 3)) { // limit API calls
-                try {
-                    const ar = await fetch(`/api/repos/${repo.id}/analytics`);
-                    if (ar.ok) {
-                        const ad = await ar.json();
-                        const labels = ad.complexity_over_time?.labels || [];
-                        const values = ad.complexity_over_time?.values || [];
-                        labels.forEach((lbl, i) => {
-                            moduleLabels.push(lbl);
-                            moduleValues.push(values[i] || 0);
-                        });
-                    }
-                } catch(e) {}
-            }
-
-            // Growth chart — show real module complexity data or flat placeholder
+            // Growth chart — show Repo sizes instead of module complexities to maintain separation of concerns
             const growthCtx = document.getElementById('growthChart').getContext('2d');
-            const growthLabels = moduleLabels.length > 0 ? moduleLabels.slice(0, 10) : (repos.map(r => r.name) || ['No Data']);
-            const growthValues = moduleValues.length > 0 ? moduleValues.slice(0, 10) : repos.map(() => 0);
+            const growthLabels = repoLabels.length > 0 ? repoLabels : ['No Data'];
+            const growthValues = repoFileCounts.length > 0 ? repoFileCounts : [0];
             new Chart(growthCtx, {
                 type: 'bar',
                 data: {
                     labels: growthLabels,
-                    datasets: [{ label: 'Symbol Complexity', data: growthValues,
+                    datasets: [{ label: 'Source Files Count', data: growthValues,
                         backgroundColor: 'rgba(99,102,241,0.5)', borderColor: '#6366f1',
                         borderWidth: 1, borderRadius: 6 }]
                 },

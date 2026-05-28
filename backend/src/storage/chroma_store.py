@@ -1,5 +1,9 @@
-import chromadb
-from chromadb.config import Settings
+try:
+    import chromadb
+    from chromadb.config import Settings
+except ImportError:
+    chromadb = None
+    Settings = None
 from typing import List, Dict, Any, Optional
 import os
 

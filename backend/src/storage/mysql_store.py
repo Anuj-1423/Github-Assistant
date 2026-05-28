@@ -556,6 +556,28 @@ class MySQLStore:
             cursor.execute(query, tuple(params))
             return cursor.fetchall()
 
+    def get_user_stats(self, user_id: str) -> Dict[str, Any]:
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT COUNT(*) FROM query_logs WHERE user_id = %s
+            ''', (user_id,))
+            row = cursor.fetchone()
+            queries_count = row[0] if row else 0
+
+            cursor.execute('''
+                SELECT COUNT(*) FROM chunks c
+                JOIN repositories r ON c.repo_id = r.id
+                WHERE r.user_id = %s
+            ''', (user_id,))
+            row = cursor.fetchone()
+            chunks_count = row[0] if row else 0
+            
+            return {
+                "total_queries": queries_count,
+                "total_chunks": chunks_count
+            }
+
     def get_user_details(self, user_id: str):
         with self._get_connection() as conn:
             cursor = conn.cursor(dictionary=True)

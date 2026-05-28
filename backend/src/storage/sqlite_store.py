@@ -534,6 +534,26 @@ class SQLiteStore:
             ''', (user_id, repo_id, query, answer))
             conn.commit()
 
+    def get_user_stats(self, user_id: str) -> Dict[str, Any]:
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT COUNT(*) FROM query_logs WHERE user_id = ?
+            ''', (user_id,))
+            queries_count = cursor.fetchone()[0]
+
+            cursor.execute('''
+                SELECT COUNT(*) FROM chunks c
+                JOIN repositories r ON c.repo_id = r.id
+                WHERE r.user_id = ?
+            ''', (user_id,))
+            chunks_count = cursor.fetchone()[0]
+            
+            return {
+                "total_queries": queries_count,
+                "total_chunks": chunks_count
+            }
+
     def count_chunks(self) -> int:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()

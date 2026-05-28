@@ -106,13 +106,17 @@ class AuthRegister(BaseModel):
 
 @app.post("/api/auth/register")
 def register_user(req: AuthRegister):
-    store = get_storage()
-    if hasattr(store, "create_user"):
-        user = store.create_user(req.email, req.password, req.full_name, req.role)
-        if user:
-            return {"status": "success", "user": user}
-        raise HTTPException(status_code=400, detail="User already exists")
-    raise HTTPException(status_code=501, detail="Auth not implemented")
+    try:
+        store = get_storage()
+        if hasattr(store, "create_user"):
+            user = store.create_user(req.email, req.password, req.full_name, req.role)
+            if user:
+                return {"status": "success", "user": user}
+            raise HTTPException(status_code=400, detail="User already exists")
+        raise HTTPException(status_code=501, detail="Auth not implemented")
+    except Exception as e:
+        logger.error(f"Register Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/auth/login")
 def login_user(req: AuthLogin):
@@ -332,13 +336,10 @@ def get_repo_status(repo_id: str):
 @app.get("/api/repos/{repo_id}/files")
 def get_repo_files(repo_id: str):
     store = get_storage()
-    if hasattr(store, "db_path"):
-        import sqlite3
-        with sqlite3.connect(store.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute('SELECT DISTINCT file_path FROM chunks WHERE repo_id = ? LIMIT 10', (repo_id,))
-            files = [row[0] for row in cursor.fetchall()]
-            return {"files": files}
+    if hasattr(store, "list_repo_chunks"):
+        chunks = store.list_repo_chunks(repo_id, limit=50000)
+        files = list(set([c.get("file_path") for c in chunks if c.get("file_path")]))
+        return {"files": files}
     return {"files": []}
 
 @app.get("/api/repos/{repo_id}/graph")

@@ -78,6 +78,14 @@ class IndexingJob:
                     chunks = self.chunker.chunk_file(rel_path, parse_result, content)
                     all_chunks.extend(chunks)
                 else:
+                    # Add to parse results so it appears in the architecture map
+                    all_parse_results.append({
+                        "file_path": rel_path,
+                        "functions": [],
+                        "classes": [],
+                        "imports": []
+                    })
+                    
                     # Fallback text indexing for .md, .csv, Dockerfile, .txt, etc.
                     # Exclude huge files if necessary, but we'll chunk it as a whole file for now.
                     chunk_id = str(uuid.uuid4())[:8]
