@@ -156,8 +156,13 @@
         async function loadGlobalRepos() {
             try {
                 const response = await fetch('/api/admin/repos-all', { headers: ADMIN_HEADERS });
-                const fallback = await fetch('/api/repos', { headers: ADMIN_HEADERS });
-                const data = response.ok ? await response.json() : (fallback.ok ? await fallback.json() : []);
+                let data = [];
+                if (response.ok) {
+                    data = await response.json();
+                } else {
+                    const fallback = await fetch('/api/repos', { headers: ADMIN_HEADERS });
+                    if (fallback.ok) data = await fallback.json();
+                }
                 
                 // Parse GitHub owners as fallback for system uploads
                 allGlobalRepos = data.map(r => {
@@ -223,21 +228,21 @@
         
         async function loadStats() {
             try {
-                const response = await fetch('/api/admin/overview', { headers: ADMIN_HEADERS });
-                if (response.ok) {
-                    const data = await response.json();
+                const [overviewRes, usersRes] = await Promise.all([
+                    fetch('/api/admin/overview', { headers: ADMIN_HEADERS }),
+                    fetch('/api/admin/users', { headers: ADMIN_HEADERS })
+                ]);
+                
+                if (overviewRes.ok) {
+                    const data = await overviewRes.json();
                     document.getElementById('stat-users').innerText = data.total_users || 0;
                     document.getElementById('stat-repos').innerText = data.global_docs || 0;
                     document.getElementById('stat-queries').innerText = data.total_queries || 0;
                     document.getElementById('stat-ready').innerText = data.repo_status ? (data.repo_status.ready || 0) : 0;
                 }
-            } catch(e) {}
-
-            // Load per-user activity breakdown
-            try {
-                const ur = await fetch('/api/admin/users', { headers: ADMIN_HEADERS });
-                if (ur.ok) {
-                    const ud = await ur.json();
+                
+                if (usersRes.ok) {
+                    const ud = await usersRes.json();
                     const users = (ud.users || []).filter(u => u.role !== 'admin').slice(0, 8);
                     const panel = document.getElementById('user-activity-panel');
                     if (users.length === 0) {

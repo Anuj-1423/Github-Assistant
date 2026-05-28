@@ -275,24 +275,23 @@
 
             // --- 1. Fetch user's repos ---
             let repos = [];
+            let stats = {};
             try {
-                const r = await fetch('/api/repos', { headers });
-                if (r.ok) repos = await r.json();
+                const [rRes, sRes] = await Promise.all([
+                    fetch('/api/repos', { headers }),
+                    fetch('/api/user/stats', { headers })
+                ]);
+                
+                if (rRes.ok) repos = await rRes.json();
+                if (sRes.ok) stats = await sRes.json();
             } catch(e) {}
 
             document.getElementById('ana-total-repos').innerText = repos.length;
             document.getElementById('ana-total-repos-sub').innerText =
                 repos.length === 1 ? '1 workspace' : `${repos.length} workspaces`;
 
-            // --- 2. Fetch user stats (chunks + queries) ---
-            try {
-                const sr = await fetch('/api/user/stats', { headers });
-                if (sr.ok) {
-                    const stats = await sr.json();
-                    document.getElementById('ana-total-chunks').innerText = (stats.total_chunks ?? 0).toLocaleString();
-                    document.getElementById('ana-total-queries').innerText = (stats.total_queries ?? 0).toLocaleString();
-                }
-            } catch(e) {}
+            document.getElementById('ana-total-chunks').innerText = (stats.total_chunks ?? 0).toLocaleString();
+            document.getElementById('ana-total-queries').innerText = (stats.total_queries ?? 0).toLocaleString();
 
             // --- 3. Gather per-repo file counts and language distribution ---
             const langCount = {};
