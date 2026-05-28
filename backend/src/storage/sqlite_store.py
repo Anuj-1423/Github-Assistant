@@ -399,8 +399,9 @@ class SQLiteStore:
             cursor = conn.cursor()
             query = '''
                 SELECT r.id, r.name, r.url, r.branch, r.status, r.created_at, r.user_id,
-                       COALESCE((SELECT u.username FROM query_logs q JOIN users u ON u.id = q.user_id WHERE q.repo_id = r.id ORDER BY q.created_at ASC LIMIT 1), 'System Operator') as uploader_name
+                       u.email as uploader_email, u.full_name as uploader_name
                 FROM repositories r 
+                LEFT JOIN users u ON r.user_id = u.id
             '''
             params = []
             
@@ -409,7 +410,6 @@ class SQLiteStore:
                 params.append(user_id)
             elif current_admin_id:
                 query += '''
-                    LEFT JOIN users u ON r.user_id = u.id
                     WHERE (u.role != 'admin' OR u.id IS NULL OR r.user_id = ?)
                 '''
                 params.append(current_admin_id)

@@ -187,6 +187,7 @@
             }
             const filtered = allGlobalRepos.filter(r => 
                 (r.uploader_name && r.uploader_name.toLowerCase().includes(term)) ||
+                (r.uploader_email && r.uploader_email.toLowerCase().includes(term)) ||
                 (r.name && r.name.toLowerCase().includes(term)) ||
                 (r.url && r.url.toLowerCase().includes(term))
             );
@@ -207,7 +208,7 @@
                             <i class="fas fa-code-branch" style="color: var(--text-secondary);"></i> ${r.name || r.id}
                         </div>
                         <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
-                            <span><i class="fas fa-user-astronaut" style="color: var(--primary-brand); margin-right: 4px;"></i> ${r.uploader_name || 'System Operator'}</span>
+                            <span><i class="fas fa-user-astronaut" style="color: var(--primary-brand); margin-right: 4px;"></i> ${r.uploader_name || 'System Operator'} ${r.uploader_email ? `(${r.uploader_email})` : ''}</span>
                             <span style="opacity: 0.5;">|</span>
                             <span><i class="fab fa-github" style="margin-right: 4px;"></i> ${r.url || 'Local Environment'}</span>
                         </div>

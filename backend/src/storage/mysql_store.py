@@ -305,14 +305,19 @@ class MySQLStore:
     def list_repos(self, user_id: str = None, current_admin_id: str = None) -> List[Dict[str, Any]]:
         with self._get_connection() as conn:
             cursor = conn.cursor(dictionary=True)
+            query = '''
+                SELECT r.*, u.email as uploader_email, u.full_name as uploader_name
+                FROM repositories r
+                LEFT JOIN users u ON r.user_id = u.id
+            '''
             if current_admin_id:
                 # Admins see all repos
-                cursor.execute('SELECT * FROM repositories ORDER BY created_at DESC')
+                cursor.execute(f'{query} ORDER BY r.created_at DESC')
             elif user_id:
                 # Users see only their repos (or global repos where user_id='system' if you want)
-                cursor.execute("SELECT * FROM repositories WHERE user_id = %s OR user_id = 'system' OR user_id IS NULL ORDER BY created_at DESC", (user_id,))
+                cursor.execute(f"{query} WHERE r.user_id = %s OR r.user_id = 'system' OR r.user_id IS NULL ORDER BY r.created_at DESC", (user_id,))
             else:
-                cursor.execute('SELECT * FROM repositories ORDER BY created_at DESC')
+                cursor.execute(f'{query} ORDER BY r.created_at DESC')
             return cursor.fetchall()
 
     def delete_repo(self, repo_id: str):
