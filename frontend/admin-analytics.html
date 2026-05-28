@@ -225,18 +225,28 @@
                 const rr = await fetch('/api/admin/repos-all', { headers: ADMIN_HEADERS });
                 if (!rr.ok) return;
                 const repos = await rr.json();
-                for (const repo of repos) {
+                
+                // Fetch file lists concurrently
+                const fetchPromises = repos.map(async (repo) => {
                     try {
                         const fr = await fetch(`/api/repos/${repo.id}/files`);
-                        if (!fr.ok) continue;
+                        if (!fr.ok) return [];
                         const fd = await fr.json();
-                        (fd.files || []).forEach(f => {
-                            const ext = '.' + f.split('.').pop().toLowerCase();
-                            const lang = extMap[ext] || 'Other';
-                            langCount[lang] = (langCount[lang] || 0) + 1;
-                        });
-                    } catch(e) {}
-                }
+                        return fd.files || [];
+                    } catch (e) {
+                        return [];
+                    }
+                });
+                
+                const allRepoFiles = await Promise.all(fetchPromises);
+                
+                allRepoFiles.forEach(files => {
+                    files.forEach(f => {
+                        const ext = '.' + f.split('.').pop().toLowerCase();
+                        const lang = extMap[ext] || 'Other';
+                        langCount[lang] = (langCount[lang] || 0) + 1;
+                    });
+                });
             } catch(e) {}
 
             const colors = ['#6366f1','#3b82f6','#8b5cf6','#22c55e','#f59e0b','#ef4444','#06b6d4','#475569'];
@@ -448,12 +458,12 @@
             const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
             elements.forEach((el, index) => {
                 el.style.opacity = "0";
-                el.style.transform = "translateY(20px)";
-                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                el.style.transform = "translateY(10px)";
+                el.style.transition = "all 0.3s ease-out";
                 setTimeout(() => {
                     el.style.opacity = "1";
                     el.style.transform = "translateY(0)";
-                }, 50 + (index * 40)); // Staggered delay
+                }, 10 + (index * 15)); // Staggered delay
             });
         });
     </script>

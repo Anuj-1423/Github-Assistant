@@ -247,7 +247,7 @@
                 const elements = activeView.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
                 elements.forEach((el, index) => {
                     el.style.opacity = "0";
-                    el.style.transform = "translateY(20px)";
+                    el.style.transform = "translateY(10px)";
                     el.style.transition = "none";
                     setTimeout(() => {
                         el.style.transition = "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
@@ -304,23 +304,30 @@
             const repoLabels = [];
             const repoFileCounts = [];
 
-            for (const repo of repos) {
+            // Fetch per-repo files concurrently
+            const fileFetches = repos.map(async (repo) => {
                 try {
                     const fr = await fetch(`/api/repos/${repo.id}/files`);
                     if (fr.ok) {
                         const fd = await fr.json();
-                        const files = fd.files || [];
-                        totalFiles += files.length;
-                        repoLabels.push(repo.name);
-                        repoFileCounts.push(files.length);
-
-                        files.forEach(f => {
-                            const ext = '.' + f.split('.').pop().toLowerCase();
-                            const lang = extMap[ext] || 'Other';
-                            langCount[lang] = (langCount[lang] || 0) + 1;
-                        });
+                        return { repo, files: fd.files || [] };
                     }
                 } catch(e) {}
+                return { repo, files: [] };
+            });
+
+            const fileResults = await Promise.all(fileFetches);
+            
+            for (const {repo, files} of fileResults) {
+                totalFiles += files.length;
+                repoLabels.push(repo.name);
+                repoFileCounts.push(files.length);
+
+                files.forEach(f => {
+                    const ext = '.' + f.split('.').pop().toLowerCase();
+                    const lang = extMap[ext] || 'Other';
+                    langCount[lang] = (langCount[lang] || 0) + 1;
+                });
             }
 
             document.getElementById('ana-total-files').innerText = totalFiles.toLocaleString();
@@ -567,12 +574,12 @@
             const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
             elements.forEach((el, index) => {
                 el.style.opacity = "0";
-                el.style.transform = "translateY(20px)";
-                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                el.style.transform = "translateY(10px)";
+                el.style.transition = "all 0.3s ease-out";
                 setTimeout(() => {
                     el.style.opacity = "1";
                     el.style.transform = "translateY(0)";
-                }, 50 + (index * 40)); // Staggered delay
+                }, 10 + (index * 15)); // Faster staggered delay
             });
         });
     </script>

@@ -197,51 +197,52 @@
                 }
             } catch(e) {}
 
-            // --- Architecture overview (files, nodes, edges, modules) ---
-            try {
-                const ar = await fetch(`/api/repos/${repoId}/architecture-map`);
-                if (ar.ok) {
-                    const data = await ar.json();
-                    const ov = data.overview || {};
-                    document.getElementById('stat-files').innerText = (ov.files_indexed ?? '—').toLocaleString();
-                    document.getElementById('stat-nodes').innerText = (ov.graph_nodes ?? '—').toLocaleString();
-                    document.getElementById('stat-edges').innerText = (ov.graph_edges ?? '—').toLocaleString();
-                    document.getElementById('stat-modules').innerText = (ov.modules ?? '—').toLocaleString();
+            // --- Fetch all data concurrently to reduce wait time ---
+            const fetchArch = fetch(`/api/repos/${repoId}/architecture-map`).then(res => res.ok ? res.json() : null).catch(() => null);
+            const fetchAn = fetch(`/api/repos/${repoId}/analytics`).then(res => res.ok ? res.json() : null).catch(() => null);
+            
+            // Pre-fetch the mermaid code so it's ready exactly when the user clicks System Map
+            window.prefetchedMapPromise = fetch(`/api/repos/${repoId}/architecture-mermaid`).then(res => res.ok ? res.json() : null).catch(() => null);
 
-                    // Hotspots: top modules by symbol count
-                    const modules = data.modules || [];
-                    const colors = ['#ef4444', '#fbbf24', '#22c55e', '#3b82f6', '#8b5cf6', '#06b6d4'];
-                    if (modules.length > 0) {
-                        document.getElementById('hotspots-container').innerHTML = modules.slice(0, 6).map((m, i) => `
-                            <div class="hotspot-row">
-                                <div style="display: flex; gap: 20px; align-items: center;">
-                                    <div style="width: 12px; height: 12px; border-radius: 50%; background: ${colors[i % colors.length]};"></div>
-                                    <div>
-                                        <div style="font-size: 15px; font-weight: 700;">${m.name}</div>
-                                        <div style="font-size: 12px; color: var(--text-muted);">${m.file_count} files · ${m.symbol_count} symbols · Top: ${(m.top_symbols || []).slice(0,3).join(', ') || 'N/A'}</div>
-                                    </div>
+            const [archData, anData] = await Promise.all([fetchArch, fetchAn]);
+
+            // --- Architecture overview (files, nodes, edges, modules) ---
+            if (archData) {
+                const ov = archData.overview || {};
+                document.getElementById('stat-files').innerText = (ov.files_indexed ?? '—').toLocaleString();
+                document.getElementById('stat-nodes').innerText = (ov.graph_nodes ?? '—').toLocaleString();
+                document.getElementById('stat-edges').innerText = (ov.graph_edges ?? '—').toLocaleString();
+                document.getElementById('stat-modules').innerText = (ov.modules ?? '—').toLocaleString();
+
+                // Hotspots: top modules by symbol count
+                const modules = archData.modules || [];
+                const colors = ['#ef4444', '#fbbf24', '#22c55e', '#3b82f6', '#8b5cf6', '#06b6d4'];
+                if (modules.length > 0) {
+                    document.getElementById('hotspots-container').innerHTML = modules.slice(0, 6).map((m, i) => `
+                        <div class="hotspot-row">
+                            <div style="display: flex; gap: 20px; align-items: center;">
+                                <div style="width: 12px; height: 12px; border-radius: 50%; background: ${colors[i % colors.length]};"></div>
+                                <div>
+                                    <div style="font-size: 15px; font-weight: 700;">${m.name}</div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">${m.file_count} files · ${m.symbol_count} symbols · Top: ${(m.top_symbols || []).slice(0,3).join(', ') || 'N/A'}</div>
                                 </div>
-                                <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 12px;" onclick="window.location.href='chat.html?repo=${repoId}'">Ask in Chat</button>
                             </div>
-                        `).join('');
-                    } else {
-                        document.getElementById('hotspots-container').innerHTML = '<div style="color: var(--text-muted);">No module data available yet.</div>';
-                    }
+                            <button class="btn btn-secondary" style="padding: 10px 20px; font-size: 12px;" onclick="window.location.href='chat.html?repo=${repoId}'">Ask in Chat</button>
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('hotspots-container').innerHTML = '<div style="color: var(--text-muted);">No module data available yet.</div>';
                 }
-            } catch(e) {}
+            }
 
             // --- Per-repo analytics (complexity chart) ---
             const moduleLabels = [], moduleValues = [];
-            try {
-                const an = await fetch(`/api/repos/${repoId}/analytics`);
-                if (an.ok) {
-                    const ad = await an.json();
-                    (ad.complexity_over_time?.labels || []).forEach((lbl, i) => {
-                        moduleLabels.push(lbl);
-                        moduleValues.push(ad.complexity_over_time.values[i] || 0);
-                    });
-                }
-            } catch(e) {}
+            if (anData) {
+                (anData.complexity_over_time?.labels || []).forEach((lbl, i) => {
+                    moduleLabels.push(lbl);
+                    moduleValues.push(anData.complexity_over_time.values[i] || 0);
+                });
+            }
 
             const growthCtx = document.getElementById('growthChart').getContext('2d');
             new Chart(growthCtx, {
@@ -305,9 +306,14 @@
             container.innerHTML = '<div style="color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Generating architecture map...</div>';
 
             try {
-                const res = await fetch(`/api/repos/${repoId}/architecture-mermaid`);
-                if (!res.ok) throw new Error('API error');
-                const mapData = await res.json();
+                let mapData;
+                if (window.prefetchedMapPromise) {
+                    mapData = await window.prefetchedMapPromise;
+                } else {
+                    const res = await fetch(`/api/repos/${repoId}/architecture-mermaid`);
+                    if (!res.ok) throw new Error('API error');
+                    mapData = await res.json();
+                }
                 const repoName = document.getElementById('sidebar-repo-name').innerText;
 
                 const repoBox = document.createElement('div');
@@ -458,12 +464,12 @@
             const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
             elements.forEach((el, index) => {
                 el.style.opacity = "0";
-                el.style.transform = "translateY(20px)";
-                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                el.style.transform = "translateY(10px)";
+                el.style.transition = "all 0.3s ease-out";
                 setTimeout(() => {
                     el.style.opacity = "1";
                     el.style.transform = "translateY(0)";
-                }, 50 + (index * 40)); // Staggered delay
+                }, 10 + (index * 15)); // Faster staggered delay
             });
         });
     </script>

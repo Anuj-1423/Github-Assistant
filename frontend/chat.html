@@ -283,39 +283,34 @@
 
             try {
                 const userId = localStorage.getItem('auth_user_id');
-                const response = await fetch('/api/repos', {
-                    headers: userId ? { 'X-User-Id': userId } : {}
-                });
-                if (response.ok) {
-                    const repos = await response.json();
-                    const repo = repos.find(r => r.id === repoId);
-                    if (repo) {
-                        document.getElementById('repo-name-display').innerText = repo.name.toUpperCase();
-                    }
+                const headers = userId ? { 'X-User-Id': userId } : {};
+                
+                const fetchRepos = fetch('/api/repos', { headers }).then(r => r.ok ? r.json() : []);
+                const fetchFiles = fetch(`/api/repos/${repoId}/files`).then(r => r.ok ? r.json() : null);
+                const fetchStats = fetch(`/api/repos/${repoId}/status`).then(r => r.ok ? r.json() : null);
+                
+                const [repos, filesData, stats] = await Promise.all([fetchRepos, fetchFiles, fetchStats]);
+                
+                const repo = repos.find(r => r.id === repoId);
+                if (repo) {
+                    document.getElementById('repo-name-display').innerText = repo.name.toUpperCase();
                 }
                 
-                // Fetch dynamic critical components (real files)
-                const filesRes = await fetch(`/api/repos/${repoId}/files`);
-                if (filesRes.ok) {
-                    const data = await filesRes.json();
-                    if (data.files && data.files.length > 0) {
-                        const container = document.getElementById('dynamic-critical-components');
-                        const topFiles = data.files.slice(0, 3);
-                        const colors = ['var(--primary-brand)', 'var(--accent-blue)', 'var(--accent-purple)'];
-                        container.innerHTML = topFiles.map((f, i) => `
-                            <div class="pinned-item" onclick="askAboutComponent('${f}')">
-                                <i class="fas fa-file-code" style="margin-right: 12px; color: ${colors[i%3]}; font-size: 16px;"></i> 
-                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${f}">${f}</span>
-                            </div>
-                        `).join('');
-                    } else {
-                        document.getElementById('critical-components-section').style.display = 'none';
-                    }
+                if (filesData && filesData.files && filesData.files.length > 0) {
+                    const container = document.getElementById('dynamic-critical-components');
+                    const topFiles = filesData.files.slice(0, 3);
+                    const colors = ['var(--primary-brand)', 'var(--accent-blue)', 'var(--accent-purple)'];
+                    container.innerHTML = topFiles.map((f, i) => `
+                        <div class="pinned-item" onclick="askAboutComponent('${f}')">
+                            <i class="fas fa-file-code" style="margin-right: 12px; color: ${colors[i%3]}; font-size: 16px;"></i> 
+                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${f}">${f}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('critical-components-section').style.display = 'none';
                 }
                 
-                const statsRes = await fetch(`/api/repos/${repoId}/status`);
-                if (statsRes.ok) {
-                    const stats = await statsRes.json();
+                if (stats) {
                     document.getElementById('stat-chunks').innerText = stats.chunks_created || 0;
                     document.getElementById('stat-links').innerText = stats.graph_edges || 0;
                 }
@@ -636,12 +631,12 @@
             const elements = document.querySelectorAll(".admin-card, .repo-card, .stat-card, section, .cluster-node, .log-terminal, table, .complexity-map, .chat-interface");
             elements.forEach((el, index) => {
                 el.style.opacity = "0";
-                el.style.transform = "translateY(20px)";
-                el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+                el.style.transform = "translateY(10px)";
+                el.style.transition = "all 0.3s ease-out";
                 setTimeout(() => {
                     el.style.opacity = "1";
                     el.style.transform = "translateY(0)";
-                }, 50 + (index * 40)); // Staggered delay
+                }, 10 + (index * 15)); // Staggered delay
             });
         });
     </script>
