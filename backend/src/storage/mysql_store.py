@@ -60,6 +60,17 @@ class MySQLStore:
                     )
                 ''')
 
+                # Self-healing migration: check if updated_at column exists in users
+                try:
+                    cursor.execute("SHOW COLUMNS FROM users LIKE 'updated_at'")
+                    if not cursor.fetchone():
+                        logger.info("Migrating legacy users table: adding updated_at column...")
+                        cursor.execute("ALTER TABLE users ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+                        conn.commit()
+                except Exception as e:
+                    logger.error(f"Failed to migrate users table updated_at column: {e}")
+
+
                 # Repositories table
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS repositories (
